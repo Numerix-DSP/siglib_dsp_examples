@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title></title></head><body style="background-color: rgb(255, 255, 255);">
+<div style="font-family: Arial;" align="center">
+<center>
+<table border="0">
+  <tbody>
+    <tr>
+      <td align="center"><a href="http://www.numerix-dsp.com" target="_blank"><font size="2"><img src="../../../WebResources/NumerixLogoSM.JPG" alt="Numerix Web Site" border="0" height="100" width="105"></font></a></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">
+      <h3><font color="#0000ff" size="3">SigLib </font><font color="#0000ff" size="3">p</font><font color="#0000ff" size="3">/4
+D-QPSK Modem Example Programs</font></h3>
+      </td>
+      <td align="center"><font size="2">&nbsp; </font></td>
+      <td align="center"><a href="http://www.numerix-dsp.com/siglib.html" target="_blank"><font size="2"><img src="../../../WebResources/siglib_ver.gif" alt="SigLib DSP Library Information" border="0" height="49" width="125"></font></a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</div>
+
+<hr style="font-family: Arial;">
+<p style="font-family: Arial;"><font size="2">The files in
+this folder provide a
+example of a complete </font><font size="2">p</font><font size="2">/4
+D-QPSK modem.</font></p>
+
+<p style="font-family: Arial;"><font size="2">The input data
+sequence is taken
+from the file "base.txt" this data is used to modulate
+the carrier (using dqpskmod.exe) and the data is written to a .wav
+file before the data is passed to dqpskdem.exe which
+demodulates the data. The demodulated data is written to the file
+demodout.dat. Each data burst contains a precoding region of
+continuous 1s followed by the packet data sequence which is
+indicated by the synchronization sequence :
+1111...01010001111110. The demodulated synchronization
+sequences and packet data sequences should be the same as base.txt.</font></p>
+
+<p style="font-family: Arial;"><font size="2">Each data
+sequence in base.txt is
+transmitted as a separate data sequence which means that the
+symbol and carrier synchronizers have to be reinitialized on each
+iteration. These functions also work with continuous data streams.</font></p>
+
+<p style="font-family: Arial;"><font size="2">The
+application uses V.26B
+modulation with the following configuration :<br>
+</font></p>
+
+<blockquote style="font-family: Arial;">
+  <p><font size="2">Sampling
+Rate = 48 KHz<br>
+Data format = 8 bit<br>
+Symbol Rate = 1200 baud<br>
+Bit Rate = 2400 bps<br>
+Carrier Frequency = 1800 Hz</font></p>
+</blockquote>
+
+<table style="font-family: Arial;" border="0">
+
+  <tbody>
+    <tr>
+      <td><font size="2"><strong>Dibit</strong></font></td>
+      <td>&nbsp;</td>
+      <td><font size="2"><strong>Phase
+change<br>
+Alternative B</strong></font></td>
+    </tr>
+    <tr>
+      <td align="center">00</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><font size="2">+ 45°</font></td>
+    </tr>
+    <tr>
+      <td align="center">01</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><font size="2">+ 135°</font></td>
+    </tr>
+    <tr>
+      <td align="center">11</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><font size="2">+ 225°</font></td>
+    </tr>
+    <tr>
+      <td align="center">10</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><font size="2">+ 315°</font></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-family: Arial;"><font size="2">This
+example</font><font size="2">&nbsp;can be
+compiled with any of the supported compilers. Examples are provided for
+the free Microsoft Visual Studio and GCC</font><font size="2"> (under
+Cygwin) compiler using Gnuplot/C which is available
+from&nbsp;</font><font size="2">: <a href="http://www.numerix-dsp.com/files/" target="_blank">http://www.numerix-dsp.com/files/</a>.</font><font size="2"> &nbsp;The supplied batch file
+"br.bat"&nbsp;will
+compile and execute both programs.</font>
+</p>
+
+<table style="font-family: Arial;" border="0" cellpadding="0" cellspacing="0">
+
+  <tbody>
+    <tr>
+      <td><strong>Filename&nbsp;</strong></td>
+      <td>&nbsp;</td>
+      <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+      <td><a href="Base.txt"><font size="2">Base.txt</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Source
+data file that is used by the modulator. Contains pre-amble, data
+sequence and post-amble</font></td>
+    </tr>
+    <tr>
+      <td><a href="BASE.WAV"><font size="2">BASE.WAV</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Modulated
+sequence</font></td>
+    </tr>
+    <tr>
+      <td><a href="Demodoutput.txt"><font size="2">Demodoutput.txt</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Output
+from demodulator</font></td>
+    </tr>
+    <tr>
+      <td><a href="dqpskdem.c"><font size="2">dqpskdem.c</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Demodulator
+source code</font></td>
+    </tr>
+    <tr>
+      <td><a href="dqpskmod.c"><font size="2">dqpskmod.c</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Modulator
+source code</font></td>
+    </tr>
+    <tr>
+      <td><a href="Rx_FIR.h"><font size="2">Rx_FIR.h</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">FIR
+filter for demodulator</font></td>
+    </tr>
+    <tr>
+      <td><a href="Tx_FIR.h"><font size="2">Tx_FIR.h</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">FIR
+filter for modulator</font></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-family: Arial;">
+</p>
+
+<table style="font-family: Arial;" border="0" cellpadding="0" cellspacing="0">
+
+  <tbody>
+    <tr>
+      <td style="height: 30px;"><strong>Filename&nbsp;</strong></td>
+      <td style="height: 30px;">&nbsp;</td>
+      <td style="height: 30px;"><strong>Description</strong></td>
+    </tr>
+    <tr>
+      <td><a href="bBuildRun.bat"><font size="2">gBuildRun.bat</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Batch
+file to build and run modulator and demodulator programs using free
+Borland V5.5.1 Compiler</font></td>
+    </tr>
+    <tr>
+      <td><a href="gb.bat"><font size="2">gb.bat</font></a><font size="2">&nbsp;</font></td>
+      <td>&nbsp;</td>
+      <td><font size="2">Batch
+file to build source file with SigLib</font><font size="2">
+using free Borland V5.5.1 Compiler</font></td>
+    </tr>
+    <tr>
+      <td><font><a href="mBuildRun.bat"><font size="2">mBuildRun.bat</font></a></font></td>
+      <td><br>
+      </td>
+      <td><font size="2">Batch
+file to build and run modulator and demodulator programs using free
+&nbsp;with Microsoft V9 compiler</font></td>
+    </tr>
+    <tr>
+      <td><a href="mb.bat"><font size="2">mb.bat</font></a><font size="2">&nbsp;</font></td>
+      <td><br>
+      </td>
+      <td><font size="2">Batch
+file to build source file with SigLib</font><font size="2">
+using free &nbsp;with Microsoft V9 compiler</font></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<br style="font-family: Arial;"><span style="font-family: Arial;">
+Build example for analyzing the modem functions with gprof are provided
+in gBuildProfile.bat. Note, gprof is a statistical function with a
+sampling period of 0.01s. Many of the modem functions take less than
+this period to run so do not show up in the results.</span><br style="font-family: Arial;"><span style="font-family: Arial;">
+To execute this under Cygwin, install the following packages :</span><br style="font-family: Arial;"><span style="font-family: Arial;">
+&nbsp;&nbsp;&nbsp; Cygwin from </span><a style="font-family: Arial;" href="https://cygwin.com/install.html" target="_blank">https://cygwin.com/install.html</a><span style="font-family: Arial;"> and include the following packages : gcc and make</span><br style="font-family: Arial;"><span style="font-family: Arial;">
+&nbsp;&nbsp;&nbsp; GraphViz from </span><a style="font-family: Arial;" href="http://www.graphviz.org/Download_windows.php" target="_blank">http://www.graphviz.org/Download_windows.php</a><span style="font-family: Arial;"> and add the bin folder to the path</span><br style="font-family: Arial;"><span style="font-family: Arial;">
+&nbsp;&nbsp;&nbsp; Gprof2dot from </span><a style="font-family: Arial;" href="https://github.com/jrfonseca/gprof2dot" target="_blank">https://github.com/jrfonseca/gprof2dot</a><span style="font-family: Arial;">. Note, I located the extracted folder off %HOMEPATH%\python</span><br style="font-family: Arial;">
+<span style="font-family: Arial;">The gprof results are presented in .png call graph images.</span><br style="font-family: Arial;">
+<br style="font-family: Arial;">
+
+<hr style="font-family: Arial;">
+<table style="font-family: Arial;" border="0" cellspacing="5">
+
+  <tbody>
+    <tr>
+      <td nowrap="nowrap" valign="top"><a name="contact"></a><font color="#0000ff" size="3"><strong>For further
+information, please contact :</strong></font><font color="#0000ff" size="2"><strong><br>
+      </strong></font><a href="mailto:numerix@numerix-dsp.com"><font size="2"><img src="../../../WebResources/email.gif" alt="Email Numerix" border="0" height="32" width="32"></font></a><font size="2"> Email : </font><a href="mailto:numerix@numerix-dsp.com"><font size="2">numerix@numerix-dsp.com
+      </font></a></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td valign="top">
+      <address> <font size="2"><br>
+      </font> </address>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-family: Arial;"><font size="2">Copyright © 2017, Sigma Numerix Ltd.<br>
+SigLib and Digital Filter Plus are trademarks of Sigma Numerix Ltd. All
+other trademarks acknowledged.<br>
+Sigma Numerix are continuously increasing the functionality of SigLib
+and reserve the right to alter the product at any time.</font></p>
+
+</body></html>
