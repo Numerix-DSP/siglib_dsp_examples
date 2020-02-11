@@ -1,4 +1,5 @@
 // SigLib - .WAV file function read and display program
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 #include <stdio.h>
 #include <string.h>

@@ -1,6 +1,7 @@
 // SigLib Arbitrary Length Fast Fourier Transform Example.
 // This algorithm uses the chirp Z-Transform Algorithm to give a 200
 // point FFT.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

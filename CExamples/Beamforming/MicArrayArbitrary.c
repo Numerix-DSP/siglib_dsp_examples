@@ -8,6 +8,7 @@
 //      4 Mic Circular (Diamond) + centre, 0.043 mic radius
 //      4 Mic Linear, 0.10 separation
 //      4 Mic Linear, 0.033 separation
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 #include <stdio.h>
 #include <math.h>

@@ -7,7 +7,7 @@
 // To see how to apply a scrambler to the sequence
 // (e.g. polynomial : 1 + x-14 + x-17 used in the ITU-T
 // recommendations), please refer to example tstqam16.c.
-
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

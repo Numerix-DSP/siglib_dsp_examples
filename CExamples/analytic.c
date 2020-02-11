@@ -1,4 +1,6 @@
 // SigLib Analytical Signal By Applying A Hilbert Transform
+// Copyright (C) 2020 Sigma Numerix Ltd.
+
 // Hilbert transform applied to a real input signal on the imaginary
 // output path and applies a corresponding delay to the real
 // output. The flow diagram is as follows :

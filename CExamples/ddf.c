@@ -1,4 +1,5 @@
 // SigLib - Display INPUT_LENGTH samples of a .sig data file
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

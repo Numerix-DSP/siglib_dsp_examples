@@ -1,4 +1,5 @@
 // SigLib 128 Point LMS Adaptive Filter Example.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // This files allows the testing of : Least Mean Square, Leaky LMS,
 // Normalized LMS, Sign Error LMS, Sign Data LMS and Sign Sign LMS

@@ -1,4 +1,5 @@
 // SigLib Peak To Average Ratio Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

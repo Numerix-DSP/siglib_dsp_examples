@@ -2,6 +2,7 @@
 // This example performs a non-causal IIR filter on the data. This
 // technique uses time reversal of the data stream to give zero phase distortion.
 // The results are compared with the causal filter.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

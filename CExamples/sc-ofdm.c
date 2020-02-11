@@ -7,6 +7,7 @@
 // Test Complex PAPR
 // PAPR to library, examples and document
 // Update SigLibGlobal.bas and SigLibGlobal.NET.bas
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -1,6 +1,6 @@
 // SigLib - Program to read vibration data file and generate an order analysis
-// This program :
-//     Re-orders the data into an ordergram
+// This program re-orders the data into an ordergram
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

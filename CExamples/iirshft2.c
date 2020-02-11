@@ -1,4 +1,5 @@
 // SigLib IIR Filter Cut-off Frequency Shift Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

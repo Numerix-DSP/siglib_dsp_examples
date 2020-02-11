@@ -1,5 +1,6 @@
 // IIR Notch Filter Example
 // Generates the notch filter with the specified magnitude for the pole
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

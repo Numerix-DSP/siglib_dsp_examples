@@ -1,5 +1,6 @@
 // SigLib - FIR Filter Design By The Window Method
-//
+// Copyright (C) 2020 Sigma Numerix Ltd.
+
 //   +------+        +-------+        +--------+        +---------+
 //   | Freq |_______\| 128Pt |_______\| Array  |_______\| Hamming |
 //   | Resp |       /| IFFT  |       /| Rotate |       /| Window  |

@@ -1,7 +1,7 @@
 // SigLib Example to Compare The Output Scaling Of The DFT And FFT Functions
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
-
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
 #include <gnuplot_c.h>                              // Gnuplot/C

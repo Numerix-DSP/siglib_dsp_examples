@@ -1,6 +1,7 @@
 // SigLib Quantisation Example, also shows the effects of
 // increasing FFT length on data with a simulated quantisation
 // Quantized value = round(x*2^n)/2^n, where n is the number of bits
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

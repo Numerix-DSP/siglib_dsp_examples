@@ -1,5 +1,6 @@
 // SigLib Multi-Rate Filter Example
-//
+// Copyright (C) 2020 Sigma Numerix Ltd.
+
 // This demonstration shows how to translate a set of FIR filter
 // coefficients into a poly-phase filter bank and use the
 // polyphase filter system for decimation. There are several methods

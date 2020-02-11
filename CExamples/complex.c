@@ -1,4 +1,5 @@
 // SigLib Complex Number Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>
@@ -50,13 +51,13 @@ void main (void)
     Result = SCV_Multiply (Numerator, Denominator);
     printf ("(2 + j6) * (4 + j1) = %lf +j%lf\n", Result.real, Result.imag);
     SDS_ComplexMultiply (2.0, 6.0, 4.0, 1.0, &ResultReal, &ResultImag);
-    printf ("(2 + j6) * (4 + j1) = %lf +j%lf\n\n", ResultReal, ResultImag); 
+    printf ("(2 + j6) * (4 + j1) = %lf +j%lf\n\n", ResultReal, ResultImag);
 
     printf ("\nComplex inverse\n");
     Result = SCV_Inverse (Denominator);
     printf ("1 / (4 + j1) = %lf +j%lf\n", Result.real, Result.imag);
     SDS_ComplexInverse (4.0, 1.0, &ResultReal, &ResultImag);
-    printf ("1 / (4 + j1) = %lf +j%lf\n\n", ResultReal, ResultImag); 
+    printf ("1 / (4 + j1) = %lf +j%lf\n\n", ResultReal, ResultImag);
 
     Result = SCV_Multiply (Numerator, SCV_Inverse (Denominator));
     printf ("(2 + j6) / (4 + j1) = %lf +j%lf\n", Result.real, Result.imag);
@@ -65,7 +66,7 @@ void main (void)
     Result = SCV_Divide (Numerator, Denominator);
     printf ("(2 + j6) / (4 + j1) = %lf +j%lf\n", Result.real, Result.imag);
     SDS_ComplexDivide (2.0, 6.0, 4.0, 1.0, &ResultReal, &ResultImag);
-    printf ("(2 + j6) / (4 + j1) = %lf +j%lf\n", ResultReal, ResultImag); 
+    printf ("(2 + j6) / (4 + j1) = %lf +j%lf\n", ResultReal, ResultImag);
 
 
 }

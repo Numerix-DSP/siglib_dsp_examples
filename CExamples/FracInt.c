@@ -1,4 +1,5 @@
 // SigLib - Example program for fraction and integer fuctions
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

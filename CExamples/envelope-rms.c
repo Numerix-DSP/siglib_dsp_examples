@@ -1,4 +1,5 @@
 // SigLib Envelope Detection Using One Pole Filter Example, with RMS
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

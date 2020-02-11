@@ -1,4 +1,5 @@
 // SigLib Sin^2 And Sin^3 etc. Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

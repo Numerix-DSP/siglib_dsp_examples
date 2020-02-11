@@ -3,6 +3,7 @@
 // (with a reasonably sized FFT) indestinguishable. The Zoom FFT
 // then magnifies the frequency range of interest, by a factor
 // of eight and performs a complex FFT.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

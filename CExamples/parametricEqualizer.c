@@ -1,4 +1,5 @@
 // SigLib Parametric Equalizer calculation functions
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 #include <stdio.h>
 #include <math.h>

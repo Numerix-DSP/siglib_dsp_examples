@@ -1,4 +1,6 @@
 // SigLib BPSK Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
+
 // Simulating :
 // 600 bps
 // '1' = cos (theta), '0' = - cos (theta)

@@ -1,4 +1,5 @@
 // SigLib IIR Filter Gain Adjustment Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

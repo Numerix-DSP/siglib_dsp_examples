@@ -1,4 +1,5 @@
 //  SigLib FFT Bin Number To Frequency Caclulation Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 //  Include files
 #include <stdio.h>
@@ -25,6 +26,5 @@ void main()
             450.0, 1024, 9600.0, SUF_FrequencyToBinNumber2(450.0,           //  Frequency
                                                            1024,            //  FFT length
                                                            1.0/9600.0));    //  Inverse sample rate
-
 }
 

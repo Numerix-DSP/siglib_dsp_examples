@@ -3,6 +3,7 @@
 // by utilizing the symetrical properties of the FFT process by which
 // real inputs produce even real and odd imaginary outputs and imaginary
 // inputs produce odd real and even imaginary outputs.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

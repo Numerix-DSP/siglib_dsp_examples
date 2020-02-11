@@ -1,9 +1,9 @@
 // SigLib Sort / Swap Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-
 
 void main(void)
 {
@@ -33,5 +33,3 @@ void main(void)
     printf ("b = %lf\n", b);
     printf ("c = %lf\n", c);
 }
-
-

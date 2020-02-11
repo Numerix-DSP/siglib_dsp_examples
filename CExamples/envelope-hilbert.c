@@ -3,6 +3,7 @@
 // signal with an appropriately delayed version of the original and
 // this gives the envelope.
 // The process is equivalent to generating an analytical signal.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

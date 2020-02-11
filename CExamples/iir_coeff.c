@@ -1,4 +1,5 @@
 // SigLib - Calculates IIR Biquad Filter Coefficients
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

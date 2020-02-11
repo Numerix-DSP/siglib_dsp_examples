@@ -1,5 +1,6 @@
 // Bilinear Transform IIR Filter Example.
 // Generates a low pass filter
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

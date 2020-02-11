@@ -1,4 +1,5 @@
 // SigLib Select Minimum And Maximum Values In Two Arrays
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -1,4 +1,5 @@
 // SigLib De-glitch / De-bounce example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

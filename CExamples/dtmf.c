@@ -1,4 +1,5 @@
 // SigLib - DTMF Generation And Detection Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Freq. (Hz) 1209 1336 1477 1633
 //     697     1     2    3    A

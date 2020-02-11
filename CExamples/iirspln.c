@@ -6,6 +6,7 @@
 // the desired sample rate should be normalised to (2.0 . PI).
 // The SDA_IirModifyFilterGain function is used to normalise the gain.
 // The example modifies the Fc from 1.0 radian to 2.0 radians.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

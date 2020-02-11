@@ -3,6 +3,7 @@
 //     Baud rate - 1200 Baud
 //     Sample rate - 48000 Hz
 //     Carrier freq. - 1800 Hz
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

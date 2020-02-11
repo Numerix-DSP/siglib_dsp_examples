@@ -1,4 +1,5 @@
 // SigLib - SDA_Find example program
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -9,7 +9,7 @@
 // level detected and when the threshold is crossed, the index is recorded minus the filter
 // delay. For display pupRealDataoses the location is set in the detection array so that it can be
 // superimposed on the FSK data.
-
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

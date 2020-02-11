@@ -1,4 +1,5 @@
 // Example : Spectrum Of A Sine Wave and the same wave, with a single sample missing, near the centre
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

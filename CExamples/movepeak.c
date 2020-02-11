@@ -1,4 +1,5 @@
 // SigLib - Move Peak Towards Dead Band Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

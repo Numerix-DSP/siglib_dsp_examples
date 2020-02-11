@@ -1,4 +1,5 @@
 // SigLib One-pole filer for given attack/decay rate example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

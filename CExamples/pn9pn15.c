@@ -1,4 +1,5 @@
 // SigLib PN-9 and PN-15 Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

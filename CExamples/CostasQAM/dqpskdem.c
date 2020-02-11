@@ -1,4 +1,6 @@
 // SigLib example for V.26b using pi/4 Differential Quadrature Phase Shift keying (DQPSK) demodulation
+// Copyright (C) 2020 Sigma Numerix Ltd.
+
 //     Data rate - 2400 bps
 //     Baud rate - 1200 Baud
 //     Sample rate - 48000 Hz

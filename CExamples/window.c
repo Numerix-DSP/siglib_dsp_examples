@@ -1,5 +1,6 @@
 // SigLib Time Domain Windowing Example
 // This program also shows how to use the window normalised gain compensation function
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

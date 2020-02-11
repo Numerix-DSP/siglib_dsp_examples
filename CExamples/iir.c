@@ -1,5 +1,6 @@
 // Bilinear Transform IIR Filter Design Example.
 // Generates a low pass filter and transforms the frequency
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -1,4 +1,5 @@
 // SigLib Time Domain Pitch Shifting Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -1,4 +1,5 @@
 // SigLib 180 Degree Phase Reversal Detector Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -5,6 +5,7 @@
 // This algorithm benefits from using overlapping windows, in general,
 // the greater the overlap, the better the performance. ie. the lower
 // the distortion.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

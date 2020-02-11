@@ -1,10 +1,9 @@
 // Bilinear Transform IIR Filter Design Example.
-
 // Generates a low pass filter and transforms the frequency
 // uses the "MAC" variants of the IIR filter functions
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
-
-  // Include files
+// Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
 #include <nhl.h>

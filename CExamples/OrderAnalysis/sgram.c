@@ -1,6 +1,5 @@
-/*
-SigLib - Program to read .dat file and generate a waterfall diagram
-*/
+// SigLib - Program to read .dat file and generate a waterfall diagram
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>
@@ -24,7 +23,7 @@ SigLib - Program to read .dat file and generate a waterfall diagram
 #define SAMPLE_RATE         10162.                 // Sample rate of data in vibration data file
 #define NUMBER_OF_SAMPLES   101547                 // Number of samples in vibration data file
 
-#define DB_SCALE            (1e5)                       // Scaling for dB
+#define DB_SCALE            (1e5)                  // Scaling for dB
 
 // Declare global variables and arrays
 static SLData_t     *pDataArray, *pFDPRealData, *pFDPImagData, *pFDPResults;

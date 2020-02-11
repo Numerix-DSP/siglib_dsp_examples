@@ -1,4 +1,5 @@
 // SigLib Zero and Level Crossing Detector Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

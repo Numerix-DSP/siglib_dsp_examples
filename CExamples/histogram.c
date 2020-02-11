@@ -1,4 +1,5 @@
 // SigLib - Histogram Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 #include <stdio.h>
 #include <siglib.h>

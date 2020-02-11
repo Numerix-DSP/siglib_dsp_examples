@@ -1,4 +1,6 @@
 // SigLib BPSK With 8KHz Sample Rate Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
+
 // Simulating :
 // 600 bps
 // '1' = cos (theta), '0' = - cos (theta)

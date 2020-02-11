@@ -1,4 +1,5 @@
 // SigLib Echo / Reverb Generation Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

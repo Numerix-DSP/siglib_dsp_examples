@@ -1,4 +1,5 @@
 // SigLib - This example generates a delay in ms of the amount defined on the command line
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

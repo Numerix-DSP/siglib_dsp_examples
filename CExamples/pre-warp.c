@@ -1,4 +1,5 @@
 // SigLib Bilinear Transform Pre-warping Example
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>

@@ -1,4 +1,5 @@
 // SigLib Example for SetRange and SetMedian
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>
@@ -13,7 +14,7 @@ static const SLData_t   Src1[] = { 1.,  2.,  3.,  4.,  5.,  6.};
 static const SLData_t   Src2[] = {-3., -1.,  1.,  3.,  5.,  7.};
 static SLData_t         Dst[ARRAY_LENGTH];
 
-    
+
 void main(void)
 {
     printf ("Source array #1 :\n");

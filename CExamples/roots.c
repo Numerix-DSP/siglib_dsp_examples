@@ -2,6 +2,7 @@
 // This program calculates the real factors of the polynomial : ax^2 + bx +c = 0
 // The values of a, b and c can be supplied on the command line alternatively, if they are no
 // then the program uses some pre-calculated values.
+// Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>
