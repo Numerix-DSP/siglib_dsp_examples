@@ -86,7 +86,7 @@ void main(void)
                         GPC_IMG_AUTO_SCALE,         // Maximum signal magnitude
                         GPC_MONOCHROME,             // Colour mode
                         GPC_KEY_ENABLE);            // Legend / key mode
-    if (hImage == NULL) {
+    if (NULL == hImage) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

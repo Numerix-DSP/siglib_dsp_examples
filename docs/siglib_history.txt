@@ -2,14 +2,68 @@ SigLib (Tm) Revision Update History File
 ========================================
 
 
-VERSION : 8.63
-RELEASE DATE : xx-xx-xxxx
+VERSION : 9.02
+RELEASE DATE : xx/xx/xxx
 _________________________
 
 Additional Processor / Compiler Support :
-    None
+    None.
 
 Additional Functionality :
+    None.
+
+Bug Fixes :
+    None.
+
+Operational Changes :
+    SIF_FirPolyPhaseGenerate() tidied up.
+    Functions renamed:
+        SDA_InterpolateLinear1 to SDA_InterpolateLinear1D, SDA_InterpolateLinear2 to SDA_InterpolateLinear2D,
+        SIF_InterpolateSinc1 to SIF_InterpolateSinc1D, SIF_InterpolateWindowedSinc1 to SIF_InterpolateWindowedSinc1D,
+        SDA_InterpolateSinc1 to SDA_InterpolateSinc1D
+
+Optimisation Changes :
+    None.
+
+Notes :
+    Tidied up Machine Learning example code - no additional functionality
+
+
+
+VERSION : 9.01
+RELEASE DATE : 05/01/2021
+_________________________
+
+Additional Processor / Compiler Support :
+    NXP LPC series.
+
+Additional Functionality :
+    None.
+
+Bug Fixes :
+    None.
+
+Operational Changes :
+    SUF_WriteWeightsBinaryFile return value changed to SLArrayIndex_t
+    siglib.c and file_io.c now fprints %ld for SLArrayIndex_t
+
+Optimisation Changes :
+    None.
+
+Notes :
+    None.
+
+
+
+VERSION : 9.00
+RELEASE DATE : 21/12/2020
+_________________________
+
+Additional Processor / Compiler Support :
+    Extended ARM Cortex support
+
+Additional Functionality :
+    SDA_Shuffle, SMX_ShuffleColumns, SMX_ShuffleRows
     SDA_LinearMicrophoneArrayBeamPatternLinear and SDA_MicrophoneArrayBeamPatternLinear
     SDA_Multiplex and SDA_Demultiplex
     SDA_Mux6, SDA_Demux6, SDA_Mux7, SDA_Demux7, SDA_Mux8 and SDA_Demux8
@@ -18,16 +72,72 @@ Additional Functionality :
     SUF_BandwidthToQFactor and SUF_QFactorToBandwidth
     SDS_Nearest, SDS_Clip, SDS_Threshold, SDS_SoftThreshold, SDS_ThresholdAndClamp, SDS_Clamp, SDS_SetMinValue
     SDA_InterpolateArbitraryThreePointQuadraticPeakVertexMagnitude and SDA_InterpolateArbitraryThreePointQuadraticPeakVertexLocation
+    SDA_Ramp, SDA_SortMinToMax2, SDA_SortMaxToMin2 and SDA_SortIndexed
+    SMX_DeleteOldColumn modified to work in-place
+    SDA_Log2, SDS_LogN, SDA_LogN, SDA_LogDistribution
+    SDA_SubtractMax
+    SIF_OnePoleHighPass, SDS_OnePoleHighPass, SDA_OnePoleHighPass, SDS_OnePoleHighPassNormalized, SDA_OnePoleHighPassNormalized and
+        SDA_OnePoleHighPassPerSample, SDS_OnePoleHighPassCutOffFrequencyToFilterCoeff
+    SIF_FftDeconvolutionPre, SDA_FftDeconvolutionPre
+    SDA_ComplexInverse
+	SDA_MicrophoneArrayBeamPatternLinear
+    SIF_CopyWithIndex and SDA_CopyWithIndex
+    SUF_PrintHigher, SUF_PrintLower, SUF_DebugPrintHigher, SUF_DebugPrintLower
+    SMX_ExtractCategoricalColumn
+    SDS_DetectNAN and SDA_DetectNAN
+    SUF_PrintFixedPointArray, SUF_DebugPrintFixedPointArray
+    SUF_BinReadData, SUF_BinWriteData, SUF_CsvReadData, SUF_CsvWriteData
+    SUF_DatReadData, SUF_DatWriteData, SUF_DatReadHeader, SUF_DatWriteHeader
+    SUF_SigReadData, SUF_SigWriteData, SUF_SigReadFile, SUF_SigWriteFile
+    SUF_XmtReadData
+    SUF_WavReadData, SUF_WavWriteData, SUF_WavReadWord, SUF_WavReadInt, SUF_WavWriteWord, SUF_WavWriteInt
+    SUF_WavReadHeader, SUF_WavWriteHeader, SUF_WavDisplayInfo, SUF_WavSetInfo, SUF_WavFileLength, SUF_WavReadFile
+    SUF_WavWriteFile, SUF_WavWriteFileScaled
+    SUF_CsvReadMatrix
+    SDA_TwoLayer2CategoryNetworkFit, SDA_TwoLayer2CategoryNetworkPredict, SDA_TwoLayerNCategoryNetworkFit, SDA_TwoLayerNCategoryNetworkPredict
+    SDS_ActivationReLU, SDA_ActivationReLU, SDS_ActivationReLUDerivative, SDA_ActivationReLUDerivative
+    SDS_ActivationLeakyReLU, SDA_ActivationLeakyReLU, SDS_ActivationLeakyReLUDerivative, SDA_ActivationLeakyReLUDerivative
+    SDS_ActivationLogistic, SDA_ActivationLogistic, SDS_ActivationLogisticDerivative, SDA_ActivationLogisticDerivative
+    SDS_ActivationTanH, SDA_ActivationTanH, SDS_ActivationTanHDerivative, SDA_ActivationTanHDerivative
+    SUF_WriteWeightsIntegerCFile, SUF_WriteWeightsFloatCFile, SUF_WriteWeightsBinaryFile, SUF_ReadWeightsBinaryFile
+    SDS_EuclideanDistance, SDS_EuclideanDistanceSquared, SDA_EuclideanDistance, SDA_EuclideanDistanceSquared,
+        SCA_EuclideanDistance and SCA_EuclideanDistanceSquared
 
 Bug Fixes :
     SDA_Quantize_N
     Tidied up limit cases for atan2 function : e.g. SDS_Phase
+    SDA_Subtract macro - incorrect parameter negation
+    Updated digital comms initialization function comments. Carrier Frequncy is Carrier phase increment per sample (radians / 2π)
 
 Operational Changes :
     Microsoft secure fopen_s used with MSVC
     SIGLIB_10LOG10_MIN replaced with SIGLIB_DB_MIN
     SDA_InterpolateArbitraryThreePointQuadraticVertexMagnitude and SDA_InterpolateArbitraryThreePointQuadraticVertexLocation - Tidied up array limits tests
     32 bit Linux binary support deprecated. Binaries can still be built from source code.
+    SDA_Deconvolution renamed to SDA_FftDeconvolution and parameter list changed
+    Function Name Tidy Up:
+        SDA_ComplexSqrt to SDA_ComplexRectSqrt
+        SDA_ComplexInverse to SDA_ComplexRectInverse
+        SDA_ComplexConjugate to SDA_ComplexRectConjugate
+        SDA_ComplexMagnitude to SDA_ComplexRectMagnitude
+        SDA_ComplexMagnitudeSquared to SDA_ComplexRectMagnitudeSquared
+        SDA_ComplexPhase to SDA_ComplexRectPhase
+        SDA_ComplexMultiply to SDA_ComplexRectMultiply
+        SDA_ComplexDivide to SDA_ComplexRectDivide
+        SDA_ComplexAdd to SDA_ComplexRectAdd
+        SDA_ComplexSubtract to SDA_ComplexRectSubtract
+        SDA_ComplexLog to SDA_ComplexRectLog
+        SDA_ComplexExp to SDA_ComplexRectExp
+        SDA_ComplexExpj to SDA_ComplexRectExpj
+        SDA_ComplexPow to SDA_ComplexRectPow
+        SDA_ComplexVectorAddScalar to SDA_ComplexRectAddScalar
+        SDA_ComplexVectorSubtractScalar to SDA_ComplexRectSubtractScalar
+        SDA_ComplexVectorMultiplyScalar to SDA_ComplexRectMultiplyScalar
+        SDA_ComplexVectorDivideScalar to SDA_ComplexRectDivideScalar
+        SDA_ComplexScalarSubtractVector to SDA_ComplexScalarSubtractRect
+        SDA_ComplexRectangularLinearInterpolate to SDA_ComplexRectLinearInterpolate
+    Numerix Host Library is no longer required to use the exampled. All of that functionality is now part of the standard SigLib library.
+    SDS_EuclideanDistance renamed to SCV_EuclideanDistance
 
 Optimisation Changes :
     SDA_PeakToAverageRatio, SDA_PeakToAveragePowerRatio, SDA_PeakToAveragePowerRatioDB, SDA_PeakToAverageRatioComplex
@@ -519,7 +629,7 @@ Additional Processor / Compiler Support :
 
 Additional Functionality :
 	SDA_ComplexRectangularToPolar and SDA_ComplexPolarToRectangular
-	SUF_DebugPrintCount
+	SUF_DebugPrintCount, SUF_PrintCount
 	SUF_AmCarrierArrayAllocate, SIF_AmplitudeModulate, SDS_AmplitudeModulate
 	SIF_AmplitudeModulate2, SDA_AmplitudeModulate2 and SDS_AmplitudeModulate2
 	SDA_FastSin, SDS_FastSin, SDA_FastCos, SDS_FastCos, SDA_FastSinCos and SDS_FastSinCos
@@ -537,7 +647,7 @@ Additional Functionality :
 	SDA_Sinc and SDS_Sinc
 	SIF_QuickSinc, SDA_QuickSinc and SDS_QuickSinc
 	SIF_ResampleSinc, SIF_ResampleWindowedSinc and SDA_ResampleSinc
-	SIF_InterpolateSinc1, SIF_InterpolateWindowedSinc1 and SDA_InterpolateSinc1
+	SIF_InterpolateSinc1D, SIF_InterpolateWindowedSinc1D and SDA_InterpolateSinc1D
 	SIF_ResampleLinearContiguous and SDA_ResampleLinearContiguous
 	SIF_ResampleSincContiguous, SIF_ResampleWindowedSincContiguous and SDA_ResampleSincContiguous
 	SIF_ReSize, SDA_ReSize, SDA_ReSizeInput and SDA_ReSizeOutput
@@ -1090,7 +1200,7 @@ Optimisation Changes :
 	SDA_ConvolveLinear, SDA_ConvolveCircular and SDA_ConvolvePartial simplified to improve performance
 
 Notes :
-	DFilter has been deprecated from SigLib. This functionality has been replaced by DFPlus, which runs under Windows and Linux. For further details, please see http://www.numerix-dsp.com/dfplus.
+	DFilter has been deprecated from SigLib. This functionality has been replaced by DFPlus, which runs under Windows and Linux. For further details, please see https://www.numerix-dsp.com/dfplus.
 
 
 
@@ -1589,7 +1699,7 @@ Additional Functionality :
 		dct8x8_init, dct8x8, idct8x8, zig_zag_scan, zig_zag_descan.
 	BUFFER_OPERATE virtual function
 	Matrix manipulation :
-		matrix_multiply, matrix_transpose, print_matrix,
+		matrix_multiply, matrix_transpose, SUF_PrintMatrix,
 		matrix_copy, matrix_add, matrix_subtract,
 		matrix_multiply_piecewise, matrix_scalar_multiply.
 
@@ -1773,4 +1883,4 @@ Operational Changes :
 
 
 DFPlus, Digital Filter Plus and SigLib are trademarks of Sigma Numerix Ltd.
-Copyright (C) 1992 to 2018 Sigma Numerix Ltd.
+Copyright (C) 1992 to 2020 Sigma Numerix Ltd.

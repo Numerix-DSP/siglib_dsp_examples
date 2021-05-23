@@ -6,7 +6,6 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>
 #include <gnuplot_c.h>                              // Gnuplot/C
 
   // Define constants
@@ -36,7 +35,7 @@
 #define IMPULSE_RESPONSE_LENGTH 1024
 
 #define FFT_LENGTH              IMPULSE_RESPONSE_LENGTH
-#define LOG2_FFT_LENGTH         10
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 #define PLOT_LENGTH             (IMPULSE_RESPONSE_LENGTH/2)
 
@@ -56,9 +55,6 @@ void main (void)
     h_GPC_Plot  *hTDPlot;                           // Plot objects
     h_GPC_Plot  *hFDPlot;
     h_GPC_Plot  *hPZPlot;
-#if PRINT_RESULTS
-    int   i;
-#endif
 
                                                     // Allocate memory
                                                     // Need twice number of poles and zeros for BPFs and BSFs
@@ -70,8 +66,8 @@ void main (void)
     pSrc = SUF_VectorArrayAllocate (IMPULSE_RESPONSE_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
-    if ((pIIRCoeffs == NULL) || (pRealData == NULL) || (pImagData == NULL) || (pResults == NULL) ||
-        (pSrc == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pIIRCoeffs) || (NULL == pRealData) || (NULL == pImagData) || (NULL == pResults) ||
+        (NULL == pSrc) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
@@ -92,13 +88,13 @@ void main (void)
 
 #if PRINT_RESULTS
     printf ("\nComplex s-plane zeros\n");           // Print s-plane poles and zeros
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
-        print_rectangular (SPlaneZeros[i]);
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
+        SUF_PrintRectangular (SPlaneZeros[i]);
     }
 
     printf ("\nComplex s-plane poles\n");
-    for (i = 0; i < NUMBER_OF_POLES; i++) {
-        print_rectangular (SPlanePoles[i]);
+    for (int i = 0; i < NUMBER_OF_POLES; i++) {
+        SUF_PrintRectangular (SPlanePoles[i]);
     }
 #endif
 
@@ -116,13 +112,13 @@ void main (void)
 
 #if PRINT_RESULTS
     printf ("\nComplex z-plane zeros\n");           // Print z-plane poles and zeros
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
-        print_rectangular (ZPlaneZeros[i]);
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
+        SUF_PrintRectangular (ZPlaneZeros[i]);
     }
 
     printf ("\nComplex z-plane poles\n");
-    for (i = 0; i < NUMBER_OF_POLES; i++) {
-        print_rectangular (ZPlanePoles[i]);
+    for (int i = 0; i < NUMBER_OF_POLES; i++) {
+        SUF_PrintRectangular (ZPlanePoles[i]);
     }
 #endif
 
@@ -130,7 +126,7 @@ void main (void)
         gpc_init_pz("Pole-Zero Plot",               // Plot title
                     GPC_AUTO_SCALE,                 // Dimension
                     GPC_KEY_ENABLE);                // Legend / key mode
-    if (hPZPlot == NULL) {
+    if (NULL == hPZPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -164,7 +160,7 @@ void main (void)
 #if PRINT_RESULTS
     printf ("\nIIR filter coefficients\n");         // Print filter coefficients
     printf ("b(0), b(1), b(2), -a(1), -a(2)\n");
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
         SUF_PrintIIRCoefficients (pIIRCoeffs+(i*SIGLIB_IIR_COEFFS_PER_BIQUAD), 1);
     }
 #endif
@@ -183,7 +179,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (hTDPlot == NULL) {
+    if (NULL == hTDPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -195,7 +191,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (hFDPlot == NULL) {
+    if (NULL == hFDPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -275,13 +271,13 @@ void main (void)
 
 #if PRINT_RESULTS
     printf ("\nTransformed complex z-plane zeros\n"); // Print z-plane poles and zeros
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
-        print_rectangular (TransformedZPlaneZeros[i]);
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
+        SUF_PrintRectangular (TransformedZPlaneZeros[i]);
     }
 
     printf ("\nTransformed complex z-plane poles\n");
-    for (i = 0; i < NUMBER_OF_POLES; i++) {
-        print_rectangular (TransformedZPlanePoles[i]);
+    for (int i = 0; i < NUMBER_OF_POLES; i++) {
+        SUF_PrintRectangular (TransformedZPlanePoles[i]);
     }
 #endif
 
@@ -314,7 +310,7 @@ void main (void)
 #if PRINT_RESULTS
     printf ("\nIIR filter coefficients\n");         // Print filter coefficients
     printf ("b(0), b(1), b(2), -a(1), -a(2)\n");
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
         SUF_PrintIIRCoefficients (pIIRCoeffs+(i*SIGLIB_IIR_COEFFS_PER_BIQUAD), 1);
     }
 #endif
@@ -412,13 +408,13 @@ void main (void)
 
 #if PRINT_RESULTS
     printf ("\nTransformed complex z-plane zeros\n"); // Print z-plane poles and zeros
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
-        print_rectangular (TransformedZPlaneZeros[i]);
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
+        SUF_PrintRectangular (TransformedZPlaneZeros[i]);
     }
 
     printf ("\nTransformed complex z-plane poles\n");
-    for (i = 0; i < NUMBER_OF_POLES; i++) {
-        print_rectangular (TransformedZPlanePoles[i]);
+    for (int i = 0; i < NUMBER_OF_POLES; i++) {
+        SUF_PrintRectangular (TransformedZPlanePoles[i]);
     }
 #endif
 
@@ -451,7 +447,7 @@ void main (void)
 #if PRINT_RESULTS
     printf ("\nIIR filter coefficients\n");         // Print filter coefficients
     printf ("b(0), b(1), b(2), -a(1), -a(2)\n");
-    for (i = 0; i < NUMBER_OF_ZEROS; i++) {
+    for (int i = 0; i < NUMBER_OF_ZEROS; i++) {
         SUF_PrintIIRCoefficients (pIIRCoeffs+(i*SIGLIB_IIR_COEFFS_PER_BIQUAD), 1);
     }
 #endif
@@ -537,13 +533,13 @@ void main (void)
 
 #if PRINT_RESULTS
     printf ("\nTransformed complex z-plane zeros\n"); // Print z-plane poles and zeros
-    for (i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
-        print_rectangular (TransformedZPlaneZeros[i]);
+    for (int i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
+        SUF_PrintRectangular (TransformedZPlaneZeros[i]);
     }
 
     printf ("\nTransformed complex z-plane poles\n");
-    for (i = 0; i < 2*NUMBER_OF_POLES; i++) {
-        print_rectangular (TransformedZPlanePoles[i]);
+    for (int i = 0; i < 2*NUMBER_OF_POLES; i++) {
+        SUF_PrintRectangular (TransformedZPlanePoles[i]);
     }
 #endif
 
@@ -576,7 +572,7 @@ void main (void)
 #if PRINT_RESULTS
     printf ("\nIIR filter coefficients\n");         // Print filter coefficients
     printf ("b(0), b(1), b(2), -a(1), -a(2)\n");
-    for (i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
+    for (int i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
         SUF_PrintIIRCoefficients (pIIRCoeffs+(i*SIGLIB_IIR_COEFFS_PER_BIQUAD), 1);
     }
 #endif
@@ -662,13 +658,13 @@ void main (void)
 
 #if PRINT_RESULTS
     printf ("\nTransformed complex z-plane zeros\n"); // Print z-plane poles and zeros
-    for (i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
-        print_rectangular (TransformedZPlaneZeros[i]);
+    for (int i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
+        SUF_PrintRectangular (TransformedZPlaneZeros[i]);
     }
 
     printf ("\nTransformed complex z-plane poles\n");
-    for (i = 0; i < 2*NUMBER_OF_POLES; i++) {
-        print_rectangular (TransformedZPlanePoles[i]);
+    for (int i = 0; i < 2*NUMBER_OF_POLES; i++) {
+        SUF_PrintRectangular (TransformedZPlanePoles[i]);
     }
 #endif
 
@@ -701,7 +697,7 @@ void main (void)
 #if PRINT_RESULTS
     printf ("\nIIR filter coefficients\n");         // Print filter coefficients
     printf ("b(0), b(1), b(2), a(1), a(2)\n");
-    for (i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
+    for (int i = 0; i < 2*NUMBER_OF_ZEROS; i++) {
         SUF_PrintIIRCoefficients (pIIRCoeffs+(i*SIGLIB_IIR_COEFFS_PER_BIQUAD), 1);
     }
 #endif

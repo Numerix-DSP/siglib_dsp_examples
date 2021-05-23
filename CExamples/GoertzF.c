@@ -11,7 +11,7 @@
 // Define constants
 #define SAMPLE_LENGTH   512
 #define FFT_LENGTH      512
-#define LOG2_FFT_LENGTH 9
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define FILTER_FREQ     0.005
 
 // Declare global variables and arrays
@@ -30,7 +30,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

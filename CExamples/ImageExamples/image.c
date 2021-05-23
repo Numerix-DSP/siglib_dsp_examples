@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
     pRealBuffer = SUF_VectorArrayAllocate (IMAGE_DIMENSION);
     pImagBuffer = SUF_VectorArrayAllocate (IMAGE_DIMENSION);
 
-    if ((pImage0 == NULL) || (pImage1 == NULL) || (pImagImage == NULL) ||
-        (pLineBuffer == NULL) || (pHistogram == NULL) ||
-        (pRealBuffer == NULL) || (pImagBuffer == NULL)) {
+    if ((NULL == pImage0) || (NULL == pImage1) || (NULL == pImagImage) ||
+        (NULL == pLineBuffer) || (NULL == pHistogram) ||
+        (NULL == pRealBuffer) || (NULL == pImagBuffer)) {
 
         printf ("Memory allocation failure\n");
         exit (1);
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
                         (int)PEAK_PIXEL_LEVEL,      // Maximum signal magnitude
                         GPC_MONOCHROME,             // Colour mode
                         GPC_KEY_ENABLE);            // Legend / key mode
-    if (hImage == NULL) {
+    if (NULL == hImage) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
                      GPC_AUTO_SCALE,				// Scaling mode
                      GPC_POSITIVE,					// Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
                         PEAK_PIXEL_LEVEL + 1,       // Maximum signal magnitude
                         GPC_COLOUR,                 // Colour mode
                         GPC_KEY_ENABLE);            // Legend / key mode
-    if (hImage == NULL) {
+    if (NULL == hImage) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

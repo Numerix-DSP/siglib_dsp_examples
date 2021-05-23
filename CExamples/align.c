@@ -8,7 +8,6 @@
 #include <siglib_host_utils.h>                      // Optionally includes conio.h and time.h subset functions
 #include <math.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>                                    // Numerix host library
 #include <gnuplot_c.h>                              // Gnuplot/C
 
 #define PLOT_RESULTS    1                           // Set to '1' to plot results, '0' otherwise
@@ -61,7 +60,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

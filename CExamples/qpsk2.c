@@ -196,7 +196,7 @@ void main (void)
     h_GPC_Plot   *h2DPlot;                          // Plot objects
 #endif
 #if DISPLAY_CONSTELLATION
-    h_GPC_Plot   *hConstellationDiagramGraph;
+    h_GPC_Plot   *hConstellationDiagram;
 #endif
 #if DISPLAY_TIME_DOMAIN
     SLData_t    TimeIndex = SIGLIB_ZERO;
@@ -238,8 +238,8 @@ void main (void)
     pCostasLpLPF2State = SUF_VectorArrayAllocate (COSTAS_LP_LPF_LENGTH);
     pCostasLpVCOLookUpTable = SUF_CostasLoopVCOArrayAllocate (COSTAS_LP_VCO_TABLE_SIZE);
 
-    if ((pTxCarrierTable == NULL) || (pCostasLpLPFCoeffs == NULL) || (pCostasLpLPF1State == NULL) ||
-        (pCostasLpLPF2State == NULL) || (pCostasLpVCOLookUpTable == NULL)) {
+    if ((NULL == pTxCarrierTable) || (NULL == pCostasLpLPFCoeffs) || (NULL == pCostasLpLPF1State) ||
+        (NULL == pCostasLpLPF2State) || (NULL == pCostasLpVCOLookUpTable)) {
 
         printf ("Memory allocation failure\n");
         exit (1);
@@ -254,7 +254,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -267,19 +267,19 @@ void main (void)
                      (float)0.3,                    // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 #endif
 #if DISPLAY_CONSTELLATION
-    hConstellationDiagramGraph =                    // Initialize plot
+    hConstellationDiagram =                         // Initialize plot
         gpc_init_xy ("QPSK Constellation Diagram",  // Plot title
                      "X-Axis",                      // X-Axis label
                      "Y-Axis",                      // Y-Axis label
                      0.3,                           // Dimension - this is square
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (hConstellationDiagramGraph == NULL) {       // Graph creation failed
+    if (NULL == hConstellationDiagram) {            // Graph creation failed
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -287,7 +287,7 @@ void main (void)
 
                                                             // Initialise QPSK functions
     SIF_QpskModulate (pTxCarrierTable,                      // Carrier table pointer
-                      TX_CARRIER_TABLE_FREQ / SAMPLE_RATE,  // Carrier frequency
+                      TX_CARRIER_TABLE_FREQ / SAMPLE_RATE,  // Carrier phase increment per sample (radians / 2π)
                       TX_CARRIER_TABLE_SIZE,                // Carrier sine table size
                       &TxCarrierPhase,                      // Carrier phase pointer
                       &TxSampleClock,                       // Sample clock pointer
@@ -554,7 +554,7 @@ void main (void)
                                RxSymbolCount);              // Array Length
 
         if (FirstConstellationDiagramFlag) {
-            gpc_plot_xy (hConstellationDiagramGraph,            // Graph handle
+            gpc_plot_xy (hConstellationDiagram,            // Graph handle
                          (ComplexRect_s *)ConstellationPoints,  // Array of complex dataset
                          (int)RxSymbolCount,                    // Dataset length
                          "Constellation Diagram",               // Dataset title
@@ -565,7 +565,7 @@ void main (void)
             FirstConstellationDiagramFlag = 0;
         }
         else {
-            gpc_plot_xy (hConstellationDiagramGraph,            // Graph handle
+            gpc_plot_xy (hConstellationDiagram,            // Graph handle
                          (ComplexRect_s *)ConstellationPoints,  // Array of complex dataset
                          (int)RxSymbolCount,                    // Dataset length
                          "Constellation Diagram",               // Dataset title

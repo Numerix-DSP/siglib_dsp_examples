@@ -133,7 +133,7 @@ void main (void)
                      0.5,                           // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {                          // Plot creation failed - e.g is server running ?
+    if (NULL == h2DPlot) {                          // Plot creation failed - e.g is server running ?
         printf ("\nPlot creation failure. Please ensure gnuplot is located on your system path\n");
         exit (1);
     }
@@ -151,7 +151,7 @@ void main (void)
     pLMSTaps = SUF_VectorArrayAllocate (LMS_LENGTH);
     pLMSState = SUF_VectorArrayAllocate (LMS_LENGTH);
 
-    if ((pEchoTaps == NULL) || (pEchoState == NULL) || (pLMSTaps == NULL) || (pLMSState == NULL)) {
+    if ((NULL == pEchoTaps) || (NULL == pEchoState) || (NULL == pLMSTaps) || (NULL == pLMSState)) {
         printf ("\n\nMemory allocation failure\n\n");
         exit (0);
     }
@@ -325,7 +325,7 @@ void CompareAll (void)
                  GPC_AUTO_SCALE,                    // Scaling mode
                  GPC_SIGNED,                        // Sign mode
                  GPC_KEY_DISABLE);                  // Legend / key mode
-    if (h2DPlot == NULL) {                          // Plot creation failed - e.g is server running ?
+    if (NULL == h2DPlot) {                          // Plot creation failed - e.g is server running ?
         printf ("\nPlot creation failure. Please ensure gnuplot is located on your system path\n");
         exit (1);
     }

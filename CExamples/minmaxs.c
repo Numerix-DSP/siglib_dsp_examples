@@ -4,7 +4,6 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include "nhl.h"
 
 // Define constants
 #define SAMPLE_LENGTH       8
@@ -25,14 +24,14 @@ void main(void)
     ResultImag = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
 
     printf ("Input Array\n");
-    print_buffer (Data1Real, SAMPLE_LENGTH);
+    SUF_PrintArray (Data1Real, SAMPLE_LENGTH);
 
     SDA_SelectMax (Data1Real,                       // Pointer to source array 1
                    Data2Real,                       // Pointer to source array 2
                    ResultReal,                      // Pointer to destination array
                    SAMPLE_LENGTH);                  // Array length
     printf ("\nMaximum\n");
-    print_buffer (ResultReal, SAMPLE_LENGTH);
+    SUF_PrintArray (ResultReal, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     SDA_SelectMin (Data1Real,                       // Pointer to source array 1
@@ -40,7 +39,7 @@ void main(void)
                    ResultReal,                      // Pointer to destination array
                    SAMPLE_LENGTH);                  // Array length
     printf ("\nMinimum\n");
-    print_buffer (ResultReal, SAMPLE_LENGTH);
+    SUF_PrintArray (ResultReal, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     SDA_SelectMagnitudeSquaredMax (Data1Real,       // Pointer to real source array 1
@@ -51,9 +50,9 @@ void main(void)
                                    ResultImag,      // Pointer to imaginary destination array
                                    SAMPLE_LENGTH);  // Array length
     printf ("\nMaximum (Real)\n");
-    print_buffer (ResultReal, SAMPLE_LENGTH);
+    SUF_PrintArray (ResultReal, SAMPLE_LENGTH);
     printf ("\nMaximum (Imaginary)\n");
-    print_buffer (ResultImag, SAMPLE_LENGTH);
+    SUF_PrintArray (ResultImag, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     SDA_SelectMagnitudeSquaredMax (Data1Real,       // Pointer to real source array 1
@@ -64,9 +63,9 @@ void main(void)
                                    ResultImag,      // Pointer to imaginary destination array
                                    SAMPLE_LENGTH);  // Array length
     printf ("\nMinimum (Real)\n");
-    print_buffer (ResultReal, SAMPLE_LENGTH);
+    SUF_PrintArray (ResultReal, SAMPLE_LENGTH);
     printf ("\nMinimum (Imaginary)\n");
-    print_buffer (ResultImag, SAMPLE_LENGTH);
+    SUF_PrintArray (ResultImag, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     SUF_MemoryFree (ResultReal);                    // Free memory

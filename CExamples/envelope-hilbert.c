@@ -45,7 +45,7 @@ void main(void)
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
 
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
       printf ("\nPlot creation failure.\n");
       exit (1);
     }
@@ -58,8 +58,8 @@ void main(void)
     pSrc2 = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
     pEnvDelay = SUF_VectorArrayAllocate (FILTER_GROUP_DELAY);
 
-    if ((pEnvFilterCoeffs == NULL) || (pEnvFilterState == NULL) || (pSrc1 == NULL) || (pSrc2 == NULL) ||
-        (pEnvDelay == NULL)) {
+    if ((NULL == pEnvFilterCoeffs) || (NULL == pEnvFilterState) || (NULL == pSrc1) || (NULL == pSrc2) ||
+        (NULL == pEnvDelay)) {
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
     }
@@ -68,7 +68,7 @@ void main(void)
     pEnvTempEnvDelay = SUF_VectorArrayAllocate (FILTER_GROUP_DELAY);
     pTempAnalytical = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
 
-    if ((pEnvTempEnvDelay == NULL) || (pTempAnalytical == NULL)) {
+    if ((NULL == pEnvTempEnvDelay) || (NULL == pTempAnalytical)) {
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
     }

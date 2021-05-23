@@ -10,24 +10,24 @@
 // Define constants
 #define SAMPLE_LENGTH       512
 #define FFT_LENGTH          512
-#define HALF_FFT_LENGTH     256
-#define LOG2_FFT_LENGTH     9
+#define HALF_FFT_LENGTH     (FFT_LENGTH >> 1)
+#define LOG2_FFT_LENGTH     ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 // Declare global variables and arrays
 static SLData_t     *pRealData, *pImagData, *pResults, *pSrc1, *pSrc2, *filtered, *delay, *pFFTCoeffs;
-static SLData_t     Alpha, Offset, OnePoleFilterState, SinePhase;
+static SLData_t     OnePoleCoeff, Offset, OnePoleFilterState, SinePhase;
 
 void main(int argc,char **argv)
 {
     h_GPC_Plot  *h2DPlot;                           // Plot object
 
     if (argc != 2) {
-        printf ("Usage   : OnePole <Alpha>\n");
+        printf ("Usage   : OnePole <Feedback_Coefficient>\n");
         printf ("Example : OnePole 0.6\n\n");
-        Alpha = 0.6;
+        OnePoleCoeff = 0.6;
     }
     else {
-        Alpha = (SLData_t) atof (argv[1]);
+        OnePoleCoeff = (SLData_t) atof (argv[1]);
     }
 
                                                     // Allocate memory
@@ -47,7 +47,7 @@ void main(int argc,char **argv)
                      3.,                            // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -69,8 +69,13 @@ void main(int argc,char **argv)
                         SIGLIB_NULL_DATA_PTR,       // Unused
                         SAMPLE_LENGTH);             // Output dataset length
 
-    SIF_OnePole (&OnePoleFilterState);
-    SDA_OnePole (pSrc1, pSrc2, Alpha, &OnePoleFilterState, SAMPLE_LENGTH);
+    SIF_OnePole (&OnePoleFilterState);              // Filter state
+
+    SDA_OnePole (pSrc1,                             // Source data array pointer
+                 pSrc2,                             // Destination data array pointer
+                 OnePoleCoeff,                      // Filter coefficient
+                 &OnePoleFilterState,               // Filter state
+                 SAMPLE_LENGTH);                    // Dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
                  pSrc1,                             // Dataset
@@ -100,7 +105,7 @@ void main(int argc,char **argv)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -136,7 +141,7 @@ void main(int argc,char **argv)
     printf ("\nFrequency Response Of One-pole Filter\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
     SinePhase = SIGLIB_ZERO;
-    printf ("512 Point FFT, quantized data - one pole filter per bin (Alpha = %lf)\n", Alpha);
+    printf ("512 Point FFT, quantized data - one pole filter per bin (OnePoleCoeff = %lf)\n", OnePoleCoeff);
     OnePoleFilterState = SIGLIB_FIRST_SAMPLE;
                                                     // Initialise one pole filter state array
     SDA_Clear (delay,                               // Pointer to destination array
@@ -199,7 +204,7 @@ void main(int argc,char **argv)
         SDA_OnePolePerSample (pResults,             // Pointer to input data
                               filtered,             // Pointer to destination array
                               delay,                // Pointer to state array
-                              Alpha,                // Filter alpha
+                              OnePoleCoeff,                // Filter OnePoleCoeff
                               HALF_FFT_LENGTH);     // Dataset length
 
         gpc_plot_2d (h2DPlot,                       // Graph handle

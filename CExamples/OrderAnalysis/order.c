@@ -15,7 +15,7 @@
 // Define constants
 #define SAMPLE_LENGTH               4096            // Length of array read from input file
 #define FFT_LENGTH                  4096
-#define LOG2_FFT_LENGTH             12
+#define LOG2_FFT_LENGTH             ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 #define GRAPH_X_AXIS_LENGTH         240
 
@@ -88,11 +88,11 @@ void main (int argc, char *argv[])
     pImagAverage = SUF_VectorArrayAllocate (RESULT_LENGTH);     // Average order spectrum data array
     pSpeed = SUF_VectorArrayAllocate (MAX_NUMBER_OF_FRAMES);    // Speed data array
 
-    if ((pInputData == NULL) || (pOverlapArray == NULL) || (pWindowCoeffs == NULL) ||
-        (pOverlappedData == NULL) || (pOrderAnalysisInternalArray == NULL) || (pOrderMagnitudeResults == NULL) ||
-        (pFFTCoeffs == NULL) || (pOrderArray == NULL) ||
-        (pSumLevelArray == NULL) || (pRealAverage == NULL) || (pImagAverage == NULL) ||
-        (pSpeed == NULL)) {
+    if ((NULL == pInputData) || (NULL == pOverlapArray) || (NULL == pWindowCoeffs) ||
+        (NULL == pOverlappedData) || (NULL == pOrderAnalysisInternalArray) || (NULL == pOrderMagnitudeResults) ||
+        (NULL == pFFTCoeffs) || (NULL == pOrderArray) ||
+        (NULL == pSumLevelArray) || (NULL == pRealAverage) || (NULL == pImagAverage) ||
+        (NULL == pSpeed)) {
 
         printf ("Memory allocation error\n");
         exit (0);
@@ -173,7 +173,7 @@ void main (int argc, char *argv[])
                                   100.0,                    // Maximum Z value
                                   GPC_COLOUR,               // Graph mode
                                   GPC_KEY_ENABLE);          // Legend / key mode
-        if (hOrdergram == NULL) {
+        if (NULL == hOrdergram) {
             printf ("\nPlot creation failure.\n");
             exit (1);
         }
@@ -191,7 +191,7 @@ void main (int argc, char *argv[])
                                   0.1,                      // Maximum Z value
                                   GPC_COLOUR,               // Graph mode
                                   GPC_KEY_ENABLE);          // Legend / key mode
-        if (hOrdergram == NULL) {
+        if (NULL == hOrdergram) {
             printf ("\nPlot creation failure.\n");
             exit (1);
         }
@@ -204,7 +204,7 @@ void main (int argc, char *argv[])
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_POSITIVE,                  // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (hOrderPlot == NULL) {
+    if (NULL == hOrderPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -216,7 +216,7 @@ void main (int argc, char *argv[])
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (hOrderPlot == NULL) {
+    if (NULL == hOrderPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

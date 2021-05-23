@@ -11,7 +11,7 @@
 #define IMPULSE_RESPONSE_LENGTH 1024
 #define PLOT_LENGTH             (IMPULSE_RESPONSE_LENGTH/2)
 #define FFT_LENGTH              512
-#define LOG2_FFT_LENGTH         9
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define FILTER_ORDER            4                   // Filter length
 #define MAX_FILTER_ORDER        10                  // Max filter order
 
@@ -52,8 +52,8 @@ void main (void)
     pSrc = SUF_VectorArrayAllocate (IMPULSE_RESPONSE_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
-    if ((pIIRCoeffs == NULL) || (pFilterState == NULL) || (pRealData == NULL) || (pImagData == NULL) ||
-        (pResults == NULL) || (pSrc == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pIIRCoeffs) || (NULL == pFilterState) || (NULL == pRealData) || (NULL == pImagData) ||
+        (NULL == pResults) || (NULL == pSrc) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
@@ -66,7 +66,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

@@ -43,13 +43,13 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
     pData = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
-    if (pData == NULL) {
+    if (NULL == pData) {
         printf ("\npData memory allocation failure.\n");
         exit (1);
     }

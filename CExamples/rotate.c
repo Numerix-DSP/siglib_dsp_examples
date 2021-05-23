@@ -4,7 +4,6 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include "nhl.h"
 
 // Define constants
 #define SAMPLE_LENGTH   8
@@ -30,7 +29,7 @@ void main(void)
                              SAMPLE_LENGTH);        // Array length
 
     printf ("Input Array\n");
-    print_buffer (pData1, SAMPLE_LENGTH);
+    SUF_PrintArray (pData1, SAMPLE_LENGTH);
 
     Rotation = 1;
     SDA_Rotate (pData1,                             // Pointer to source array
@@ -38,7 +37,7 @@ void main(void)
                 Rotation,                           // Rotation length - samples
                 SAMPLE_LENGTH);                     // Source array length
     printf ("\nRotation = %d\n", Rotation);
-    print_buffer (pData2, SAMPLE_LENGTH);
+    SUF_PrintArray (pData2, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     Rotation = 2;
@@ -47,7 +46,7 @@ void main(void)
                 Rotation,                           // Rotation length - samples
                 SAMPLE_LENGTH);                     // Source array length
     printf ("\nRotation = %d\n", Rotation);
-    print_buffer (pData2, SAMPLE_LENGTH);
+    SUF_PrintArray (pData2, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     Rotation = 3;
@@ -65,7 +64,7 @@ void main(void)
                 Rotation,                           // Rotation length - samples
                 SAMPLE_LENGTH);                     // Source array length
     printf ("\nRotation = %d\n", Rotation);
-    print_buffer (pData2, SAMPLE_LENGTH);
+    SUF_PrintArray (pData2, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     Rotation = 5;
@@ -74,7 +73,7 @@ void main(void)
                 Rotation,                           // Rotation length - samples
                 SAMPLE_LENGTH);                     // Source array length
     printf ("\nRotation = %d\n", Rotation);
-    print_buffer (pData2, SAMPLE_LENGTH);
+    SUF_PrintArray (pData2, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     Rotation = 6;
@@ -83,7 +82,7 @@ void main(void)
                 Rotation,                           // Rotation length - samples
                 SAMPLE_LENGTH);                     // Source array length
     printf ("\nRotation = %d\n", Rotation);
-    print_buffer (pData2, SAMPLE_LENGTH);
+    SUF_PrintArray (pData2, SAMPLE_LENGTH);
     printf ("Please hit <Return> to continue\n"); getchar ();
 
     Rotation = 7;
@@ -92,7 +91,7 @@ void main(void)
                 Rotation,                           // Rotation length - samples
                 SAMPLE_LENGTH);                     // Source array length
     printf ("\nRotation = %d\n", Rotation);
-    print_buffer (pData2, SAMPLE_LENGTH);
+    SUF_PrintArray (pData2, SAMPLE_LENGTH);
 
     SUF_MemoryFree (pData1);                        // Free memory
     SUF_MemoryFree (pData2);

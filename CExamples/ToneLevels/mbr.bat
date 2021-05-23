@@ -5,7 +5,7 @@ rem Batch file for building and running the application using Microsoft Visual C
 del *.exe
 del *.dat
 
-cl toneLevels.c -W4 -D "SIGLIB_STATIC_LIB=1" -D "_CRT_SECURE_NO_WARNINGS=1" siglib.lib gnuplot_c.lib nhl.lib
+cl toneLevels.c -W4 -D "SIGLIB_STATIC_LIB=1" -D "_CRT_SECURE_NO_WARNINGS=1" siglib.lib gnuplot_c.lib
 if not exist toneLevels.exe (
     goto:EOF
 )

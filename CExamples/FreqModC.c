@@ -12,7 +12,7 @@
 
 #define SAMPLE_LENGTH       512
 #define SINE_TABLE_PERIOD   1024                    // Period of look up table for fast sine calculation
-#define CARRIER_FREQ        0.01
+#define CARRIER_FREQ        0.01                    // Carrier frequency normalized to 1. Hz aka Carrier phase increment per sample (radians / 2π)
 #define MOD_INDEX           0.05
 
 // Declare global variables and arrays
@@ -43,7 +43,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

@@ -11,8 +11,6 @@
 
 // Define constants
 #define SAMPLE_LENGTH   512
-#define FFT_LENGTH      SAMPLE_LENGTH
-#define LOG2_FFT_LENGTH 9
 
 #define FILTER_LENGTH   31
 #define FILTER_GROUP_DELAY  (FILTER_LENGTH >> 1)    // Filter group delay - Note : C array indexing
@@ -38,7 +36,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

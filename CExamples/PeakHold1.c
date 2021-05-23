@@ -9,8 +9,8 @@
 
 // Define constants
 #define FFT_LENGTH          512
-#define HALF_FFT_LENGTH     256
-#define LOG2_FFT_LENGTH     9
+#define HALF_FFT_LENGTH     (FFT_LENGTH >> 1)
+#define LOG2_FFT_LENGTH     ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define PEAK_HOLD_DECAY     0.99
 
 // Declare global variables and arrays
@@ -36,7 +36,7 @@ void main(void)
                      150.,                          // Scaling mode
                      GPC_POSITIVE,                  // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

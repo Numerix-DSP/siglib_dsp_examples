@@ -38,7 +38,7 @@ void   main(void)
     pFilterState = SUF_VectorArrayAllocate (FILTER_LENGTH);
     pFastCosineLookUpTable = SUF_VectorArrayAllocate (SINE_TABLE_SIZE);
 
-    if ((pData == NULL) || (pFilterCoeffs == NULL) || (pFilterState == NULL) || (pFastCosineLookUpTable == NULL)) {
+    if ((NULL == pData) || (NULL == pFilterCoeffs) || (NULL == pFilterState) || (NULL == pFastCosineLookUpTable)) {
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
     }
@@ -50,7 +50,7 @@ void   main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

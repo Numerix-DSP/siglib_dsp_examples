@@ -118,7 +118,7 @@ void main (void)
     h_GPC_Plot  *h2DPlot;                                   // Plot object
 #endif
 #if DISPLAY_CONSTELLATION
-    h_GPC_Plot   *hConstellationDiagramGraph;
+    h_GPC_Plot   *hConstellationDiagram;
 #endif
 #if DISPLAY_TIME_DOMAIN
     SLData_t    TimeIndex = SIGLIB_ZERO;
@@ -152,7 +152,7 @@ void main (void)
                      GPC_AUTO_SCALE,                    // Scaling mode
                      GPC_SIGNED,                        // Sign mode
                      GPC_KEY_ENABLE);                   // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -166,7 +166,7 @@ void main (void)
                      10.0,                              // Scaling mode
                      GPC_SIGNED,                        // Sign mode
                      GPC_KEY_DISABLE);                  // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -177,7 +177,7 @@ void main (void)
 
                                                             // Initialise 16-QAM functions
     SIF_Qam16Modulate (pCarrierTable,                       // Carrier table pointer
-                       CARRIER_TABLE_FREQ / SAMPLE_RATE,    // Carrier frequency
+                       CARRIER_TABLE_FREQ / SAMPLE_RATE,    // Carrier phase increment per sample (radians / 2π)
                        CARRIER_SINE_TABLE_SIZE,             // Carrier sine table size
                        &TxCarrierPhase,                     // Carrier phase pointer
                        &TxSampleClock,                      // Sample clock pointer
@@ -192,7 +192,7 @@ void main (void)
                        RRCF_LENGTH,                         // RRCF size
                        RRCF_ENABLE);                        // RRCF enable / disable switch
     SIF_Qam16Demodulate (pCarrierTable,                     // Carrier table pointer
-                         CARRIER_TABLE_FREQ / SAMPLE_RATE,  // Carrier frequency
+                         CARRIER_TABLE_FREQ / SAMPLE_RATE,  // Carrier phase increment per sample (radians / 2π)
                          CARRIER_SINE_TABLE_SIZE,           // Carrier sine table size
                          &RxCarrierPhase,                   // Carrier phase pointer
                          &RxSampleClock,                    // Sample clock pointer
@@ -452,25 +452,25 @@ void main (void)
     }
 
 #if DISPLAY_CONSTELLATION
-    hConstellationDiagramGraph =
+    hConstellationDiagram =
         gpc_init_xy ("QAM16 Constellation Diagram", // Plot title
                      "X-Axis",                      // X-Axis label
                      "Y-Axis",                      // Y-Axis label
                      1.5,                           // Dimension - this is square
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (hConstellationDiagramGraph == NULL) {       // Graph creation failed
+    if (NULL == hConstellationDiagram) {            // Graph creation failed
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
-    for (i = 0; i < ConstellationRxSymbolCount; i++) {  // Plot all consteallation diagram points
-        gpc_plot_xy (hConstellationDiagramGraph,          // Graph handle
-                     (ComplexRect_s *)ConstellationPoints,    // Array of complex dataset
-                     (int)ConstellationRxSymbolCount,     // Dataset length
-                     "Constellation Diagram",             // Dataset title
-                     "lines",                             // Graph type
-                     "blue",                              // Colour
-                     GPC_NEW);                            // New graph
+    for (i = 0; i < ConstellationRxSymbolCount; i++) {      // Plot all consteallation diagram points
+        gpc_plot_xy (hConstellationDiagram,                 // Graph handle
+                     (ComplexRect_s *)ConstellationPoints,  // Array of complex dataset
+                     (int)ConstellationRxSymbolCount,       // Dataset length
+                     "Constellation Diagram",               // Dataset title
+                     "lines",                               // Graph type
+                     "blue",                                // Colour
+                     GPC_NEW);                              // New graph
     }
     printf ("Hit <Carriage Return> to continue ..."); getchar ();
 #endif

@@ -110,7 +110,7 @@ void   main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -141,7 +141,7 @@ void   main(void)
     RxStringPtr = RxString;
 
     SIF_FskModulate (pCarrierTable,                         // Carrier sinusoid table
-                     (CARRIER_TABLE_FREQ / SAMPLE_RATE),    // Carrier frequency
+                     (CARRIER_TABLE_FREQ / SAMPLE_RATE),    // Carrier phase increment per sample (radians / 2π)
                      CARRIER_SINE_TABLE_SIZE);              // Sine table size
 
 

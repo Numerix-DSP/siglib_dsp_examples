@@ -3,23 +3,23 @@
 
 // Include files
 #include <stdio.h>
-#include <siglib_host_utils.h>                      // Optionally includes conio.h and time.h subset functions
-#include <siglib.h>                                 // SigLib DSP library
+#include <siglib.h>                                         // SigLib DSP library
+#include <siglib_host_utils.h>                              // Optionally includes conio.h and time.h subset functions
 
 // Define constants
-#define DEBUG                   0                   // Debug mode - global debug switch
+#define DEBUG                   0                           // Debug mode - global debug switch
 
-#define TRACE_BACK_DEPTH        15                  // Trace back depth
-#define TRACE_BACK_TABLE_LENGTH (TRACE_BACK_DEPTH+1)    // Trace back depth - 5 * K
-#define SAMPLES_PER_BYTE        2                   // Number of channel samples per byte
-#define INPUT_STRING_LENGTH     43                  // Input string length
+#define TRACE_BACK_DEPTH        15                          // Trace back depth
+#define TRACE_BACK_TABLE_LENGTH (TRACE_BACK_DEPTH+1)        // Trace back depth - 5 * K
+#define SAMPLES_PER_BYTE        2                           // Number of channel samples per byte
+#define INPUT_STRING_LENGTH     43                          // Input string length
 
 // Declare global variables and arrays
 static char    InputString[] = "The quick brown fox jumps over the lazy dog";
 
 static SLComplexRect_s  ChannelData[SAMPLES_PER_BYTE];      // 2 coded samples for each 8 bit input char
 
-                                                    // Viterbi decoder persistent data
+                                                            // Viterbi decoder persistent data
 static SLArrayIndex_t   VitDecSurvivorStateHistoryTable[TRACE_BACK_TABLE_LENGTH][SIGLIB_VITV32_NUMBER_OF_STATES];   // History table of survivor states
 static SLArrayIndex_t   MinQ4Q3[TRACE_BACK_TABLE_LENGTH][SIGLIB_VITV32_NUMBER_OF_PATH_STATES];              // Array to save minimium Q4Q3 dibit history
 static SLData_t         VitDecAccumulatedErrorTable[SIGLIB_VITV32_NUMBER_OF_STATES];                        // Error accumulation table
@@ -35,14 +35,14 @@ void main (void)
     SLFixData_t     i;
     int             ch;
     char            ViterbiOutput;
-                                                    // These variables must be initiailised to Zero
-    SLArrayIndex_t  TxDiffEncState = 0;             // Differential encoder state
-    SLArrayIndex_t  TxEncoderState = 0;             // Convolutional encoder state
-    SLArrayIndex_t  RxDiffDecState = 0;             // Differential decoder state
+                                                            // These variables must be initiailised to Zero
+    SLArrayIndex_t  TxDiffEncState = 0;                     // Differential encoder state
+    SLArrayIndex_t  TxEncoderState = 0;                     // Convolutional encoder state
+    SLArrayIndex_t  RxDiffDecState = 0;                     // Differential decoder state
     SLFixData_t     ExitFlag = 0;
-    SLData_t        Noise = SIGLIB_ZERO;            // Noise level
+    SLData_t        Noise = SIGLIB_ZERO;                    // Noise level
 
-                                                    // Initialise Viterbi Decoder
+                                                            // Initialise Viterbi Decoder
     SIF_ViterbiDecoderV32 (VitDecAccumulatedErrorTable,                         // Accumulated error array
                            (SLArrayIndex_t *)VitDecSurvivorStateHistoryTable,   // Survivor state history table
                            &VitDecSurvivorStateHistoryOffset,                   // Offset into state history array - this is used as a circular pointer
@@ -55,13 +55,15 @@ void main (void)
 
     while (!ExitFlag) {
         if (_kbhit()) {
-            if ((ch = _getch ()) == '+') {
+            ch = (SLFixData_t)_getch ();
+            if (ch == '+') {
                 Noise += 0.1;
             }
-            else if ((ch = _getch ()) == '-') {
+            else if (ch == '-') {
                 Noise -= 0.1;
-                if (Noise < SIGLIB_ZERO)
+                if (Noise < SIGLIB_ZERO) {
                     Noise = SIGLIB_ZERO;
+                }
             }
             else {
                 ExitFlag = 1;

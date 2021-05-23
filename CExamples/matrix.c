@@ -4,7 +4,6 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                         // SigLib DSP library
-#include "nhl.h"
 
 // Define constants
 #define MATRIXA_ROWS    3                   // Declare matrix A
@@ -84,7 +83,7 @@ void main (void)
 
                     // Print matrix A contents
     printf("Source matrix A :\n");
-    print_matrix (pMatrixa, MATRIXA_ROWS, MATRIXA_COLS);
+    SUF_PrintMatrix (pMatrixa, MATRIXA_ROWS, MATRIXA_COLS);
 
                     // Copy matrix A to matrix C for temporary backup
     SMX_Copy (pMatrixa,                             // Pointer to source matrix
@@ -99,7 +98,7 @@ void main (void)
                         MATRIXA_ROWS,               // Number of rows
                         MATRIXA_COLS);              // Number of columns
     printf("\nMatrix A multiplied by 3.0 :\n");
-    print_matrix (pMatrixa, MATRIXA_ROWS, MATRIXA_COLS);
+    SUF_PrintMatrix (pMatrixa, MATRIXA_ROWS, MATRIXA_COLS);
 
                     // Restore matrix A and transpose
     SMX_Copy (pMatrixc,                             // Pointer to source matrix
@@ -111,7 +110,7 @@ void main (void)
                    MATRIXA_ROWS,                    // Number of rows
                    MATRIXA_COLS);                   // Number of columns
     printf("\nMatrix A transposed :\n");
-    print_matrix (pMatrixb, MATRIXAT_ROWS, MATRIXAT_COLS);
+    SUF_PrintMatrix (pMatrixb, MATRIXAT_ROWS, MATRIXAT_COLS);
 
                     // Fill matrix B
     *pMatrixb++ = 1; *pMatrixb++ = 2; *pMatrixb++ = 3; *pMatrixb++ = 4;
@@ -120,7 +119,7 @@ void main (void)
 
                     // Print matrix B contents with matrix A dimensions
     printf("\nSource matrix B :\n");
-    print_matrix (pMatrixb, MATRIXA_ROWS, MATRIXA_COLS);
+    SUF_PrintMatrix (pMatrixb, MATRIXA_ROWS, MATRIXA_COLS);
 
                     // Restore matrix A and add to matrix B
     SMX_Copy (pMatrixc,                             // Pointer to source matrix
@@ -133,7 +132,7 @@ void main (void)
              MATRIXA_ROWS,                          // Number of rows
              MATRIXA_COLS);                         // Number of columns
     printf("\nA + B matrix :\n");
-    print_matrix (pMatrixc, MATRIXA_ROWS, MATRIXA_COLS);
+    SUF_PrintMatrix (pMatrixc, MATRIXA_ROWS, MATRIXA_COLS);
 
                     // Restore matrix A and subtract from matrix B
     SMX_Copy (pMatrixc,                             // Pointer to source matrix
@@ -155,7 +154,7 @@ void main (void)
 
                     // Print matrix B contents with correct dimensions
     printf("\nNew source matrix B :\n");
-    print_matrix (pMatrixb, MATRIXB_ROWS, MATRIXB_COLS);
+    SUF_PrintMatrix (pMatrixb, MATRIXB_ROWS, MATRIXB_COLS);
 
                     // MultpImagDataly matrix A by matrix B
     SMX_Multiply (pMatrixa,                         // Pointer to source matrix 1
@@ -165,7 +164,7 @@ void main (void)
                   MATRIXA_COLS,                     // Number of columns matrix 1
                   MATRIXB_COLS);                    // Number of columns matrix 2
     printf("\nA * B matrix :\n");
-    print_matrix (pMatrixc, MATRIXC_ROWS, MATRIXC_COLS);
+    SUF_PrintMatrix (pMatrixc, MATRIXC_ROWS, MATRIXC_COLS);
 
     printf("\nPlease hit any key to continue . . .\n");
     getchar ();
@@ -178,7 +177,7 @@ void main (void)
 
                     // Print matrix D
     printf("\nSource matrix D :\n");
-    print_matrix (pMatrixd, MATRIXD_ROWS, MATRIXD_COLS);
+    SUF_PrintMatrix (pMatrixd, MATRIXD_ROWS, MATRIXD_COLS);
 
 
                     // Invert matrix D
@@ -200,7 +199,7 @@ void main (void)
 
                     // Print inverse of matrix D
     printf("\nInverse of matrix D :\n");
-    print_matrix (pMatrixd_inv, MATRIXD_INV_ROWS, MATRIXD_INV_COLS);
+    SUF_PrintMatrix (pMatrixd_inv, MATRIXD_INV_ROWS, MATRIXD_INV_COLS);
 
     printf ("Inverse should be :\n");
     printf ("    0.1579   -0.2105    0.1053\n");
@@ -222,7 +221,7 @@ void main (void)
                    SIGLIB_DOUBLE_SIDED_THOLD,       // Threshold type
                    MATRIXD_SIZE);                   // Matrix size - Number of rows x number of columns
     printf("\nD * D^-1 matrix :\n");
-    print_matrix (pMatrixi, MATRIXD_ROWS, MATRIXD_COLS);
+    SUF_PrintMatrix (pMatrixi, MATRIXD_ROWS, MATRIXD_COLS);
 
                     // Print the determinant of matrix D
     Determinant =
@@ -241,7 +240,7 @@ void main (void)
 
                     // Print identity matrix (I)
     printf("\nIdentity matrix (I) :\n");
-    print_matrix (pMatrixi, MATRIXI_ROWS, MATRIXI_COLS);
+    SUF_PrintMatrix (pMatrixi, MATRIXI_ROWS, MATRIXI_COLS);
 
 
     printf ("\nSource matrix = \n\t%lf, %lf\n\t%lf, %lf\n", SrcReal2x2[0], SrcReal2x2[1], SrcReal2x2[2], SrcReal2x2[3]);
@@ -264,5 +263,3 @@ void main (void)
     SUF_MemoryFree (pMatrixd_inv);
     SUF_MemoryFree (pMatrixi);
 }
-
-

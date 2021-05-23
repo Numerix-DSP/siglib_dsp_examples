@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Machine Learning Example</title></head>
+<body style="background-color: rgb(255, 255, 255);">
+<div>
+<table border="0">
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://www.numerix-dsp.com" target="_blank"><img src="../../../WebResources/NumerixLogoSM.JPG" alt="Numerix Web Site" border="0" height="100" width="105"></a></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">
+      <h3><font color="#0000ff" size="3">SigLib Machine Learning Example Programs</font></h3>
+      </td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><a href="https://www.numerix-dsp.com/siglib.html" target="_blank"><img src="../../../WebResources/siglib_ver.gif" alt="SigLib DSP Library Information" border="0" height="49" width="125"></a></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<p style="font-family: Arial;">The files in
+this folder provide examples for the SigLib Artificial Intelligence and Machine Learning functions.</font></p>
+
+<p style="font-family: Arial;">The main SigLib functions implement two-layer convolutional neural networks:<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;SDA_TwoLayer2CategoryNetworkFit ()<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;SDA_TwoLayer2CategoryNetworkPredict ()<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;SDA_TwoLayerNCategoryNetworkFit ()<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;SDA_TwoLayerNCategoryNetworkPredict ()<br>
+</p>
+<p style="font-family: Arial;">The input data for the training and validation programs is provided in the folder "Original".
+These files are recorded at 16 kHz but the algorithms are independent of sample rate.
+The only requirement is that the training and validation data sets are recorded at the same sample rate.
+</p>
+
+<p style="font-family: Arial;">These eexamples are provided for the Microsoft Visual C/C++ and GCC compilers.
+For graphical result display they use Gnuplot/C, which is included in the SigLib download pachage.
+</p>
+
+  <table style="font-family: Arial;" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td><strong>Source Files&nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td><strong>Description</strong></td>
+      </tr>
+      <tr>
+        <td><a href="preprocess_wav.c">preprocess_wav.c</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Performs time domain and frequency domain pre-processing of source .wav files</td>
+      </tr>
+      <tr>
+        <td><a href="network_train_multi_category.c">network_train_multi_category.c</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Train the multi-category neural network</td>
+      </tr>
+      <tr>
+        <td><a href="network_validate_multi_category.c">network_validate_multi_category.c</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Validate the multi-category neural network</td>
+      </tr>
+      <tr>
+        <td><a href="network_train_single_category.c">network_train_single_category.c</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Train the single-category neural network</td>
+      </tr>
+      <tr>
+        <td><a href="network_validate_single_category.c">network_validate_single_category.c</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Validate the single-category neural network</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="height: 30px;"><strong>Build Scripts&nbsp;</strong></td>
+      </tr>
+      <tr>
+        <td><a href="mbr_multi_category.bat">mbr_multi_category.bat</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Batch file to build and run multi category training and validation, with Microsoft Visual C/C++ compiler</td>
+      </tr>
+      <tr>
+        <td><a href="mbr_multi_category_withDataAugmentation.bat">mbr_multi_category_withDataAugmentation.bat</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Batch file to build and run multi category training and validation, with additional data augmentation, with Microsoft Visual C/C++ compiler</td>
+      </tr>
+      <tr>
+        <td><a href="mbr_single_category.bat">mbr_single_category.bat</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Batch file to build and run single category training and validation, with Microsoft Visual C/C++ compiler</td>
+      </tr>
+      <tr>
+        <td><a href="mbr_single_category_with_scatter_diagram.bat">mbr_single_category_with_scatter_diagram.bat</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Batch file to build and run single category training and validation, with additional scatter diagram, with Microsoft Visual C/C++ compiler</td>
+      </tr>
+      <tr>
+        <td><a href="gbr_multi_category.sh">gbr_multi_category.sh</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Shell script to build and run multi category training and validation, with GCC</td>
+      </tr>
+      <tr>
+        <td><a href="gbr_multi_category_withDataAugmentation.sh">gbr_multi_category_withDataAugmentation.sh</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Shell script to build and run multi category training and validation, with additional data augmentation, with GCC</td>
+      </tr>
+      <tr>
+        <td><a href="gbr_all_single_category.sh">gbr_all_single_category.sh</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Shell script to build and run single category training and validation, with GCC</td>
+      </tr>
+       <tr>
+        <td><a href="gbr_all_single_with_scatter_diagram.sh">gbr_all_single_with_scatter_diagram.sh</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Shell script to build and run single category training and validation, with additional scatter diagram, with GCC</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="height: 30px;"><strong>Motor Vibration Demonstration Scripts</strong></td>
+      </tr>
+      <tr>
+        <td><a href="mbr_single_category_motorMode.bat">mbr_single_category_motorMode.bat</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Batch file to build and run the training and validation, with Microsoft Visual C/C++ compiler</td>
+      </tr>
+      <tr>
+        <td><a href="gbr_single_category_motorMode.sh">gbr_single_category_motorMode.sh</a>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>Shell script to build and run the training and validation, with GCC</td>
+      </tr>
+   </tbody>
+  </table>
+<br>
+
+<hr>
+<table style="font-family: Arial;" border="0" cellspacing="5">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap" valign="top"><a name="contact"></a><font color="#0000ff" size="3"><strong>For further information, please contact :</strong></font><font color="#0000ff" size="2"><strong><br>
+      </strong></font><a href="mailto:numerix@numerix-dsp.com"><img src="../../../WebResources/email.gif" alt="Email Numerix" border="0" height="32" width="32"></a> Email : </font><a href="mailto:numerix@numerix-dsp.com">numerix@numerix-dsp.com
+      </font></a></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td valign="top">
+      <address> <br>
+      </font> </address>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-family: Arial;">Copyright © 2020, Sigma Numerix Ltd.<br>
+SigLib and Digital Filter Plus are trademarks of Sigma Numerix Ltd. All
+other trademarks acknowledged.<br>
+Sigma Numerix are continuously increasing the functionality of SigLib
+and reserve the right to alter the product at any time.</font></p>
+</body></html>

@@ -12,11 +12,11 @@
 
 // Define constants
 #define FFT_LENGTH      16
-#define LOG2_FFT_LENGTH 4
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 // Declare global variables and arrays
-static SLData_t     *pRealData, *pImagData, *pResults, *pFFTCoeffs;
-static SLData_t     RampPhase;
+static SLData_t         *pRealData, *pImagData, *pResults, *pFFTCoeffs;
+static SLData_t         RampPhase;
 
 void main(void)
 {
@@ -27,6 +27,12 @@ void main(void)
     pResults = SUF_VectorArrayAllocate (FFT_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
+    if ((NULL == pRealData) || (NULL == pImagData) || (NULL == pResults) || (NULL == pFFTCoeffs)) {
+
+        printf ("\n\nMemory allocation failed\n\n");
+        exit (0);
+    }
+
     h2DPlot =                                       // Initialize plot
         gpc_init_2d ("Real FFT",                    // Plot title
                      "Time / Frequency",            // X-Axis label
@@ -34,7 +40,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -42,7 +48,7 @@ void main(void)
                                                     // Initialise FFT
     SIF_Fft (pFFTCoeffs,                            // Pointer to FFT coefficients
              SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table - NOT USED
-             FFT_LENGTH);                               // FFT length
+             FFT_LENGTH);                           // FFT length
 
                                                     // Initialise the source data to a ramp
     RampPhase = SIGLIB_ZERO;

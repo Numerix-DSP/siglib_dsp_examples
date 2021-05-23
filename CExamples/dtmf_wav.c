@@ -5,14 +5,13 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include "nhl.h"
 
 // Define constants
 #define DTMF_SAMPLE_LENGTH          102
 
 // Declare global variables and arrays
 static SLData_t         *pData;                     // Data array pointers
-static WAV_FILE_INFO    WavInfo;
+static SLWavFileInfo_s  wavFileInfo;
 
 void    main(void);
 
@@ -33,22 +32,22 @@ void main (void)
         exit (1);
     }
 
-    WavInfo = wav_read_header (fpInputFile);
-    if (WavInfo.NumberOfChannels != 1) {                // Check how many channels
-        printf ("Number of channels in tones.wav = %d\n", WavInfo.NumberOfChannels);
+    wavFileInfo = SUF_WavReadHeader (fpInputFile);
+    if (wavFileInfo.NumberOfChannels != 1) {                // Check how many channels
+        printf ("Number of channels in tones.wav = %d\n", wavFileInfo.NumberOfChannels);
         printf ("This app requires a mono .wav file\n");
         exit (1);
     }
 
-    wav_display_info (WavInfo);
+    SUF_WavDisplayInfo (wavFileInfo);
     printf ("\n.WAV file data. '.' indicates no tone present\n");
     printf ("                '-' indicates signal present but not DTMF\n\n");
 
-    SIF_DtmfDetect (((SLData_t)WavInfo.SampleRate),     // Sample rate
-                    DTMF_SAMPLE_LENGTH);                // Array length
+    SIF_DtmfDetect (((SLData_t)wavFileInfo.SampleRate),     // Sample rate
+                    DTMF_SAMPLE_LENGTH);                    // Array length
 
     while ((SampleCount =
-        (SLFixData_t)wav_read_data (pData, fpInputFile, WavInfo, DTMF_SAMPLE_LENGTH)) == DTMF_SAMPLE_LENGTH) {
+        (SLFixData_t)SUF_WavReadData (pData, fpInputFile, wavFileInfo, DTMF_SAMPLE_LENGTH)) == DTMF_SAMPLE_LENGTH) {
 
         KeyCode =
             SDA_DtmfDetectAndValidate (pData,               // Source array pointer

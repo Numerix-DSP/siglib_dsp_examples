@@ -8,14 +8,12 @@
 #include <gnuplot_c.h>                              // Gnuplot/C
 
 // Define constants
-//#define WINDOW_SIZE     512
-
 #define FFT_LENGTH      512
-#define LOG2_FFT_LENGTH 9
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 //#define HALF_FFT_LENGTH FFT_LENGTH / 2
 
-#define WINDOW_SIZE     63
+#define WINDOW_LENGTH   63
 
 static SLData_t     *pWindowCoeffs, *pFFTCoeffs, *pRealData, *pImagData, *pResults;
 
@@ -37,7 +35,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DTime == NULL) {
+    if (NULL == h2DTime) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -49,15 +47,15 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DTime == NULL) {
+    if (NULL == h2DTime) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
                                                     // Allocate memory
-    pSrc = SUF_VectorArrayAllocate (WINDOW_SIZE);
-    pDst = SUF_VectorArrayAllocate (WINDOW_SIZE);
-    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_SIZE);
+    pSrc = SUF_VectorArrayAllocate (WINDOW_LENGTH);
+    pDst = SUF_VectorArrayAllocate (WINDOW_LENGTH);
+    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
     pRealData = SUF_VectorArrayAllocate (FFT_LENGTH);
     pImagData = SUF_VectorArrayAllocate (FFT_LENGTH);
@@ -67,20 +65,20 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_RECTANGLE,                   // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
     SIF_Fft (pFFTCoeffs,                            // Pointer to FFT coefficients
              SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table - NOT USED
              FFT_LENGTH);                           // FFT length
 
 
-    printf ("\nRectangle window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("\nRectangle window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Rectangle Window",                // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "violet",                          // Colour
                  GPC_NEW);                          // New graph
@@ -95,24 +93,24 @@ void main(void)
                  "violet",                          // Colour
                  GPC_NEW);                          // New graph
 
-                                                    // Generate table top Hanning window table
+                                                    // Generate Hanning window table
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_HANNING,                     // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
     SIF_Fft (pFFTCoeffs,                            // Pointer to FFT coefficients
              SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table - NOT USED
              FFT_LENGTH);                           // FFT length
 
 
-    printf ("\nHanning window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("\nHanning window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Hanning Window",                  // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "blue",                            // Colour
                  GPC_ADD);                          // New graph
@@ -132,15 +130,15 @@ void main(void)
                         SIGLIB_HANNING,             // Window type
                         SIGLIB_ZERO,                // Window coefficient
                         12,                         // Flat top section length
-                        WINDOW_SIZE);               // Window length
+                        WINDOW_LENGTH);             // Window length
 
-    printf ("Table-Top Hanning window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Table-Top Hanning window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Table-Top Hanning Window",        // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "red",                             // Colour
                  GPC_ADD);                          // New graph
@@ -159,15 +157,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_HAMMING,                     // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Hamming window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Hamming window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Hamming Window",                  // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "yellow",                          // Colour
                  GPC_ADD);                          // New graph
@@ -186,15 +184,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_BLACKMAN,                    // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Blackman window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Blackman window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Blackman Window",                 // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "green",                           // Colour
                  GPC_ADD);                          // New graph
@@ -213,15 +211,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_BARTLETT_TRIANGLE_ZERO_END_POINTS,   // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Bartlett / Triangle window (zero end points) inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Bartlett / Triangle window (zero end points) inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Bartlett / Triangle Window (zero end points)", // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "orange",                          // Colour
                  GPC_ADD);                          // New graph
@@ -240,15 +238,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_BARTLETT_TRIANGLE_NON_ZERO_END_POINTS,   // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Bartlett / Triangle window (non-zero end points) inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Bartlett / Triangle window (non-zero end points) inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Bartlett / Triangle Window (non-zero end points)", // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "orange-red",                      // Colour
                  GPC_ADD);                          // New graph
@@ -267,15 +265,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_KAISER,                      // Window type
                 SIGLIB_SIX,                         // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Kaiser window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Kaiser window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Kaiser Window",                   // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "grey",                            // Colour
                  GPC_ADD);                          // New graph
@@ -294,15 +292,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_BMAN_HARRIS,                 // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Blackman-Harris window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Blackman-Harris window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Blackman-Harris Window",          // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "cyan",                            // Colour
                  GPC_ADD);                          // New graph
@@ -321,15 +319,15 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_FLAT_TOP,                    // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
 
-    printf ("Flat-Top window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("Flat-Top window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
     gpc_plot_2d (h2DTime,                           // Graph handle
                  pWindowCoeffs,                     // Dataset
-                 WINDOW_SIZE,                       // Dataset length
+                 WINDOW_LENGTH,                     // Dataset length
                  "Flat-Top Window",                 // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
-                 (double)(WINDOW_SIZE - 1),         // Maximum X value
+                 (double)(WINDOW_LENGTH - 1),       // Maximum X value
                  "lines",                           // Graph type
                  "purple",                          // Colour
                  GPC_ADD);                          // New graph
@@ -351,18 +349,18 @@ void main(void)
     SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
                 SIGLIB_BMAN_HARRIS,                 // Window type
                 SIGLIB_ZERO,                        // Window coefficient
-                WINDOW_SIZE);                       // Window length
+                WINDOW_LENGTH);                     // Window length
                                                     // Apply window to real data
     SDA_Window (pSrc,                               // Pointer to source array
                 pDst,                               // Pointer to destination array
-                pWindowCoeffs,                      // Pointer to window oefficients
-                WINDOW_SIZE);                       // Window length
+                pWindowCoeffs,                      // Pointer to window coefficients
+                WINDOW_LENGTH);                     // Window length
 
     printf ("\n\nBlackman-Harris Window\n");
-    printf ("RMS Sum of sine wave = %lf\n", SDA_RootMeanSquare (pSrc, WINDOW_SIZE));
-    printf ("RMS Sum of window = %lf\n", SDA_RootMeanSquare (pWindowCoeffs, WINDOW_SIZE));
-    printf ("RMS Sum of windowed data = %lf\n", SDA_RootMeanSquare (pDst, WINDOW_SIZE));
-    printf ("Window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_SIZE));
+    printf ("RMS Sum of sine wave = %lf\n", SDA_RootMeanSquare (pSrc, WINDOW_LENGTH));
+    printf ("RMS Sum of window = %lf\n", SDA_RootMeanSquare (pWindowCoeffs, WINDOW_LENGTH));
+    printf ("RMS Sum of windowed data = %lf\n", SDA_RootMeanSquare (pDst, WINDOW_LENGTH));
+    printf ("Window inverse coherent gain = %lf\n", SDA_WindowInverseCoherentGain (pWindowCoeffs, WINDOW_LENGTH));
 
     gpc_close (h2DTime);
     gpc_close (h2DFreq);
@@ -375,9 +373,7 @@ void main(void)
 
 void prepFFT (void)                                 // Macro to generate the FFT output
 {
-    SLData_t    Max;
-
-    SDA_Lengthen (pWindowCoeffs, pRealData, WINDOW_SIZE, FFT_LENGTH);
+    SDA_Lengthen (pWindowCoeffs, pRealData, WINDOW_LENGTH, FFT_LENGTH);
                                                     // Perform real FFT
     SDA_Rfft (pRealData,                            // Pointer to real array
               pImagData,                            // Pointer to imaginary array
@@ -392,8 +388,9 @@ void prepFFT (void)                                 // Macro to generate the FFT
                       FFT_LENGTH);                  // Dataset length
     SDA_LogMagnitude (pRealData, pImagData, pRealData, FFT_LENGTH);     // Calc power in dB
     SDA_FftShift (pRealData, pResults, FFT_LENGTH);
-    Max = SDA_Max (pResults, FFT_LENGTH);
-    SDA_Offset (pResults, -Max, pResults, FFT_LENGTH);
+    SDA_NegativeOffset (pResults,                   // Pointer to source array
+                        pResults,                   // Pointer to destination array
+                        FFT_LENGTH);                // Dataset length
     SDA_Clip (pResults,                             // Pointer to results array
               pResults,                             // Pointer to results array
               SIGLIB_DB_MIN,                        // Clip level

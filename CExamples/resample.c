@@ -17,7 +17,7 @@
 #define NEW_UP_SAMPLE_RATE      10000.
 
 // Declare global variables and arrays
-static SLData_t     *pSrcData, *pDstData;
+static SLData_t     *pSrc, *pDst;
 
 static SLData_t     SinePhase;
 
@@ -35,11 +35,17 @@ void main(void)
     SLArrayIndex_t  ResultSampleLength;
 
                                                     // Allocate arrays
-    pSrcData = SUF_VectorArrayAllocate (SOURCE_LENGTH);
-    pDstData = SUF_VectorArrayAllocate (DST_ARRAY_LENGTH);
+    pSrc = SUF_VectorArrayAllocate (SOURCE_LENGTH);
+    pDst = SUF_VectorArrayAllocate (DST_ARRAY_LENGTH);
+
+    if ((NULL == pSrc) || (NULL == pDst)) {
+
+        printf ("\n\nMemory allocation failed\n\n");
+        exit (0);
+    }
 
     SinePhase = SIGLIB_ZERO;
-    SDA_SignalGenerate (pSrcData,                           // Pointer to destination array
+    SDA_SignalGenerate (pSrc,                               // Pointer to destination array
                         SIGLIB_SINE_WAVE,                   // Signal type - Sine wave
                         SIGLIB_ONE,                         // Signal peak level
                         SIGLIB_FILL,                        // Fill (overwrite) or add to existing array contents
@@ -58,13 +64,13 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pSrcData,                          // Dataset
+                 pSrc,                              // Dataset
                  SOURCE_LENGTH,                     // Dataset length
                  "Sine Waveform",                   // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -76,18 +82,18 @@ void main(void)
 
 
 #if PLOT_FREQ_DOMAIN
-    plot_frequency_domain (pSrcData, SIGLIB_HANNING, "Sine waveform spectrum", SOURCE_LENGTH, SOURCE_LENGTH);
+    plot_frequency_domain (pSrc,     SIGLIB_HANNING, "Sine waveform spectrum", SOURCE_LENGTH, SOURCE_LENGTH);
     printf ("Please hit <Carriage Return> to continue . . .\n"); getchar ();
 #endif
 
     ResultSampleLength =
-        SDA_ResampleLinear (pSrcData,                                     // Pointer to source array
-                            pDstData,                                     // Pointer to destination array
+        SDA_ResampleLinear (pSrc,                                         // Pointer to source array
+                            pDst,                                         // Pointer to destination array
                             ORIGINAL_SAMPLE_RATE / NEW_DOWN_SAMPLE_RATE,  // New sample period
                             SOURCE_LENGTH);                               // Input dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pDstData,                          // Dataset
+                 pDst,                              // Dataset
                  ResultSampleLength,                // Dataset length
                  "Down sampled sine waveform - using linear interpolation",  // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -98,19 +104,19 @@ void main(void)
     printf ("\nDown sampled sine waveform - using linear interpolation\n");
 
 #if PLOT_FREQ_DOMAIN
-    plot_frequency_domain (pDstData, SIGLIB_HANNING, "Down sampled sine waveform spectrum - using linear interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
+    plot_frequency_domain (pDst,     SIGLIB_HANNING, "Down sampled sine waveform spectrum - using linear interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
     printf ("Please hit <Carriage Return> to continue . . .\n"); getchar ();
 #endif
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
 
     ResultSampleLength =
-        SDA_ResampleLinear (pSrcData,                                     // Pointer to source array
-                            pDstData,                                     // Pointer to destination array
+        SDA_ResampleLinear (pSrc,                                         // Pointer to source array
+                            pDst,                                         // Pointer to destination array
                             ORIGINAL_SAMPLE_RATE / NEW_UP_SAMPLE_RATE,    // New sample period
                             SOURCE_LENGTH);                               // Input dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pDstData,                          // Dataset
+                 pDst,                              // Dataset
                  ResultSampleLength,                // Dataset length
                  "Up sampled sine waveform - using linear interpolation",    // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -121,7 +127,7 @@ void main(void)
     printf ("\nUp sampled sine waveform - using linear interpolation\n");
 
 #if PLOT_FREQ_DOMAIN
-    plot_frequency_domain (pDstData, SIGLIB_HANNING, "Up sampled sine waveform spectrum - using linear interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
+    plot_frequency_domain (pDst,     SIGLIB_HANNING, "Up sampled sine waveform spectrum - using linear interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
 #endif
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
 
@@ -146,8 +152,8 @@ void main(void)
 
 
     ResultSampleLength =
-        SDA_ResampleSinc (pSrcData,                                     // Pointer to source array
-                          pDstData,                                     // Pointer to destination array
+        SDA_ResampleSinc (pSrc,                                         // Pointer to source array
+                          pDst,                                         // Pointer to destination array
                           SincLUT,                                      // Pointer to LUT array
                           SincLookUpTablePhaseGain,                     // Look up table phase gain
                           ORIGINAL_SAMPLE_RATE / NEW_DOWN_SAMPLE_RATE,  // New sample period
@@ -155,7 +161,7 @@ void main(void)
                           SOURCE_LENGTH);                               // Source dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pDstData,                          // Dataset
+                 pDst,                              // Dataset
                  ResultSampleLength,                // Dataset length
                  "Down sampled sine waveform - using sinc interpolation",    // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -166,7 +172,7 @@ void main(void)
     printf ("\nDown sampled sine waveform - using sinc interpolation\n");
 
 #if PLOT_FREQ_DOMAIN
-    plot_frequency_domain (pDstData, SIGLIB_HANNING, "Down sampled sine waveform spectrum - using sinc interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
+    plot_frequency_domain (pDst,     SIGLIB_HANNING, "Down sampled sine waveform spectrum - using sinc interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
 #endif
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
 
@@ -178,8 +184,8 @@ void main(void)
                       SINC_LUT_LENGTH);             // Look up table length
 
     ResultSampleLength =
-        SDA_ResampleSinc (pSrcData,                                     // Pointer to source array
-                          pDstData,                                     // Pointer to destination array
+        SDA_ResampleSinc (pSrc,                                         // Pointer to source array
+                          pDst,                                         // Pointer to destination array
                           SincLUT,                                      // Pointer to LUT array
                           SincLookUpTablePhaseGain,                     // Look up table phase gain
                           ORIGINAL_SAMPLE_RATE / NEW_UP_SAMPLE_RATE,    // New sample period
@@ -187,7 +193,7 @@ void main(void)
                           SOURCE_LENGTH);                               // Source dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pDstData,                          // Dataset
+                 pDst,                              // Dataset
                  ResultSampleLength,                // Dataset length
                  "Up sampled sine waveform - using sinc interpolation",  // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -198,14 +204,14 @@ void main(void)
     printf ("\nUp sampled sine waveform - using sinc interpolation\n");
 
 #if PLOT_FREQ_DOMAIN
-    plot_frequency_domain (pDstData, SIGLIB_HANNING, "Up sampled sine waveform spectrum - using sinc interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
+    plot_frequency_domain (pDst,     SIGLIB_HANNING, "Up sampled sine waveform spectrum - using sinc interpolation", ResultSampleLength, 2*SOURCE_LENGTH);
 #endif
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
 
     gpc_close (h2DPlot);
 
-    SUF_MemoryFree (pSrcData);                      // Free memory
-    SUF_MemoryFree (pDstData);
+    SUF_MemoryFree (pSrc);                          // Free memory
+    SUF_MemoryFree (pDst);
 }
 
 

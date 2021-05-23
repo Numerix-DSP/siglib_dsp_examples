@@ -72,7 +72,7 @@ void main(void)
                         255,                        // Maximum Z value
                         GPC_COLOUR,                 // Colour mode
                         GPC_KEY_ENABLE);            // Legend / key mode
-    if (hImage == NULL) {
+    if (NULL == hImage) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

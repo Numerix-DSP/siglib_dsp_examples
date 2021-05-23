@@ -4,14 +4,13 @@
 // Include files
 #include <stdio.h>
 #include <string.h>
-#include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>
-#include <gnuplot_c.h>                              // Gnuplot/C
+#include <siglib.h>                                         // SigLib DSP library
+#include <gnuplot_c.h>                                      // Gnuplot/C
 
 // Define constants
 #define INPUT_LENGTH    512
 #define FFT_LENGTH      512
-#define LOG2_FFT_LENGTH 9
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 // Declare global variables and arrays
 static SLData_t         *input, *pRealData, *pImagData, *pResults, *pFFTCoeffs;
@@ -23,7 +22,7 @@ void main (int argc, char *argv[]);
 
 void main (int argc, char *argv[])
 {
-    h_GPC_Plot  *h2DPlot;                           // Plot object
+    h_GPC_Plot  *h2DPlot;                                   // Plot object
     static FILE *fpInputFile;
     char filename[80];
 
@@ -55,122 +54,122 @@ void main (int argc, char *argv[])
     pResults = SUF_VectorArrayAllocate (INPUT_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
-    SDA_Clear (input,                               // Pointer to destination array
-               INPUT_LENGTH);                       // Dataset length
-    SDA_Clear (pRealData,                           // Pointer to destination array
-               INPUT_LENGTH);                       // Dataset length
-    SDA_Clear (pImagData,                           // Pointer to destination array
-               INPUT_LENGTH);                       // Dataset length
+    SDA_Clear (input,                                       // Pointer to destination array
+               INPUT_LENGTH);                               // Dataset length
+    SDA_Clear (pRealData,                                   // Pointer to destination array
+               INPUT_LENGTH);                               // Dataset length
+    SDA_Clear (pImagData,                                   // Pointer to destination array
+               INPUT_LENGTH);                               // Dataset length
 
-    if ((fpInputFile = fopen(filename, "rb")) == NULL) {  // Note this file is binary
+    if ((fpInputFile = fopen(filename, "rb")) == NULL) {    // Note this file is binary
         printf ("Error opening input file %s\n", filename);
         exit (1);
     }
 
-    sig_read_data (input, fpInputFile, INPUT_LENGTH);  // Read data from disk
+    SUF_SigReadData (input, fpInputFile, INPUT_LENGTH);     // Read data from disk
     fclose (fpInputFile);
 
 
-    h2DPlot =                                       // Initialize plot
-        gpc_init_2d ("Data File Display",           // Plot title
-                     "Time",                        // X-Axis label
-                     "Magnitude",                   // Y-Axis label
-                     GPC_AUTO_SCALE,                // Scaling mode
-                     GPC_SIGNED,                    // Sign mode
-                     GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    h2DPlot =                                               // Initialize plot
+        gpc_init_2d ("Data File Display",                   // Plot title
+                     "Time",                                // X-Axis label
+                     "Magnitude",                           // Y-Axis label
+                     GPC_AUTO_SCALE,                        // Scaling mode
+                     GPC_SIGNED,                            // Sign mode
+                     GPC_KEY_ENABLE);                       // Legend / key mode
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
-                                                    // Initialise FFT
-    SIF_Fft (pFFTCoeffs,                            // Pointer to FFT coefficients
-             SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table - NOT USED
-             FFT_LENGTH);                           // FFT length
+                                                            // Initialise FFT
+    SIF_Fft (pFFTCoeffs,                                    // Pointer to FFT coefficients
+             SIGLIB_NULL_ARRAY_INDEX_PTR,                   // Pointer to bit reverse address table - NOT USED
+             FFT_LENGTH);                                   // FFT length
 
-                                                    // Gen. complex window coeffs
+                                                            // Gen. complex window coeffs
     printf ("Data file : %s", filename);
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 input,                             // Dataset
-                 INPUT_LENGTH,                      // Dataset length
-                 "Data File Display",               // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(INPUT_LENGTH - 1),        // Maximum X value
-                 "lines",                           // Graph type
-                 "magenta",                         // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 input,                                     // Dataset
+                 INPUT_LENGTH,                              // Dataset length
+                 "Data File Display",                       // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (double)(INPUT_LENGTH - 1),                // Maximum X value
+                 "lines",                                   // Graph type
+                 "magenta",                                 // Colour
+                 GPC_NEW);                                  // New graph
 
     if (PerformFFT) {
         printf ("\nData File Display\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
-        SDA_Copy (input,                            // Pointer to source array
-                  pRealData,                        // Pointer to destination array
-                  FFT_LENGTH);                      // Dataset length
+        SDA_Copy (input,                                    // Pointer to source array
+                  pRealData,                                // Pointer to destination array
+                  FFT_LENGTH);                              // Dataset length
 
-                                                    // Frequency domain calculation
-                                                    // Perform complex source data FFT
-        SDA_Cfft (pRealData,                        // Pointer to real array
-                  pImagData,                        // Pointer to imaginary array
-                  pFFTCoeffs,                       // Pointer to FFT coefficients
-                  SIGLIB_NULL_ARRAY_INDEX_PTR,      // Pointer to bit reverse address table - NOT USED
-                  FFT_LENGTH,                       // FFT length
-                  LOG2_FFT_LENGTH);                 // log2 FFT length
+                                                            // Frequency domain calculation
+                                                            // Perform complex source data FFT
+        SDA_Cfft (pRealData,                                // Pointer to real array
+                  pImagData,                                // Pointer to imaginary array
+                  pFFTCoeffs,                               // Pointer to FFT coefficients
+                  SIGLIB_NULL_ARRAY_INDEX_PTR,              // Pointer to bit reverse address table - NOT USED
+                  FFT_LENGTH,                               // FFT length
+                  LOG2_FFT_LENGTH);                         // log2 FFT length
 
-                                                    // Calculate real power from complex
-        SDA_LogMagnitude (pRealData,                // Pointer to real source array
-                          pImagData,                // Pointer to imaginary source array
-                          pResults,                 // Pointer to log magnitude destination array
-                          INPUT_LENGTH);            // Dataset length
+                                                            // Calculate real power from complex
+        SDA_LogMagnitude (pRealData,                        // Pointer to real source array
+                          pImagData,                        // Pointer to imaginary source array
+                          pResults,                         // Pointer to log magnitude destination array
+                          INPUT_LENGTH);                    // Dataset length
 
-                                                    // Plot FFT magnitude result
-        gpc_plot_2d (h2DPlot,                       // Graph handle
-                     pResults,                      // Dataset
-                     INPUT_LENGTH,                  // Dataset length
-                     "Frequency Response",          // Dataset title
-                     SIGLIB_ZERO,                   // Minimum X value
-                     (double)(INPUT_LENGTH - 1),    // Maximum X value
-                     "lines",                       // Graph type
-                     "magenta",                     // Colour
-                     GPC_NEW);                      // New graph
+                                                            // Plot FFT magnitude result
+        gpc_plot_2d (h2DPlot,                               // Graph handle
+                     pResults,                              // Dataset
+                     INPUT_LENGTH,                          // Dataset length
+                     "Frequency Response",                  // Dataset title
+                     SIGLIB_ZERO,                           // Minimum X value
+                     (double)(INPUT_LENGTH - 1),            // Maximum X value
+                     "lines",                               // Graph type
+                     "magenta",                             // Colour
+                     GPC_NEW);                              // New graph
         printf ("\nFrequency Response Display\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
 
-                                                    // Plot wrapped FFT phase result
-                                                    // Calc phase from complex
-        SDA_PhaseWrapped (pRealData,                // Pointer to real source array
-                          pImagData,                // Pointer to imaginary source array
-                          pResults,                 // Pointer to destination array
-                          INPUT_LENGTH);            // Dataset length
+                                                            // Plot wrapped FFT phase result
+                                                            // Calc phase from complex
+        SDA_PhaseWrapped (pRealData,                        // Pointer to real source array
+                          pImagData,                        // Pointer to imaginary source array
+                          pResults,                         // Pointer to destination array
+                          INPUT_LENGTH);                    // Dataset length
 
-        gpc_plot_2d (h2DPlot,                       // Graph handle
-                     pResults,                      // Dataset
-                     INPUT_LENGTH,                  // Dataset length
-                     "Wrapped Phase",               // Dataset title
-                     SIGLIB_ZERO,                   // Minimum X value
-                     (double)(INPUT_LENGTH - 1),    // Maximum X value
-                     "lines",                       // Graph type
-                     "magenta",                     // Colour
-                     GPC_NEW);                      // New graph
+        gpc_plot_2d (h2DPlot,                               // Graph handle
+                     pResults,                              // Dataset
+                     INPUT_LENGTH,                          // Dataset length
+                     "Wrapped Phase",                       // Dataset title
+                     SIGLIB_ZERO,                           // Minimum X value
+                     (double)(INPUT_LENGTH - 1),            // Maximum X value
+                     "lines",                               // Graph type
+                     "magenta",                             // Colour
+                     GPC_NEW);                              // New graph
         printf ("\nWrapped Phase\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
 
-                                                    // Plot FFT unwrapped phase result
-                                                    // Calc phase from complex
-        SDA_PhaseUnWrapped (pRealData,              // Pointer to real source array
-                            pImagData,              // Pointer to imaginary source array
-                            pResults,               // Pointer to destination array
-                            INPUT_LENGTH);          // Dataset length
+                                                            // Plot FFT unwrapped phase result
+                                                            // Calc phase from complex
+        SDA_PhaseUnWrapped (pRealData,                      // Pointer to real source array
+                            pImagData,                      // Pointer to imaginary source array
+                            pResults,                       // Pointer to destination array
+                            INPUT_LENGTH);                  // Dataset length
 
-        gpc_plot_2d (h2DPlot,                       // Graph handle
-                     pResults,                      // Dataset
-                     INPUT_LENGTH,                  // Dataset length
-                     "Unwrapped Phase",             // Dataset title
-                     SIGLIB_ZERO,                   // Minimum X value
-                     (double)(INPUT_LENGTH - 1),    // Maximum X value
-                     "lines",                       // Graph type
-                     "magenta",                     // Colour
-                     GPC_NEW);                      // New graph
+        gpc_plot_2d (h2DPlot,                               // Graph handle
+                     pResults,                              // Dataset
+                     INPUT_LENGTH,                          // Dataset length
+                     "Unwrapped Phase",                     // Dataset title
+                     SIGLIB_ZERO,                           // Minimum X value
+                     (double)(INPUT_LENGTH - 1),            // Maximum X value
+                     "lines",                               // Graph type
+                     "magenta",                             // Colour
+                     GPC_NEW);                              // New graph
         printf ("\nUnwrapped Phase\n");
     }
 
@@ -178,9 +177,9 @@ void main (int argc, char *argv[])
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
     gpc_close (h2DPlot);
 
-    fclose (fpInputFile);                           // Close input file
+    fclose (fpInputFile);                                   // Close input file
 
-    SUF_MemoryFree (input);                         // Free memory
+    SUF_MemoryFree (input);                                 // Free memory
     SUF_MemoryFree (pRealData);
     SUF_MemoryFree (pImagData);
     SUF_MemoryFree (pResults);

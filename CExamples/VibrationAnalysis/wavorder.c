@@ -7,7 +7,6 @@
 #include <siglib_host_utils.h>                      // Optionally includes conio.h and time.h subset functions
 #include <math.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>                                    // Numerix host library
 
 #define DEBUG_ENABLE              0                 // Seto to '1' to enable debug printing, '0' to disable
 #define DISPLAY_AVERAGE_SPECTRUM  0                 // Seto to '1' to display average order spectrum, '0' to display order spectrum
@@ -15,7 +14,7 @@
 
 #define SAMPLE_LENGTH       1024
 #define FFT_LENGTH          SAMPLE_LENGTH
-#define LOG2_FFT_LENGTH     10
+#define LOG2_FFT_LENGTH     ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define RESULT_LENGTH       (FFT_LENGTH >> 1)       // Only need to store the lower 1/2 of the FFT output
 #define OVERLAP_LENGTH      (FFT_LENGTH >> 2)       // 25 % overlap
 #define MAX_RESAMPLE_RATIO  8                       // Maximum over-sampling ratio
@@ -35,7 +34,7 @@ static SLArrayIndex_t   *pPeakArray;
 
 static char             WavFilename[80];
 
-static WAV_FILE_INFO    WavInfo;
+static SLWavFileInfo_s  wavInfo;
 
                       // Parameters for quick sinc look up table
 #define NUMBER_OF_SINC_SIDELOBES  2             // Number of sinc sidelobes
@@ -71,16 +70,16 @@ void main (int argc, char *argv[])
     pFDPResults = SUF_VectorArrayAllocate (FFT_LENGTH);         // Results data array
     pFDPFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);    // FFT coefficient data array
 
-    if ((pDataArray == NULL) || (pOverlapArray == NULL) || (pWindowCoeffs == NULL) ||
-      (pFDPRealData == NULL) || (pFDPImagData == NULL) ||
-      (pFDPResults == NULL) || (pFDPFFTCoeffs == NULL)) {
+    if ((NULL == pDataArray) || (NULL == pOverlapArray) || (NULL == pWindowCoeffs) ||
+      (NULL == pFDPRealData) || (NULL == pFDPImagData) ||
+      (NULL == pFDPResults) || (NULL == pFDPFFTCoeffs)) {
 
         printf ("Memory allocation error\n");
         exit (0);
     }
   #if DISPLAY_AVERAGE_SPECTRUM
     pAverageArray = SUF_VectorArrayAllocate (RESULT_LENGTH);    // Average order spectrum data array
-    if (pAverageArray == NULL) {
+    if (NULL == pAverageArray) {
         printf ("Memory allocation error\n");
         exit (0);
     }
@@ -134,27 +133,27 @@ void main (int argc, char *argv[])
         exit (1);
     }
 
-    WavInfo = wav_read_header (fpInputFile);            // Rewind the .wav file header
-    if (WavInfo.NumberOfChannels != 1) {                // Check how many channels
-        printf ("Number of channels in %s = %d\n", WavFilename, WavInfo.NumberOfChannels);
+    wavInfo = SUF_WavReadHeader (fpInputFile);            // Rewind the .wav file header
+    if (wavInfo.NumberOfChannels != 1) {                // Check how many channels
+        printf ("Number of channels in %s = %d\n", WavFilename, wavInfo.NumberOfChannels);
         printf ("This app requires a mono .wav file\n");
         exit (1);
     }
 
-    wav_display_info (WavInfo);
+    SUF_WavDisplayInfo (wavInfo);
 
-    SampleRate = WavInfo.SampleRate;
+    SampleRate = wavInfo.SampleRate;
 
 
   #if DEBUG_ENABLE
-  SUF_Debugfprintf ("%s : Number of peaks = %d\n", __FUNCTION__, (WavInfo.NumberOfSamples / (FFT_LENGTH - OVERLAP_LENGTH)));
+  SUF_Debugfprintf ("%s : Number of peaks = %d\n", __FUNCTION__, (wavInfo.NumberOfSamples / (FFT_LENGTH - OVERLAP_LENGTH)));
   #endif
 
         // Allocate memory for peak data array these peaks will be used for an indication of the
         // rotational frequency of the machine and hence the first order
-    pPeakArray = SUF_IndexArrayAllocate (WavInfo.NumberOfSamples / (FFT_LENGTH - OVERLAP_LENGTH));
+    pPeakArray = SUF_IndexArrayAllocate (wavInfo.NumberOfSamples / (FFT_LENGTH - OVERLAP_LENGTH));
 
-    if (pPeakArray == NULL) {
+    if (NULL == pPeakArray) {
         printf ("Peak data array memory allocation error\n");
         exit (0);
     }
@@ -162,7 +161,7 @@ void main (int argc, char *argv[])
     fprintf (fpOutputFile, "# 3D plot for %s\n\n", WavFilename);
     fprintf (fpOutputFile, "# Time\t\tOrder\t\tMagnitude\n\n");
 
-    while ((SampleCount = wav_read_data (pDataArray, fpInputFile, WavInfo, SAMPLE_LENGTH)) == SAMPLE_LENGTH) {
+    while ((SampleCount = SUF_WavReadData (pDataArray, fpInputFile, wavInfo, SAMPLE_LENGTH)) == SAMPLE_LENGTH) {
                               // Apply the overlap to the data
         while (SDA_CopyWithOverlap (pDataArray,         // Pointer to source array
                                     pFDPRealData,       // Pointer to destination array
@@ -220,13 +219,13 @@ SUF_Debugfprintf ("%s : Frame Number = %d, PeakArray[FrameNumber] = %d\n", __FUN
     }
 
     rewind (fpInputFile);                           // Rewind the .wav file
-    WavInfo = wav_read_header (fpInputFile);        // Re-read the .wav file header
+    wavInfo = SUF_WavReadHeader (fpInputFile);        // Re-read the .wav file header
 
     FrameNumber = 0;                                // Reset the frame number
     SIF_CopyWithOverlap (&OverlapSrcArrayIndex);    // Reset the copy with overlap
 
 
-    while ((SampleCount = wav_read_data (pDataArray, fpInputFile, WavInfo, SAMPLE_LENGTH)) == SAMPLE_LENGTH) {
+    while ((SampleCount = SUF_WavReadData (pDataArray, fpInputFile, wavInfo, SAMPLE_LENGTH)) == SAMPLE_LENGTH) {
                                 // Apply the overlap to the data
         while (SDA_CopyWithOverlap (pDataArray,         // Pointer to source array
                                     pFDPRealData,       // Pointer to destination array

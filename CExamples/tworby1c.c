@@ -12,8 +12,8 @@
 
 // Define constants
 #define FFT_LENGTH      512
-#define HALF_FFT_LENGTH 256
-#define LOG2_FFT_LENGTH 9
+#define HALF_FFT_LENGTH (FFT_LENGTH >> 1)
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 // Declare global variables and arrays
 static SLData_t     *pRealData1, *pImagData1, *pRealData2, *pImagData2, *pRealDataCopy, *pImagDataCopy;
@@ -35,7 +35,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

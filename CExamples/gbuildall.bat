@@ -20,6 +20,7 @@ call gb ChanCode
 call gb chirp_3d
 call gb chirp-z
 call gb chirp-z2
+call gb clipping
 call gb comb1
 call gb comb2
 call gb complex
@@ -27,11 +28,11 @@ call gb ComplexInterp
 call gb compshft
 call gb convolve
 call gb ConvolveComplex
-call gb copyovl
+call gb CopyWithOverlap
 call gb cornu_s
-call gb corr1
-call gb corr2
-call gb corr3
+call gb correlate1
+call gb correlate2
+call gb correlate3
 call gb costasl
 call gb covar
 call gb datatype
@@ -59,6 +60,7 @@ call gb envelope
 call gb envelope-hilbert
 call gb envelope-hilbert-simple
 call gb envelope-rms
+call gb EuclideanDistance
 call gb evm
 call gb FDConCor
 call gb FDFilt
@@ -108,8 +110,8 @@ call gb iirshft2
 call gb iirshft3
 call gb iirspln
 call gb IntDiff
-call gb interp
-call gb intleave
+call gb interleave
+call gb interpolation
 call gb inv_fir
 call gb isquare
 call gb kurtosis
@@ -136,6 +138,7 @@ call gb multiplx
 call gb NonCaus
 call gb Offset
 call gb OnePole
+call gb OnePoleCutOffFrequency
 call gb OnePoleTimeConstant
 call gb OrdNIIR
 call gb ovl_add
@@ -170,12 +173,15 @@ call gb round
 call gb sc-ofdm
 call gb sequence
 call gb sgram
+call gb shuffle
 call gb sig_gen
 call gb sig_gen_s
 call gb sine_fft
 call gb sinpower
 call gb sinx_x
+call gb sort
 call gb spec_inv
+call gb SpeedOfSoundInAir
 call gb stats
 call gb sortswap
 call gb SyncAsyn

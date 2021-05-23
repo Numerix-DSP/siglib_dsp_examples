@@ -38,7 +38,7 @@ void main(void)
                      1.0,                           // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -46,7 +46,7 @@ void main(void)
     pSrc = SUF_VectorArrayAllocate (SAMPLE_LENGTH); // Allocate memory
     pDst = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
 
-    if ((pSrc == NULL) || (pDst == NULL)) {
+    if ((NULL == pSrc) || (NULL == pDst)) {
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
     }

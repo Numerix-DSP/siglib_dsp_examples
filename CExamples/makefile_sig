@@ -1,9 +1,7 @@
 # Example makefile for SigLib example
 
-SIGLIB_CFLAGS = -I../include -I../nhl -I../gnuplot_c
-SIGLIB_LIBS = -L../lib/linux -lsiglib -L../nhl -lnhl -L../gnuplot_c -lgnuplot_c
-
-# -L../nhl -lnhl
+SIGLIB_CFLAGS = -I../include -I../gnuplot_c
+SIGLIB_LIBS = -L../lib/linux -lsiglib -L../gnuplot_c -lgnuplot_c
 
 PROGRAM=sig_gen
 

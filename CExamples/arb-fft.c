@@ -1,16 +1,14 @@
 // SigLib Arbitrary Length Fast Fourier Transform Example.
-// This algorithm uses the chirp Z-Transform Algorithm to give a 200
-// point FFT.
+// This algorithm uses the chirp Z-Transform Algorithm to give a 200 point FFT.
 // Copyright (C) 2020 Sigma Numerix Ltd.
 
 // Include files
 #include <stdio.h>
-#include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>                                    // Numerix host library
-#include <gnuplot_c.h>                              // Gnuplot/C
+#include <siglib.h>                                         // SigLib DSP library
+#include <gnuplot_c.h>                                      // Gnuplot/C
 
 // Define constants
-#define SAMPLE_LENGTH   200                         // Input dataset length
+#define SAMPLE_LENGTH   200                                 // Input dataset length
 
 // Declare global variables and arrays
 static SLData_t             *pInput, *pResults, *pRealData, *pImagData, *pWindowCoeffs, *pRealDatac, *pImagDatac, *pFFTCoeffs;
@@ -24,7 +22,7 @@ void main(int argc, char *argv[]);
 
 void main(int argc, char *argv[])
 {
-    h_GPC_Plot  *h2DPlot;                           // Plot object
+    h_GPC_Plot  *h2DPlot;                                   // Plot object
     static FILE *fpInputFile;
 
     if (argc != 2) {
@@ -32,7 +30,7 @@ void main(int argc, char *argv[])
         exit (1);
     }
 
-    if ((fpInputFile = fopen (argv[1], "rb")) == NULL) {
+    if (NULL == (fpInputFile = fopen (argv[1], "rb"))) {
         printf ("Error opening data file : %s\n", argv[1]);
         exit (0);
     }
@@ -41,7 +39,7 @@ void main(int argc, char *argv[])
 
     printf ("Calculated FFT length for arbitrary FFT = %d\n", FFTLength);
 
-    pInput = SUF_VectorArrayAllocate (SAMPLE_LENGTH);           // Allocate the memory
+    pInput = SUF_VectorArrayAllocate (SAMPLE_LENGTH);       // Allocate the memory
     pWindowCoeffs = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
 
     pRealData = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
@@ -65,187 +63,187 @@ void main(int argc, char *argv[])
     pResults = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFTLength);
 
-    if ((pInput == NULL) || (pWindowCoeffs == NULL) || (pRealData == NULL) || (pImagData == NULL) ||
-        (pRealDatac == NULL) || (pImagDatac == NULL) || (AWNrPtr == NULL) || (AWNiPtr == NULL) ||
-        (vLrPtr == NULL) || (vLiPtr == NULL) || (CZTRealWorkPtr == NULL) || (CZTImagWorkPtr == NULL) ||
-        (WMrPtr == NULL) || (WMiPtr == NULL) || (pResults == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pInput) || (NULL == pWindowCoeffs) || (NULL == pRealData) || (NULL == pImagData) ||
+        (NULL == pRealDatac) || (NULL == pImagDatac) || (NULL == AWNrPtr) || (NULL == AWNiPtr) ||
+        (NULL == vLrPtr) || (NULL == vLiPtr) || (NULL == CZTRealWorkPtr) || (NULL == CZTImagWorkPtr) ||
+        (NULL == WMrPtr) || (NULL == WMiPtr) || (NULL == pResults) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
     }
 
-    h2DPlot =                                       // Initialize plot
-        gpc_init_2d ("Arbitrary Length FFT",        // Plot title
-                     "Time / Frequency",            // X-Axis label
-                     "Magnitude",                   // Y-Axis label
-                     GPC_AUTO_SCALE,                // Scaling mode
-                     GPC_SIGNED,                    // Sign mode
-                     GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    h2DPlot =                                               // Initialize plot
+        gpc_init_2d ("Arbitrary Length FFT",                // Plot title
+                     "Time / Frequency",                    // X-Axis label
+                     "Magnitude",                           // Y-Axis label
+                     GPC_AUTO_SCALE,                        // Scaling mode
+                     GPC_SIGNED,                            // Sign mode
+                     GPC_KEY_ENABLE);                       // Legend / key mode
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
-                                                    // Init. arbitrary len. FFT
-    SIF_FftArb (AWNrPtr,                            // Pointer to AWNr coefficients
-                AWNiPtr,                            // Pointer to AWNi coefficients
-                WMrPtr,                             // Pointer to WMr coefficients
-                WMiPtr,                             // Pointer to WMi coefficients
-                vLrPtr,                             // Pointer to vLr coefficients
-                vLiPtr,                             // Pointer to vLi coefficients
-                pFFTCoeffs,                         // Pointer to FFT coefficients
-                SIGLIB_NULL_ARRAY_INDEX_PTR,        // Pointer to bit reverse address table
-                &CZTorFFTSwitch,                    // Pointer to switch to indicate CZT or FFT
-                &FFTSize,                           // Pointer to FFT length
-                &Log2FFTSize,                       // Pointer to Log 2 FFT length
-                &InverseFFTSize,                    // Pointer to the inverse FFT length
-                &InverseSampleLengthXFFTSize,       // Pointer to the inverse (Sample length * FFT length)
-                SAMPLE_LENGTH);                     // Dataset length
+                                                            // Init. arbitrary len. FFT
+    SIF_FftArb (AWNrPtr,                                    // Pointer to AWNr coefficients
+                AWNiPtr,                                    // Pointer to AWNi coefficients
+                WMrPtr,                                     // Pointer to WMr coefficients
+                WMiPtr,                                     // Pointer to WMi coefficients
+                vLrPtr,                                     // Pointer to vLr coefficients
+                vLiPtr,                                     // Pointer to vLi coefficients
+                pFFTCoeffs,                                 // Pointer to FFT coefficients
+                SIGLIB_NULL_ARRAY_INDEX_PTR,                // Pointer to bit reverse address table
+                &CZTorFFTSwitch,                            // Pointer to switch to indicate CZT or FFT
+                &FFTSize,                                   // Pointer to FFT length
+                &Log2FFTSize,                               // Pointer to Log 2 FFT length
+                &InverseFFTSize,                            // Pointer to the inverse FFT length
+                &InverseSampleLengthXFFTSize,               // Pointer to the inverse (Sample length * FFT length)
+                SAMPLE_LENGTH);                             // Dataset length
 
-                                                    // Generate Hanning window table
-    SIF_Window (pWindowCoeffs,                      // Pointer to window oefficient
-                SIGLIB_HANNING,                     // Window type
-                SIGLIB_ZERO,                        // Window coefficient
-                SAMPLE_LENGTH);                     // Window length
+                                                            // Generate Hanning window table
+    SIF_Window (pWindowCoeffs,                              // Pointer to window oefficient
+                SIGLIB_HANNING,                             // Window type
+                SIGLIB_ZERO,                                // Window coefficient
+                SAMPLE_LENGTH);                             // Window length
 
-    sig_read_data (pInput, fpInputFile, SAMPLE_LENGTH);  // Read data from disk
+    SUF_SigReadData (pInput, fpInputFile, SAMPLE_LENGTH);   // Read data from disk
 
-                                                    // Apply window to data
-    SDA_Window (pInput,                             // Pointer to source array
-                pInput,                             // Pointer to destination array
-                pWindowCoeffs,                      // Pointer to window oefficients
-                SAMPLE_LENGTH);                     // Window length
+                                                            // Apply window to data
+    SDA_Window (pInput,                                     // Pointer to source array
+                pInput,                                     // Pointer to destination array
+                pWindowCoeffs,                              // Pointer to window coefficients
+                SAMPLE_LENGTH);                             // Window length
 
-                                                    // Copy to compare CZT with FT
-    SDA_Copy (pInput,                               // Pointer to source array
-              pWindowCoeffs,                        // Pointer to destination array
-              SAMPLE_LENGTH);                       // Dataset length
+                                                            // Copy to compare CZT with FT
+    SDA_Copy (pInput,                                       // Pointer to source array
+              pWindowCoeffs,                                // Pointer to destination array
+              SAMPLE_LENGTH);                               // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pInput,                            // Dataset
-                 SAMPLE_LENGTH,                     // Dataset length
-                 "Source Signal",                   // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(SAMPLE_LENGTH - 1),       // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pInput,                                    // Dataset
+                 SAMPLE_LENGTH,                             // Dataset length
+                 "Source Signal",                           // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (double)(SAMPLE_LENGTH - 1),               // Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nSource Signal\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
-                                                    // Clear the imaginary data input
-    SDA_Clear (pImagDatac,                          // Pointer to destination array
-               SAMPLE_LENGTH);                      // Dataset length
+                                                            // Clear the imaginary data input
+    SDA_Clear (pImagDatac,                                  // Pointer to destination array
+               SAMPLE_LENGTH);                              // Dataset length
 
-    SDA_CfftArb (pInput,                            // Pointer to real source array
-                 pImagDatac,                        // Pointer to imaginary source array
-                 pRealData,                         // Pointer to real destination array
-                 pImagData,                         // Pointer to imaginary destination array
-                 CZTRealWorkPtr,                    // Pointer to real temporary array
-                 CZTImagWorkPtr,                    // Pointer to imaginary temporary array
-                 AWNrPtr,                           // Pointer to AWNr coefficients
-                 AWNiPtr,                           // Pointer to AWNi coefficients
-                 WMrPtr,                            // Pointer to WMr coefficients
-                 WMiPtr,                            // Pointer to WMi coefficients
-                 vLrPtr,                            // Pointer to vLr coefficients
-                 vLiPtr,                            // Pointer to vLi coefficients
-                 pFFTCoeffs,                        // Pointer to FFT coefficients
-                 SIGLIB_NULL_ARRAY_INDEX_PTR,       // Pointer to bit reverse address table
-                 CZTorFFTSwitch,                    // Switch to indicate CZT or FFT
-                 FFTSize,                           // FFT length
-                 Log2FFTSize,                       // Log 2 FFT length
-                 InverseFFTSize,                    // Inverse FFT length
-                 InverseSampleLengthXFFTSize,       // Inverse (Sample length * FFT length)
-                 SAMPLE_LENGTH);                    // Arbitrary FFT length
+    SDA_CfftArb (pInput,                                    // Pointer to real source array
+                 pImagDatac,                                // Pointer to imaginary source array
+                 pRealData,                                 // Pointer to real destination array
+                 pImagData,                                 // Pointer to imaginary destination array
+                 CZTRealWorkPtr,                            // Pointer to real temporary array
+                 CZTImagWorkPtr,                            // Pointer to imaginary temporary array
+                 AWNrPtr,                                   // Pointer to AWNr coefficients
+                 AWNiPtr,                                   // Pointer to AWNi coefficients
+                 WMrPtr,                                    // Pointer to WMr coefficients
+                 WMiPtr,                                    // Pointer to WMi coefficients
+                 vLrPtr,                                    // Pointer to vLr coefficients
+                 vLiPtr,                                    // Pointer to vLi coefficients
+                 pFFTCoeffs,                                // Pointer to FFT coefficients
+                 SIGLIB_NULL_ARRAY_INDEX_PTR,               // Pointer to bit reverse address table
+                 CZTorFFTSwitch,                            // Switch to indicate CZT or FFT
+                 FFTSize,                                   // FFT length
+                 Log2FFTSize,                               // Log 2 FFT length
+                 InverseFFTSize,                            // Inverse FFT length
+                 InverseSampleLengthXFFTSize,               // Inverse (Sample length * FFT length)
+                 SAMPLE_LENGTH);                            // Arbitrary FFT length
 
-                                                    // Perform DFT on copy
-    SDA_Rft (pWindowCoeffs,                         // Pointer to source array
-             pRealDatac,                            // Pointer to real destination array
-             pImagDatac,                            // Pointer to imaginary destination array
-             SAMPLE_LENGTH);                        // Dataset length
+                                                            // Perform DFT on copy
+    SDA_Rft (pWindowCoeffs,                                 // Pointer to source array
+             pRealDatac,                                    // Pointer to real destination array
+             pImagDatac,                                    // Pointer to imaginary destination array
+             SAMPLE_LENGTH);                                // Dataset length
 
-                                                    // Scale output of DFT
-    SDA_Multiply (pRealDatac,                       // Pointer to source array
-                  SIGLIB_ONE / SAMPLE_LENGTH,       // Inverse DFT length
-                  pRealDatac,                       // Pointer to destination array
-                  SAMPLE_LENGTH);                   // Dataset length
-    SDA_Multiply (pImagDatac,                       // Pointer to source array
-                  SIGLIB_ONE / SAMPLE_LENGTH,       // Inverse DFT length
-                  pImagDatac,                       // Pointer to destination array
-                  SAMPLE_LENGTH);                   // Dataset length
+                                                            // Scale output of DFT
+    SDA_Multiply (pRealDatac,                               // Pointer to source array
+                  SIGLIB_ONE / SAMPLE_LENGTH,               // Inverse DFT length
+                  pRealDatac,                               // Pointer to destination array
+                  SAMPLE_LENGTH);                           // Dataset length
+    SDA_Multiply (pImagDatac,                               // Pointer to source array
+                  SIGLIB_ONE / SAMPLE_LENGTH,               // Inverse DFT length
+                  pImagDatac,                               // Pointer to destination array
+                  SAMPLE_LENGTH);                           // Dataset length
 
-                                                    // Calculate and display the error
-    SDA_Subtract2 (pRealDatac,                      // Pointer to source array 1
-                   pRealData,                       // Pointer to source array 2
-                   pResults,                        // Pointer to destination array
-                   SAMPLE_LENGTH);                  // Dataset length
+                                                            // Calculate and display the error
+    SDA_Subtract2 (pRealDatac,                              // Pointer to source array 1
+                   pRealData,                               // Pointer to source array 2
+                   pResults,                                // Pointer to destination array
+                   SAMPLE_LENGTH);                          // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pResults,                          // Dataset
-                 SAMPLE_LENGTH,                     // Dataset length
-                 "Real Data Error",                 // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(SAMPLE_LENGTH - 1),       // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pResults,                                  // Dataset
+                 SAMPLE_LENGTH,                             // Dataset length
+                 "Real Data Error",                         // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (double)(SAMPLE_LENGTH - 1),               // Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nReal Data Error\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
-    SDA_Subtract2 (pImagDatac,                      // Pointer to source array 1
-                   pImagData,                       // Pointer to source array 2
-                   pResults,                        // Pointer to destination array
-                   SAMPLE_LENGTH);                  // Dataset length
+    SDA_Subtract2 (pImagDatac,                              // Pointer to source array 1
+                   pImagData,                               // Pointer to source array 2
+                   pResults,                                // Pointer to destination array
+                   SAMPLE_LENGTH);                          // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pResults,                          // Dataset
-                 SAMPLE_LENGTH,                     // Dataset length
-                 "Imaginary Data Error",            // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(SAMPLE_LENGTH - 1),       // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pResults,                                  // Dataset
+                 SAMPLE_LENGTH,                             // Dataset length
+                 "Imaginary Data Error",                    // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (double)(SAMPLE_LENGTH - 1),               // Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nImaginary Data Error\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
                 // Plot chirp z-transform magnitude result
-    SDA_Magnitude (pRealData,                       // Pointer to real source array
-                   pImagData,                       // Pointer to imaginary source array
-                   pResults,                        // Pointer to destination array
-                   SAMPLE_LENGTH);                  // Dataset length
+    SDA_Magnitude (pRealData,                               // Pointer to real source array
+                   pImagData,                               // Pointer to imaginary source array
+                   pResults,                                // Pointer to destination array
+                   SAMPLE_LENGTH);                          // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pResults,                          // Dataset
-                 SAMPLE_LENGTH,                     // Dataset length
-                 "Chirp z-Transform Magnitude",     // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(SAMPLE_LENGTH - 1),       // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pResults,                                  // Dataset
+                 SAMPLE_LENGTH,                             // Dataset length
+                 "Chirp z-Transform Magnitude",             // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (double)(SAMPLE_LENGTH - 1),               // Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nChirp z-Transform Magnitude\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
                 // Plot chirp z-transform phase result
-    SDA_PhaseWrapped (pRealData,                    // Pointer to real source array
-                      pImagData,                    // Pointer to imaginary source array
-                      pResults,                     // Pointer to destination array
-                      SAMPLE_LENGTH);               // Dataset length
+    SDA_PhaseWrapped (pRealData,                            // Pointer to real source array
+                      pImagData,                            // Pointer to imaginary source array
+                      pResults,                             // Pointer to destination array
+                      SAMPLE_LENGTH);                       // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pResults,                          // Dataset
-                 SAMPLE_LENGTH,                     // Dataset length
-                 "Chirp z-Transform Phase",         // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(SAMPLE_LENGTH - 1),       // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pResults,                                  // Dataset
+                 SAMPLE_LENGTH,                             // Dataset length
+                 "Chirp z-Transform Phase",                 // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (double)(SAMPLE_LENGTH - 1),               // Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nChirp z-Transform Phase\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
     gpc_close (h2DPlot);
 
-    fclose (fpInputFile);                           // Close input file
+    fclose (fpInputFile);                                   // Close input file
 
-    SUF_MemoryFree (pInput);                        // Free memory
+    SUF_MemoryFree (pInput);                                // Free memory
     SUF_MemoryFree (pWindowCoeffs);
     SUF_MemoryFree (pRealData);
     SUF_MemoryFree (pImagData);

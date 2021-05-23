@@ -109,8 +109,8 @@ void main(void)
     pCostasLpLPF2State = SUF_VectorArrayAllocate (COSTAS_LP_LPF_LENGTH);
     pVCOLookUpTable = SUF_CostasLoopVCOArrayAllocate (VCO_SINE_TABLE_SIZE);
 
-    if ((pData == NULL) || (pCarrierTable == NULL) || (pCostasLpLPFCoeffs == NULL) || (pCostasLpLPF1State == NULL) ||
-        (pCostasLpLPF2State == NULL) || (pVCOLookUpTable == NULL)) {
+    if ((NULL == pData) || (NULL == pCarrierTable) || (NULL == pCostasLpLPFCoeffs) || (NULL == pCostasLpLPF1State) ||
+        (NULL == pCostasLpLPF2State) || (NULL == pVCOLookUpTable)) {
 
         printf ("Memory allocation failure\n\n");
     }
@@ -132,14 +132,14 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 #endif
 
     SIF_DpskModulate (pCarrierTable,                        // Carrier table pointer
-                      (CARRIER_TABLE_FREQ / SAMPLE_RATE),   // Carrier frequency
+                      (CARRIER_TABLE_FREQ / SAMPLE_RATE),   // Carrier phase increment per sample (radians / 2π)
                       &SampleCount,                         // Transmitter sample count - tracks samples
                       CARRIER_SINE_TABLE_SIZE,              // Carrier sine table size
                       &ModulationPhase);                    // Pointer to modulation phase value
@@ -148,7 +148,7 @@ void main(void)
     SIF_DpskDemodulate (&CostasLpVCOPhase,                  // VCO phase
                         pVCOLookUpTable,                    // VCO look up table
                         VCO_SINE_TABLE_SIZE,                // VCO look up table size
-                        CARRIER_FREQ / SAMPLE_RATE,         // Carrier frequency
+                        CARRIER_FREQ / SAMPLE_RATE,         // Carrier phase increment per sample (radians / 2π)
                         pCostasLpLPF1State,                 // Pointer to loop filter 1 state
                         &CostasLpLPF1Index,                 // Pointer to loop filter 1 index
                         pCostasLpLPF2State,                 // Pointer to loop filter 2 state

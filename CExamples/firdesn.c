@@ -35,7 +35,7 @@ void main(void)
 
     pSrc = SUF_VectorArrayAllocate (FFT_LENGTH);
 
-    if (pSrc == NULL) {
+    if (NULL == pSrc) {
         printf ("Memory allocation error in main ()\n");
         return;
     }
@@ -47,7 +47,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -208,7 +208,7 @@ void main(void)
              FILTER_LENGTH);                        // Filter length
 
     SIF_FirLowPassFilter (pLPFilterCoeffs,          // Filter coeffs array
-                          0.012,                    // Filter cut off frequency
+                          0.12,                     // Filter cut off frequency
                           SIGLIB_HAMMING,           // Window type
                           FILTER_LENGTH);           // Filter length
 
@@ -220,8 +220,6 @@ void main(void)
     SDA_Multiply (pLPFilterCoeffs, FilterInverseCoherentGain, pLPFilterCoeffs, FILTER_LENGTH);
 
                                                     // Normalize 0dB gain for graph
-    SDA_Multiply (pLPFilterCoeffs, 20000.0, pLPFilterCoeffs, FILTER_LENGTH);
-
                     // Display coefficients for each filter
     gpc_plot_2d (h2DPlot,                           // Graph handle
                  pLPFilterCoeffs,                   // Dataset
@@ -233,6 +231,8 @@ void main(void)
                  "blue",                            // Colour
                  GPC_NEW);                          // New graph
     printf ("\nLow-pass Filter Coefficients\nPlease hit <Carriage Return> to continue . . ."); getchar ();
+
+    SDA_Multiply (pLPFilterCoeffs, 10000000.0, pLPFilterCoeffs, FILTER_LENGTH);
 
                     // Display frequency response for each filter
     plot_frequency_domain (pLPFilterCoeffs, SIGLIB_RECTANGLE, "Low-pass Filter Response", FILTER_LENGTH, FFT_LENGTH);

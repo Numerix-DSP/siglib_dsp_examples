@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include "nhl.h"
 
 // Define constants
 #define MAX_SAMPLE_LENGTH       4000
@@ -24,7 +23,7 @@
 // Declare global variables and arrays
 static SLData_t         *pData;                             // DTMF data
 static SLData_t         *pDTMFGenCoeffs;                    // DTMF generator frequency look up table
-static WAV_FILE_INFO    WavInfo;
+static SLWavFileInfo_s  wavFileInfo;
 
 static const char       TextSrcFilename[] = "dtmf.txt";
 static FILE             *fpInputFile;
@@ -66,8 +65,8 @@ void main (void)
         exit (0);
     }
 
-    WavInfo = wav_set_info ((long)8000, (long)FileLength, (short)1, (short)16, (short)2, (short)1);
-    wav_write_header (fpOutputFile, WavInfo);
+    wavFileInfo = SUF_WavSetInfo ((long)8000, (long)FileLength, (short)1, (short)16, (short)2, (short)1);
+    SUF_WavWriteHeader (fpOutputFile, wavFileInfo);
 
     SIF_DtmfGenerate (pDTMFGenCoeffs,               // Generator coefficient look up table pointer
                       SAMPLE_RATE);                 // Sample rate
@@ -88,7 +87,7 @@ void main (void)
                               (SLArrayIndex_t)(Period*SAMPLES_PER_MS));     // Array length
         }
 
-        wav_write_data (pData, fpOutputFile, WavInfo, Period*SAMPLES_PER_MS);
+        SUF_WavWriteData (pData, fpOutputFile, wavFileInfo, Period*SAMPLES_PER_MS);
 
         FileLength += Period*SAMPLES_PER_MS;
     }
@@ -97,9 +96,9 @@ void main (void)
     getchar ();
 
                         // Now update the header to indicate the filelength
-    WavInfo = wav_set_info ((long)8000, (long)FileLength, (short)1, (short)16, (short)2, (short)1);
+    wavFileInfo = SUF_WavSetInfo ((long)8000, (long)FileLength, (short)1, (short)16, (short)2, (short)1);
     rewind (fpOutputFile);
-    wav_write_header (fpOutputFile, WavInfo);
+    SUF_WavWriteHeader (fpOutputFile, wavFileInfo);
 
     fclose (fpInputFile);
     fclose (fpOutputFile);
@@ -110,22 +109,22 @@ void main (void)
         exit (1);
     }
 
-    WavInfo = wav_read_header (fpInputFile);
-    if (WavInfo.NumberOfChannels != 1) {                // Check how many channels
-        printf ("Number of channels in %s = %d\n", WavDstFilename, WavInfo.NumberOfChannels);
+    wavFileInfo = SUF_WavReadHeader (fpInputFile);
+    if (wavFileInfo.NumberOfChannels != 1) {                // Check how many channels
+        printf ("Number of channels in %s = %d\n", WavDstFilename, wavFileInfo.NumberOfChannels);
         printf ("This app requires a mono .wav file\n");
         exit (1);
     }
 
-    wav_display_info (WavInfo);
+    SUF_WavDisplayInfo (wavFileInfo);
     printf ("\n.wav file data. '.' indicates no tone present\n");
     printf ("                '-' indicates signal present but not DTMF\n\n");
 
-    SIF_DtmfDetect (((SLData_t)WavInfo.SampleRate), // Sample rate
+    SIF_DtmfDetect (((SLData_t)wavFileInfo.SampleRate), // Sample rate
                     DTMF_SAMPLE_LENGTH);            // Array length
 
     while ((SampleCount =
-        (SLFixData_t)wav_read_data (pData, fpInputFile, WavInfo, DTMF_SAMPLE_LENGTH)) == DTMF_SAMPLE_LENGTH) {
+        (SLFixData_t)SUF_WavReadData (pData, fpInputFile, wavFileInfo, DTMF_SAMPLE_LENGTH)) == DTMF_SAMPLE_LENGTH) {
 
         NewMax = SDA_Max (pData, DTMF_SAMPLE_LENGTH);   // Detect the peak value of the DTMF signal
         if (NewMax > Max)

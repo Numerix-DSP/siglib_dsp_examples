@@ -39,9 +39,9 @@ void main(int argc, char *argv[])
 
     SDA_Clear (ChannelizationCode, SIGLIB_MAX_SPREADING_FACTOR);
 
-    SDS_ChannelizationCode (ChannelizationCode,                 // Channelization code array
-                            SpreadingFactor,                    // Spreading factor
-                            CodeIndex);                         // Channelization code index
+    SDS_ChannelizationCode (ChannelizationCode,             // Channelization code array
+                            SpreadingFactor,                // Spreading factor
+                            CodeIndex);                     // Channelization code index
 
     printf ("Channelization codes : ");
     for (i = 0; i < SpreadingFactor; i++) {

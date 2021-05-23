@@ -9,12 +9,12 @@
 
 // Include files
 #include <stdio.h>
-#include <siglib.h>                                 // SigLib DSP library
-#include <gnuplot_c.h>                              // Gnuplot/C
+#include <siglib.h>                                     // SigLib DSP library
+#include <gnuplot_c.h>                                  // Gnuplot/C
 
 // Define constants
 #define FFT_LENGTH                  128
-#define LOG2_FFT_LENGTH             7
+#define LOG2_FFT_LENGTH             ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define HIGH_DECIMATE_RATIO         4
 #define LPF_DECIMATE_RATIO          4
 #define SOURCE_BUF_SIZE             (FFT_LENGTH * HIGH_DECIMATE_RATIO * LPF_DECIMATE_RATIO)
@@ -60,10 +60,10 @@ static SLArrayIndex_t   RealDecimatorIndex, ImagDecimatorIndex;
 
 void main(void)
 {
-    h_GPC_Plot  *h2DPlot;                           // Plot object
+    h_GPC_Plot  *h2DPlot;                               // Plot object
     SLData_t    MixFreq;
 
-                                                    // Allocate memory
+                                                        // Allocate memory
     pRealData = SUF_VectorArrayAllocate (INTERMEDIATE_LENGTH);
     pImagData = SUF_VectorArrayAllocate (INTERMEDIATE_LENGTH);
     pInputData = SUF_VectorArrayAllocate (SOURCE_BUF_SIZE);
@@ -73,8 +73,8 @@ void main(void)
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
     pWindowCoeffs = SUF_VectorArrayAllocate (FFT_LENGTH);
 
-    if ((pRealData == NULL) || (pImagData == NULL) || (pInputData == NULL) || (pRealCombFilter == NULL) ||
-        (pImagCombFilter == NULL) || (pSineTable == NULL) || (pFFTCoeffs == NULL) || (pWindowCoeffs == NULL)) {
+    if ((NULL == pRealData) || (NULL == pImagData) || (NULL == pInputData) || (NULL == pRealCombFilter) ||
+        (NULL == pImagCombFilter) || (NULL == pSineTable) || (NULL == pFFTCoeffs) || (NULL == pWindowCoeffs)) {
 
       printf ("\n\nMemory allocation failed\n\n");
       return;
@@ -101,224 +101,224 @@ void main(void)
     scanf ("%lf", &MixFreq);
 #endif
 
-    h2DPlot =                                       // Initialize plot
-        gpc_init_2d ("Zoom-FFT",                    // Plot title
-                     "Time / Frequency",            // X-Axis label
-                     "Magnitude",                   // Y-Axis label
-                     GPC_AUTO_SCALE,                // Scaling mode
-                     GPC_SIGNED,                    // Sign mode
-                     GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    h2DPlot =                                           // Initialize plot
+        gpc_init_2d ("Zoom-FFT",                        // Plot title
+                     "Time / Frequency",                // X-Axis label
+                     "Magnitude",                       // Y-Axis label
+                     GPC_AUTO_SCALE,                    // Scaling mode
+                     GPC_SIGNED,                        // Sign mode
+                     GPC_KEY_DISABLE);                  // Legend / key mode
+    if (NULL == h2DPlot) {
       printf ("\nPlot creation failure.\n");
       exit (1);
     }
 
-                                                    // Initialise FFT
-    SIF_Fft (pFFTCoeffs,                            // Pointer to FFT coefficients
-             SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table - NOT USED
-             FFT_LENGTH);                           // FFT length
+                                                        // Initialise FFT
+    SIF_Fft (pFFTCoeffs,                                // Pointer to FFT coefficients
+             SIGLIB_NULL_ARRAY_INDEX_PTR,               // Pointer to bit reverse address table - NOT USED
+             FFT_LENGTH);                               // FFT length
 
                         // Generate the source spectrum
     SinePhase = SIGLIB_ZERO;
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        SIGLIB_ONE,                 // Signal peak level
-                        SIGLIB_FILL,                // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY,          // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        0.2,                        // Signal peak level
-                        SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY - 0.009,  // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        0.3,                        // Signal peak level
-                        SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY - 0.006,  // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        0.4,                        // Signal peak level
-                        SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY - 0.003,  // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        0.6,                        // Signal peak level
-                        SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY + 0.003,  // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        0.7,                        // Signal peak level
-                        SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY + 0.006,  // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
-    SDA_SignalGenerate (pInputData,                 // Pointer to destination array
-                        SIGLIB_SINE_WAVE,           // Signal type - Sine wave
-                        0.8,                        // Signal peak level
-                        SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
-                        CARRIER_FREQUENCY + 0.009,  // Signal frequency
-                        SIGLIB_ZERO,                // D.C. Offset
-                        SIGLIB_ZERO,                // Unused
-                        SIGLIB_ZERO,                // Signal end value - Unused
-                        &SinePhase,                 // Signal phase - maintained across array boundaries
-                        SIGLIB_NULL_DATA_PTR,       // Unused
-                        SOURCE_BUF_SIZE);           // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        SIGLIB_ONE,                     // Signal peak level
+                        SIGLIB_FILL,                    // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY,              // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        0.2,                            // Signal peak level
+                        SIGLIB_ADD,                     // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY - 0.009,      // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        0.3,                            // Signal peak level
+                        SIGLIB_ADD,                     // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY - 0.006,      // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        0.4,                            // Signal peak level
+                        SIGLIB_ADD,                     // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY - 0.003,      // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        0.6,                            // Signal peak level
+                        SIGLIB_ADD,                     // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY + 0.003,      // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        0.7,                            // Signal peak level
+                        SIGLIB_ADD,                     // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY + 0.006,      // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
+    SDA_SignalGenerate (pInputData,                     // Pointer to destination array
+                        SIGLIB_SINE_WAVE,               // Signal type - Sine wave
+                        0.8,                            // Signal peak level
+                        SIGLIB_ADD,                     // Fill (overwrite) or add to existing array contents
+                        CARRIER_FREQUENCY + 0.009,      // Signal frequency
+                        SIGLIB_ZERO,                    // D.C. Offset
+                        SIGLIB_ZERO,                    // Unused
+                        SIGLIB_ZERO,                    // Signal end value - Unused
+                        &SinePhase,                     // Signal phase - maintained across array boundaries
+                        SIGLIB_NULL_DATA_PTR,           // Unused
+                        SOURCE_BUF_SIZE);               // Output dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pInputData,                        // Dataset
-                 FFT_LENGTH,                        // Dataset length
-                 "Modulated Signal",                // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(FFT_LENGTH - 1),          // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                               // Graph handle
+                 pInputData,                            // Dataset
+                 FFT_LENGTH,                            // Dataset length
+                 "Modulated Signal",                    // Dataset title
+                 SIGLIB_ZERO,                           // Minimum X value
+                 (double)(FFT_LENGTH - 1),              // Maximum X value
+                 "lines",                               // Graph type
+                 "blue",                                // Colour
+                 GPC_NEW);                              // New graph
     printf ("\nModulated Signal\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
-                                                    // Copy for FFT
-    SDA_Copy (pInputData,                           // Pointer to source array
-              pRealData,                            // Pointer to destination array
-              FFT_LENGTH);                          // Dataset length
+                                                        // Copy for FFT
+    SDA_Copy (pInputData,                               // Pointer to source array
+              pRealData,                                // Pointer to destination array
+              FFT_LENGTH);                              // Dataset length
 
-                                                    // Perform real FFT
-    SDA_Rfft (pRealData,                            // Pointer to real array
-              pImagData,                            // Pointer to imaginary array
-              pFFTCoeffs,                           // Pointer to FFT coefficients
-              SIGLIB_NULL_ARRAY_INDEX_PTR,          // Pointer to bit reverse address table - NOT USED
-              FFT_LENGTH,                           // FFT length
-              LOG2_FFT_LENGTH);                     // log2 FFT length
+                                                        // Perform real FFT
+    SDA_Rfft (pRealData,                                // Pointer to real array
+              pImagData,                                // Pointer to imaginary array
+              pFFTCoeffs,                               // Pointer to FFT coefficients
+              SIGLIB_NULL_ARRAY_INDEX_PTR,              // Pointer to bit reverse address table - NOT USED
+              FFT_LENGTH,                               // FFT length
+              LOG2_FFT_LENGTH);                         // log2 FFT length
 
-                                                    // Calculate real magnitude from complex
-    SDA_Magnitude (pRealData,                       // Pointer to real source array
-                   pImagData,                       // Pointer to imaginary source array
-                   pRealData,                       // Pointer to magnitude destination array
-                   FFT_LENGTH);                     // Dataset length
+                                                        // Calculate real magnitude from complex
+    SDA_Magnitude (pRealData,                           // Pointer to real source array
+                   pImagData,                           // Pointer to imaginary source array
+                   pRealData,                           // Pointer to magnitude destination array
+                   FFT_LENGTH);                         // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pRealData,                         // Dataset
-                 FFT_LENGTH,                        // Dataset length
-                 "Modulated Signal Spectrum",       // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(FFT_LENGTH - 1),          // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                               // Graph handle
+                 pRealData,                             // Dataset
+                 FFT_LENGTH,                            // Dataset length
+                 "Modulated Signal Spectrum",           // Dataset title
+                 SIGLIB_ZERO,                           // Minimum X value
+                 (double)(FFT_LENGTH - 1),              // Maximum X value
+                 "lines",                               // Graph type
+                 "blue",                                // Colour
+                 GPC_NEW);                              // New graph
     printf ("\nModulated Signal Spectrum\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
                         // Initialize Zoom FFT
-    SIF_ZoomFft (pRealCombFilter,                   // Pointer to real comb filter state array
-                 &RealCombFilterSum,                // Real comb filter sum
-                 pImagCombFilter,                   // Pointer to imaginary comb filter state array
-                 &ImagCombFilterSum,                // Imaginary comb filter sum
-                 &CombFilterPhase,                  // Comb filter phase
-                 pSineTable,                        // Pointer to sine look-up table
-                 &SineTablePhase,                   // Sine table phase for mixer
-                 &RealDecimatorIndex,               // Pointer to real decimator index
-                 &ImagDecimatorIndex,               // Pointer to imaginary decimator index
-                 &RealLPFIndex,                     // Pointer to real LPF index
-                 &ImagLPFIndex,                     // Pointer to imaginary LPF index
-                 pRealLPFStateArray,                // Pointer to real LPF state array
-                 pImagPFStateArray,                 // Pointer to imaginary LPF state array
-                 pWindowCoeffs,                     // Pointer to window look-up table
-                 pFFTCoeffs,                        // Pointer to FFT coefficient table
-                 SIGLIB_NULL_ARRAY_INDEX_PTR,       // Pointer to bit reverse address table
-                 COMB_FILTER_LENGTH,                // Comb filter length
-                 SINE_BUF_SIZE,                     // Mixer sine table size
-                 LPF_FILTER_LENGTH,                 // FIR filter length
-                 FFT_LENGTH);                       // FFT length
+    SIF_ZoomFft (pRealCombFilter,                       // Pointer to real comb filter state array
+                 &RealCombFilterSum,                    // Real comb filter sum
+                 pImagCombFilter,                       // Pointer to imaginary comb filter state array
+                 &ImagCombFilterSum,                    // Imaginary comb filter sum
+                 &CombFilterPhase,                      // Comb filter phase
+                 pSineTable,                            // Pointer to sine look-up table
+                 &SineTablePhase,                       // Sine table phase for mixer
+                 &RealDecimatorIndex,                   // Pointer to real decimator index
+                 &ImagDecimatorIndex,                   // Pointer to imaginary decimator index
+                 &RealLPFIndex,                         // Pointer to real LPF index
+                 &ImagLPFIndex,                         // Pointer to imaginary LPF index
+                 pRealLPFStateArray,                    // Pointer to real LPF state array
+                 pImagPFStateArray,                     // Pointer to imaginary LPF state array
+                 pWindowCoeffs,                         // Pointer to window look-up table
+                 pFFTCoeffs,                            // Pointer to FFT coefficient table
+                 SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table
+                 COMB_FILTER_LENGTH,                    // Comb filter length
+                 SINE_BUF_SIZE,                         // Mixer sine table size
+                 LPF_FILTER_LENGTH,                     // FIR filter length
+                 FFT_LENGTH);                           // FFT length
                         // Perform Zoom FFT
-    SDA_ZoomFft (pInputData,                        // Pointer to input array
-                 pRealData,                         // Pointer to real result array
-                 pImagData,                         // Pointer to imaginary result array
-                 pRealCombFilter,                   // Pointer to real comb filter state array
-                 &RealCombFilterSum,                // Real comb filter sum
-                 pImagCombFilter,                   // Pointer to imaginary comb filter state array
-                 &ImagCombFilterSum,                // Imaginary comb filter sum
-                 &CombFilterPhase,                  // Comb filter phase
-                 pSineTable,                        // Pointer to sine look-up table
-                 &SineTablePhase,                   // Pointer to sine table phase for mixer
-                 MixFreq,                           // Mix frequency
-                 COMB_FILTER_LENGTH,                // Length of comb filter
-                 SINE_BUF_SIZE,                     // Sine table size for mixer
-                 HIGH_DECIMATE_RATIO,               // High decimation ratio
-                 pRealLPFStateArray,                // Pointer to real LPF state array
-                 pImagPFStateArray,                 // Pointer to imaginary LPF state array
-                 LPFCoefficientArray,               // Pointer to LPF coefficients
-                 &RealDecimatorIndex,               // Pointer to real decimator index
-                 &ImagDecimatorIndex,               // Pointer to imaginary decimator index
-                 &RealLPFIndex,                     // Pointer to real LPF index
-                 &ImagLPFIndex,                     // Pointer to imaginary LPF index
-                 pWindowCoeffs,                     // Pointer to window look-up table
-                 pFFTCoeffs,                        // Pointer to FFT coefficient table
-                 SIGLIB_NULL_ARRAY_INDEX_PTR,       // Pointer to bit reverse address table
-                 SOURCE_BUF_SIZE,                   // Input dataset length
-                 INTERMEDIATE_LENGTH,               // Intermediate dataset length
-                 LPF_FILTER_LENGTH,                 // FIR filter length
-                 LPF_DECIMATE_RATIO,                // FIR decimation ratio
-                 SIGLIB_TRUE,                       // Frequency reverse flag
-                 FFT_LENGTH,                        // FFT length
-                 LOG2_FFT_LENGTH);                  // Log2 FFT length
+    SDA_ZoomFft (pInputData,                            // Pointer to input array
+                 pRealData,                             // Pointer to real result array
+                 pImagData,                             // Pointer to imaginary result array
+                 pRealCombFilter,                       // Pointer to real comb filter state array
+                 &RealCombFilterSum,                    // Real comb filter sum
+                 pImagCombFilter,                       // Pointer to imaginary comb filter state array
+                 &ImagCombFilterSum,                    // Imaginary comb filter sum
+                 &CombFilterPhase,                      // Comb filter phase
+                 pSineTable,                            // Pointer to sine look-up table
+                 &SineTablePhase,                       // Pointer to sine table phase for mixer
+                 MixFreq,                               // Mix frequency
+                 COMB_FILTER_LENGTH,                    // Length of comb filter
+                 SINE_BUF_SIZE,                         // Sine table size for mixer
+                 HIGH_DECIMATE_RATIO,                   // High decimation ratio
+                 pRealLPFStateArray,                    // Pointer to real LPF state array
+                 pImagPFStateArray,                     // Pointer to imaginary LPF state array
+                 LPFCoefficientArray,                   // Pointer to LPF coefficients
+                 &RealDecimatorIndex,                   // Pointer to real decimator index
+                 &ImagDecimatorIndex,                   // Pointer to imaginary decimator index
+                 &RealLPFIndex,                         // Pointer to real LPF index
+                 &ImagLPFIndex,                         // Pointer to imaginary LPF index
+                 pWindowCoeffs,                         // Pointer to window look-up table
+                 pFFTCoeffs,                            // Pointer to FFT coefficient table
+                 SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table
+                 SOURCE_BUF_SIZE,                       // Input dataset length
+                 INTERMEDIATE_LENGTH,                   // Intermediate dataset length
+                 LPF_FILTER_LENGTH,                     // FIR filter length
+                 LPF_DECIMATE_RATIO,                    // FIR decimation ratio
+                 SIGLIB_TRUE,                           // Frequency reverse flag
+                 FFT_LENGTH,                            // FFT length
+                 LOG2_FFT_LENGTH);                      // Log2 FFT length
 
-                                                    // Calculate real magnitude from complex
-    SDA_Magnitude (pRealData,                       // Pointer to real source array
-                   pImagData,                       // Pointer to imaginary source array
-                   pRealData,                       // Pointer to magnitude destination array
-                   FFT_LENGTH);                     // Dataset length
+                                                        // Calculate real magnitude from complex
+    SDA_Magnitude (pRealData,                           // Pointer to real source array
+                   pImagData,                           // Pointer to imaginary source array
+                   pRealData,                           // Pointer to magnitude destination array
+                   FFT_LENGTH);                         // Dataset length
 
-                                                    // Swap FFT halves to centralize mix frequency
-    SDA_FftShift (pRealData,                        // Pointer to source array
-                  pRealData,                        // Pointer to destination array
-                  FFT_LENGTH);                      // Dataset length
+                                                        // Swap FFT halves to centralize mix frequency
+    SDA_FftShift (pRealData,                            // Pointer to source array
+                  pRealData,                            // Pointer to destination array
+                  FFT_LENGTH);                          // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pRealData,                         // Dataset
-                 FFT_LENGTH,                        // Dataset length
-                 "Zoomed Spectrum (x16)",           // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (double)(FFT_LENGTH - 1),          // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                               // Graph handle
+                 pRealData,                             // Dataset
+                 FFT_LENGTH,                            // Dataset length
+                 "Zoomed Spectrum (x16)",               // Dataset title
+                 SIGLIB_ZERO,                           // Minimum X value
+                 (double)(FFT_LENGTH - 1),              // Maximum X value
+                 "lines",                               // Graph type
+                 "blue",                                // Colour
+                 GPC_NEW);                              // New graph
     printf ("\nZoomed Spectrum (x16)\n");
 
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
     gpc_close (h2DPlot);
 
-    SUF_MemoryFree (pRealData);                     // Free memory
+    SUF_MemoryFree (pRealData);                         // Free memory
     SUF_MemoryFree (pImagData);
     SUF_MemoryFree (pInputData);
     SUF_MemoryFree (pRealCombFilter);

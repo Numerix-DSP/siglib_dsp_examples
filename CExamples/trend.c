@@ -8,8 +8,8 @@
 
 // Define constants
 #define FFT_LENGTH      512
-#define LOG2_FFT_LENGTH 9
-#define WINDOW_SIZE     FFT_LENGTH
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
+#define WINDOW_LENGTH   FFT_LENGTH
 #define SAMPLE_LENGTH   FFT_LENGTH
 
 // Declare global variables and arrays
@@ -27,7 +27,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -38,7 +38,7 @@ void main(void)
     pImagData = SUF_VectorArrayAllocate (FFT_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
     pResults = SUF_VectorArrayAllocate (FFT_LENGTH);    // RMS result array
-    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_SIZE);  // Window array
+    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_LENGTH);// Window array
     RampPtr = SUF_VectorArrayAllocate (FFT_LENGTH); // Detrend ramp array
 
                                                     // Initialise FFT
@@ -132,8 +132,8 @@ void main(void)
                                                     // Apply window to real data
     SDA_Window (pRealData,                          // Pointer to source array
             pRealData,                              // Pointer to destination array
-            pWindowCoeffs,                          // Pointer to window oefficients
-            WINDOW_SIZE);                           // Window length
+            pWindowCoeffs,                          // Pointer to window coefficients
+            WINDOW_LENGTH);                         // Window length
 
                                                     // Perform real FFT
     SDA_Rfft (pRealData,                            // Pointer to real array
@@ -185,8 +185,8 @@ void main(void)
                                                     // Apply window to real data
     SDA_Window (pRealData,                          // Pointer to source array
             pRealData,                              // Pointer to destination array
-            pWindowCoeffs,                          // Pointer to window oefficients
-            WINDOW_SIZE);                           // Window length
+            pWindowCoeffs,                          // Pointer to window coefficients
+            WINDOW_LENGTH);                         // Window length
 
                                                     // Perform real FFT
     SDA_Rfft (pRealData,                            // Pointer to real array

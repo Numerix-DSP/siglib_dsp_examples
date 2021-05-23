@@ -4,7 +4,6 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>
 
 // Define constants
 #define DST_ARRAY_LENGTH        60                  // Output sample length - allow for growth
@@ -19,7 +18,7 @@ static const SLData_t   SrcDataArray [] =
     31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0,
     41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0,
 };
-static SLData_t     *pDstData,  *pReSizeState;
+static SLData_t     *pDst,      *pReSizeState;
 
 
 void main(void)
@@ -29,7 +28,7 @@ void main(void)
     SLArrayIndex_t  i;
 
                                                     // Allocate arrays
-    pDstData = SUF_VectorArrayAllocate (DST_ARRAY_LENGTH);
+    pDst = SUF_VectorArrayAllocate (DST_ARRAY_LENGTH);
     pReSizeState = SUF_VectorArrayAllocate (STATE_ARRAY_LENGTH);
 
     printf ("Resize test one - short arrays\n");
@@ -40,7 +39,7 @@ void main(void)
     for (i = 0; i < 6; i++) {
         ResultSampleLength =
             SDA_ReSize (SrcDataArray+(i* 7),        // Pointer to source array
-                        pDstData,                   // Pointer to destination array
+                        pDst,                       // Pointer to destination array
                         pReSizeState,               // Pointer to state array
                         &ReSizeStateLength,         // Pointer to state array length
                         7,                          // Source array length
@@ -48,7 +47,7 @@ void main(void)
 
         if (ResultSampleLength == 20) {
             printf ("New output\n");
-            print_buffer (pDstData, 20);
+            SUF_PrintArray (pDst,     20);
         }
     }
 
@@ -61,7 +60,7 @@ void main(void)
 
     ResultSampleLength =
         SDA_ReSize (SrcDataArray,                   // Pointer to source array
-                    pDstData,                       // Pointer to destination array
+                    pDst,                           // Pointer to destination array
                     pReSizeState,                   // Pointer to state array
                     &ReSizeStateLength,             // Pointer to state array length
                     7,                              // Source array length
@@ -71,7 +70,7 @@ void main(void)
 
     ResultSampleLength =
         SDA_ReSize (SrcDataArray+7,                 // Pointer to source array
-                    pDstData,                       // Pointer to destination array
+                    pDst,                           // Pointer to destination array
                     pReSizeState,                   // Pointer to state array
                     &ReSizeStateLength,             // Pointer to state array length
                     25,                             // Source array length
@@ -80,11 +79,11 @@ void main(void)
     printf ("ResultSampleLength = %d\n", ResultSampleLength);
 
     printf ("New output\n");
-    print_buffer (pDstData, 20);
+    SUF_PrintArray (pDst,     20);
 
     ResultSampleLength =
         SDA_ReSize (SrcDataArray+32,                // Pointer to source array
-                    pDstData,                       // Pointer to destination array
+                    pDst,                           // Pointer to destination array
                     pReSizeState,                   // Pointer to state array
                     &ReSizeStateLength,             // Pointer to state array length
                     10,                             // Source array length
@@ -93,7 +92,7 @@ void main(void)
     printf ("ResultSampleLength = %d\n", ResultSampleLength);
 
     printf ("New output\n");
-    print_buffer (pDstData, 20);
+    SUF_PrintArray (pDst,     20);
 
     printf ("\nPlease hit <Carriage Return> to continue . . . \n");
     getchar ();
@@ -109,18 +108,18 @@ void main(void)
                          16);                       // Source array length
 
         while ((ResultSampleLength =
-                SDA_ReSizeOutput (pDstData,         // Pointer to destination array
+                SDA_ReSizeOutput (pDst,             // Pointer to destination array
                             pReSizeState,           // Pointer to state array
                             &ReSizeStateLength,     // Pointer to state array length
                             7))                     // Destination array length
                     == 7) {
 
             printf ("New output\n");
-            print_buffer (pDstData, 7);
+            SUF_PrintArray (pDst,     7);
         }
     }
 
-    SUF_MemoryFree (pDstData);                      // Free memory
+    SUF_MemoryFree (pDst);                      // Free memory
     SUF_MemoryFree (pReSizeState);
 }
 

@@ -14,7 +14,7 @@
             // Initialise filter coefficients
 static const SLData_t   SourceData[LONG_SAMPLE_LENGTH] = {
     -3.78, 2.89, -4.94, 5.26, 8.19, 1.22, -1.69, 2.18, -2.65, 6.05, 3.34
-    };
+};
 
 static SLData_t     SortedData[LONG_SAMPLE_LENGTH], MedianWorkArray[LONG_SAMPLE_LENGTH];
 
@@ -31,7 +31,7 @@ void main(void)
 
     SDA_SortMinToMax (SourceData,                   // Pointer to source array
                       SortedData,                   // Pointer to destination array
-                      LONG_SAMPLE_LENGTH);              // Array length
+                      LONG_SAMPLE_LENGTH);          // Array length
 
     printf ("\n\n");
                                                     // Print sorted data
@@ -43,7 +43,7 @@ void main(void)
     Median =
         SDA_Median (SourceData,                     // Pointer to source array
                     MedianWorkArray,                // Pointer to internal working array
-                    LONG_SAMPLE_LENGTH);                    // Array length
+                    LONG_SAMPLE_LENGTH);            // Array length
 
     printf ("Median = %lf\n", Median);
 
@@ -55,7 +55,7 @@ void main(void)
 
     SDA_SortMinToMax (SourceData,                   // Pointer to source array
                       SortedData,                   // Pointer to destination array
-                      SHORT_SAMPLE_LENGTH);             // Array length
+                      SHORT_SAMPLE_LENGTH);         // Array length
 
     printf ("\n\n");
                                                     // Print sorted data
@@ -67,7 +67,7 @@ void main(void)
     Median =
         SDA_Median (SourceData,                     // Pointer to source array
                     MedianWorkArray,                // Pointer to internal working array
-                    SHORT_SAMPLE_LENGTH);                   // Array length
+                    SHORT_SAMPLE_LENGTH);           // Array length
 
     printf ("Median = %lf\n", Median);
 }

@@ -13,7 +13,7 @@
 #define NEW_IIR_GAIN            SIGLIB_ONE          // New IIR filter gain
 #define IMPULSE_RESPONSE_LENGTH 1024
 #define FFT_LENGTH              IMPULSE_RESPONSE_LENGTH
-#define LOG2_FFT_LENGTH         10
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define PLOT_LENGTH             (IMPULSE_RESPONSE_LENGTH/2)
 
 // Declare global variables and arrays
@@ -47,8 +47,8 @@ void main (void)
     pSrc1 = SUF_VectorArrayAllocate (IMPULSE_RESPONSE_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
-    if ((pNewIIRCoeffs == NULL) || (pRealData == NULL) || (pImagData == NULL) || (pResults == NULL) ||
-        (pSrc1 == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pNewIIRCoeffs) || (NULL == pRealData) || (NULL == pImagData) || (NULL == pResults) ||
+        (NULL == pSrc1) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
@@ -61,7 +61,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

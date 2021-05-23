@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>                                    // Numerix host library
 #include <gnuplot_c.h>                              // Gnuplot/C
 
 #define SAMPLE_LENGTH       60000                   // Declare enough memory for entire audio sequence
@@ -16,7 +15,7 @@
 
 static char             WavFilename[256];
 
-static WAV_FILE_INFO    WavInfo;
+static SLWavFileInfo_s  wavInfo;
 
 
 static SLData_t         *pDataArray, *pPowerArray;
@@ -38,7 +37,7 @@ int main (int argc, char *argv[])
     h2DDualPlot =                                   // Initialize plot
         gpc_init_2d_dual_plot ("Plot wave",         // Plot title
                                GPC_KEY_ENABLE);     // Legend / key mode
-    if (h2DDualPlot == NULL) {
+    if (NULL == h2DDualPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -52,8 +51,8 @@ int main (int argc, char *argv[])
     pEnvTempDelay = SUF_VectorArrayAllocate (FILTER_GROUP_DELAY);
     pTempAnalytical = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
 
-    if ((pDataArray == NULL) || (pPowerArray == NULL) || (pEnvFilterCoeffs == NULL) || (pEnvFilterState == NULL) ||
-        (pEnvDelay == NULL) || (pEnvTempDelay == NULL) || (pTempAnalytical == NULL)) {
+    if ((NULL == pDataArray) || (NULL == pPowerArray) || (NULL == pEnvFilterCoeffs) || (NULL == pEnvFilterState) ||
+        (NULL == pEnvDelay) || (NULL == pEnvTempDelay) || (NULL == pTempAnalytical)) {
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
     }
@@ -73,14 +72,14 @@ int main (int argc, char *argv[])
         exit (1);
     }
 
-    WavInfo = wav_read_header (fpInputFile);
-    if (WavInfo.NumberOfChannels != 1) {            // Check how many channels
-        printf ("Number of channels in %s = %d\n", WavFilename, WavInfo.NumberOfChannels);
+    wavInfo = SUF_WavReadHeader (fpInputFile);
+    if (wavInfo.NumberOfChannels != 1) {            // Check how many channels
+        printf ("Number of channels in %s = %d\n", WavFilename, wavInfo.NumberOfChannels);
         printf ("This app requires a mono .wav file\n");
         exit (1);
     }
 
-    wav_display_info (WavInfo);
+    SUF_WavDisplayInfo (wavInfo);
 
     SIF_EnvelopeHilbert (pEnvFilterCoeffs,          // Pointer to Hilbert transform filter coefficient array
                          pEnvFilterState,           // Pointer to filter state array
@@ -92,9 +91,9 @@ int main (int argc, char *argv[])
 
     OnePoleCoeff =
         SDS_OnePoleTimeConstantToFilterCoeff (1.,                   // Attack / decay rate (ms)
-                                              WavInfo.SampleRate);  // Sample rate
+                                              wavInfo.SampleRate);  // Sample rate
 
-    SampleCount = wav_read_data (pDataArray, fpInputFile, WavInfo, SAMPLE_LENGTH);
+    SampleCount = SUF_WavReadData (pDataArray, fpInputFile, wavInfo, SAMPLE_LENGTH);
 
     printf ("wav read sample count = %d\n", SampleCount);
 
@@ -132,7 +131,7 @@ int main (int argc, char *argv[])
         gpc_plot_2d_dual_plot (h2DDualPlot,                         // Graph handle
                                "Time (sec)",                        // X-Axis label
                                SIGLIB_ZERO,                         // Minimum X value
-                               (double)(SampleCount - 1) / (double)(WavInfo.SampleRate),    // Maximum X value
+                               (double)(SampleCount - 1) / (double)(wavInfo.SampleRate),    // Maximum X value
                                pDataArray,                          // Dataset #1
                                "Input Signal",                      // Dataset #1 title
                                "lines",                             // Graph type #1

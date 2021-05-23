@@ -24,31 +24,29 @@
 
 // Include files
 #include <stdio.h>
-#include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>
-#include <gnuplot_c.h>                              // Gnuplot/C
+#include <siglib.h>                                         // SigLib DSP library
+#include <gnuplot_c.h>                                      // Gnuplot/C
 
 // Define constants
-#define DEBUG           0                           // Set to 0 for no debug
-#define SAMPLE_RATE     10000.                      // 10 KHz
-#define INPUT_LENGTH    150                         // Input dataset length
+#define DEBUG           0                                   // Set to 0 for no debug
+#define SAMPLE_RATE     10000.                              // 10 KHz
+#define INPUT_LENGTH    150                                 // Input dataset length
 #define OUTPUT_LENGTH   100
-#define WINDOW_SIZE     INPUT_LENGTH
 #define FFT_LENGTH      256
-#define LOG2_FFT_LENGTH 8
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 // Declare global variables and arrays
 static SLData_t         Radius, Decay, StartFreq, EndFreq;
 static SLComplexPolar_s ContourStart;
 static SLComplexRect_s  temp;
 
-static SLData_t         deltaomega, deltasigma;     // Variables used to calculate W
+static SLData_t         deltaomega, deltasigma;             // Variables used to calculate W
 static SLData_t         phinc, w1inc, w2inc;
 
-static SLComplexRect_s  A_1, W1, W_1, W12, W_12;    // Complex contour coeffs
+static SLComplexRect_s  A_1, W1, W_1, W12, W_12;            // Complex contour coeffs
 
 static SLData_t         *pInput, *pResults;
-static SLData_t         *pRealData, *pImagData, *pWindowCoeffs, *pFFTCoeffs;
+static SLData_t         *pRealData, *pImagData, *pFFTCoeffs;
 
 static SLData_t         *pAWNr, *pAWNi, *pvLr, *pvLi, *pWMr, *pWMi;
 static SLData_t         *pCZTRealWork, *pCZTImagWork;
@@ -59,13 +57,12 @@ void main(void)
 {
     int         waveformChoice;
 
-    h_GPC_Plot  *h2DPlot;                           // Plot object
+    h_GPC_Plot  *h2DPlot;                                   // Plot object
     static FILE *fpInputFile;
 
     pInput = SUF_VectorArrayAllocate (INPUT_LENGTH);
     pRealData = SUF_VectorArrayAllocate (FFT_LENGTH);
     pImagData = SUF_VectorArrayAllocate (FFT_LENGTH);
-    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_SIZE);
 
     pAWNr = SUF_VectorArrayAllocate (INPUT_LENGTH);
     pAWNi = SUF_VectorArrayAllocate (INPUT_LENGTH);
@@ -83,9 +80,9 @@ void main(void)
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
 
-    if ((pInput == NULL) || (pRealData == NULL) || (pImagData == NULL) || (pWindowCoeffs == NULL) ||
-        (pAWNr == NULL) || (pAWNi == NULL) || (pvLr == NULL) || (pvLi == NULL) ||
-        (pWMr == NULL) || (pWMi == NULL) || (pResults == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pInput) || (NULL == pRealData) || (NULL == pImagData) ||
+        (NULL == pAWNr) || (NULL == pAWNi) || (NULL == pvLr) || (NULL == pvLi) ||
+        (NULL == pWMr) || (NULL == pWMi) || (NULL == pResults) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMalloc failed\n\n");
         exit (0);
@@ -143,7 +140,7 @@ void main(void)
             }
     }
 
-    sig_read_data (pInput, fpInputFile, INPUT_LENGTH);  // Read data from disk
+    SUF_SigReadData (pInput, fpInputFile, INPUT_LENGTH);    // Read data from disk
     fclose (fpInputFile);
 
     printf ("\n\nEnter radius (r>0.9) >");
@@ -158,14 +155,14 @@ void main(void)
     printf ("\n\nEnter end_freq >");
     scanf ("%lf", &EndFreq);
 
-    getchar ();                             // Clear the CR in the pipeline
+    getchar ();                                             // Clear the CR in the pipeline
 
-                                            // Calculate A0 values
+                                                            // Calculate A0 values
     ContourStart = SCV_Polar (Radius, (StartFreq / SAMPLE_RATE) * SIGLIB_TWO_PI);
     temp = SCV_PolarToRectangular (ContourStart);
     A_1 = SCV_Inverse (temp);
 
-                                            // Calculate W0 values - W^(N^2/2)
+                                                            // Calculate W0 values - W^(N^2/2)
     deltaomega = (EndFreq - StartFreq) / ((SLData_t)OUTPUT_LENGTH - SIGLIB_ONE);
     deltasigma = Decay;
 
@@ -174,13 +171,13 @@ void main(void)
     w2inc = SDS_Sqrt (w1inc);
 
 
-    W1.real = w1inc * SDS_Cos (phinc);                                  // W
+    W1.real = w1inc * SDS_Cos (phinc);                      // W
     W1.imag = w1inc * sin (phinc);
 
-    W12.real = w2inc * SDS_Cos (phinc / SIGLIB_TWO);                    // W^(1/2)
+    W12.real = w2inc * SDS_Cos (phinc / SIGLIB_TWO);        // W^(1/2)
     W12.imag = w2inc * SDS_Sin (phinc / SIGLIB_TWO);
 
-    W_1.real = (SIGLIB_ONE / w1inc) * SDS_Cos (-phinc);                 // W^(-1)
+    W_1.real = (SIGLIB_ONE / w1inc) * SDS_Cos (-phinc);     // W^(-1)
     W_1.imag = (SIGLIB_ONE / w1inc) * SDS_Sin (-phinc);
 
     W_12.real = (SIGLIB_ONE / w2inc) * SDS_Cos (-phinc / SIGLIB_TWO);   // W^(-1/2)
@@ -207,148 +204,147 @@ void main(void)
     getchar ();
 #endif
 
-    h2DPlot =                                       // Initialize plot
-        gpc_init_2d ("Chirp z-Transform",           // Plot title
-                     "Time / Frequency",            // X-Axis label
-                     "Magnitude",                   // Y-Axis label
-                     GPC_AUTO_SCALE,                // Scaling mode
-                     GPC_SIGNED,                    // Sign mode
-                     GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    h2DPlot =                                               // Initialize plot
+        gpc_init_2d ("Chirp z-Transform",                   // Plot title
+                     "Time / Frequency",                    // X-Axis label
+                     "Magnitude",                           // Y-Axis label
+                     GPC_AUTO_SCALE,                        // Scaling mode
+                     GPC_SIGNED,                            // Sign mode
+                     GPC_KEY_ENABLE);                       // Legend / key mode
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
-                                                    // Initialise FFT
-    SIF_Fft (pFFTCoeffs,                            // Pointer to FFT coefficients
-             SIGLIB_NULL_ARRAY_INDEX_PTR,           // Pointer to bit reverse address table - NOT USED
-             FFT_LENGTH);                           // FFT length
-                                                    // Gen. complex window coeffs
-    SIF_Awn (pAWNr,                                 // Real coefficient pointer
-             pAWNi,                                 // Imaginary coefficient pointer
-             A_1,                                   // A ^ (-1)
-             W1,                                    // W
-             W12,                                   // W^(1/2)
-             INPUT_LENGTH);                         // Dataset length
-                                                    // Gen. contour definition coeffs
-    SIF_Vl (pvLr,                                   // Real coefficient pointer
-            pvLi,                                   // Imaginary coefficient pointer
-            W_1,                                    // W^(-1)
-            W_12,                                   // W^(-1/2)
-            INPUT_LENGTH,                           // Input dataset length
-            OUTPUT_LENGTH,                          // Output dataset length
-            FFT_LENGTH);                            // FFT dataset length
-                                                    // Gen. weighting coeffs
-    SIF_Wm (pWMr,                                   // Real coefficient pointer
-            pWMi,                                   // Imaginary coefficient pointer
-            W1,                                     // W
-            W12,                                    // W^(1/2)
-            OUTPUT_LENGTH);                         // Dataset length
+                                                            // Initialise FFT
+    SIF_Fft (pFFTCoeffs,                                    // Pointer to FFT coefficients
+             SIGLIB_NULL_ARRAY_INDEX_PTR,                   // Pointer to bit reverse address table - NOT USED
+             FFT_LENGTH);                                   // FFT length
+                                                            // Gen. complex window coeffs
+    SIF_Awn (pAWNr,                                         // Real coefficient pointer
+             pAWNi,                                         // Imaginary coefficient pointer
+             A_1,                                           // A ^ (-1)
+             W1,                                            // W
+             W12,                                           // W^(1/2)
+             INPUT_LENGTH);                                 // Dataset length
+                                                            // Gen. contour definition coeffs
+    SIF_Vl (pvLr,                                           // Real coefficient pointer
+            pvLi,                                           // Imaginary coefficient pointer
+            W_1,                                            // W^(-1)
+            W_12,                                           // W^(-1/2)
+            INPUT_LENGTH,                                   // Input dataset length
+            OUTPUT_LENGTH,                                  // Output dataset length
+            FFT_LENGTH);                                    // FFT dataset length
+                                                            // Gen. weighting coeffs
+    SIF_Wm (pWMr,                                           // Real coefficient pointer
+            pWMi,                                           // Imaginary coefficient pointer
+            W1,                                             // W
+            W12,                                            // W^(1/2)
+            OUTPUT_LENGTH);                                 // Dataset length
 
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pInput,                            // Dataset
-                 INPUT_LENGTH,                      // Dataset length
-                 "Source Signal",                   // Dataset title
-                 SIGLIB_ZERO,                       // Minimum X value
-                 (((double)INPUT_LENGTH - 1) / SAMPLE_RATE), // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pInput,                                    // Dataset
+                 INPUT_LENGTH,                              // Dataset length
+                 "Source Signal",                           // Dataset title
+                 SIGLIB_ZERO,                               // Minimum X value
+                 (((double)INPUT_LENGTH - 1) / SAMPLE_RATE),// Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nSource Signal\nPlease hit <Carriage Return> to continue . . ."); getchar ();
 
-                                                    // Ensure zero padded samples
-    SDA_Clear (pCZTRealWork,                        // Pointer to destination array
-               FFT_LENGTH);                         // Dataset length
-    SDA_Clear (pCZTImagWork,                        // Pointer to destination array
-               FFT_LENGTH);                         // Dataset length
+                                                            // Ensure zero padded samples
+    SDA_Clear (pCZTRealWork,                                // Pointer to destination array
+               FFT_LENGTH);                                 // Dataset length
+    SDA_Clear (pCZTImagWork,                                // Pointer to destination array
+               FFT_LENGTH);                                 // Dataset length
 
-                                                    // Complex window = complex mpy with real data
-    SDA_ComplexWindow (pInput,                      // Pointer to real source array
-                       pInput,                      // Pointer to imaginary source array
-                       pCZTRealWork,                // Pointer to real destination array
-                       pCZTImagWork,                // Pointer to imaginary destination array
-                       pAWNr,                       // Real window array pointer
-                       pAWNi,                       // Imaginary window array pointer
-                       INPUT_LENGTH);               // Window size
+                                                            // Complex window = complex mpy with real data
+    SDA_ComplexWindow (pInput,                              // Pointer to real source array
+                       pInput,                              // Pointer to imaginary source array
+                       pCZTRealWork,                        // Pointer to real destination array
+                       pCZTImagWork,                        // Pointer to imaginary destination array
+                       pAWNr,                               // Real window array pointer
+                       pAWNi,                               // Imaginary window array pointer
+                       INPUT_LENGTH);                       // Window size
 
-                                                    // Frequency domain convolution
-    SDA_Cfft (pCZTRealWork,                         // Pointer to real array
-              pCZTImagWork,                         // Pointer to imaginary array
-              pFFTCoeffs,                           // Pointer to FFT coefficients
-              SIGLIB_NULL_ARRAY_INDEX_PTR,          // Pointer to bit reverse address table - NOT USED
-              FFT_LENGTH,                           // FFT length
-              LOG2_FFT_LENGTH);                     // log2 FFT length
+                                                            // Frequency domain convolution
+    SDA_Cfft (pCZTRealWork,                                 // Pointer to real array
+              pCZTImagWork,                                 // Pointer to imaginary array
+              pFFTCoeffs,                                   // Pointer to FFT coefficients
+              SIGLIB_NULL_ARRAY_INDEX_PTR,                  // Pointer to bit reverse address table - NOT USED
+              FFT_LENGTH,                                   // FFT length
+              LOG2_FFT_LENGTH);                             // log2 FFT length
 
-    SDA_ComplexMultiply2 (pCZTRealWork,             // Pointer to real source array 1
-                          pCZTImagWork,             // Pointer to imaginary source array 1
-                          pvLr,                     // Pointer to real source array 2
-                          pvLi,                     // Pointer to imaginary source array 2
-                          pCZTRealWork,             // Pointer to real destination array
-                          pCZTImagWork,             // Pointer to imaginary destination array
-                          FFT_LENGTH);              // Dataset lengths
+    SDA_ComplexMultiply2 (pCZTRealWork,                     // Pointer to real source array 1
+                          pCZTImagWork,                     // Pointer to imaginary source array 1
+                          pvLr,                             // Pointer to real source array 2
+                          pvLi,                             // Pointer to imaginary source array 2
+                          pCZTRealWork,                     // Pointer to real destination array
+                          pCZTImagWork,                     // Pointer to imaginary destination array
+                          FFT_LENGTH);                      // Dataset lengths
 
-                                                    // IFFT
-    SDA_Cifft (pCZTRealWork,                        // Pointer to real array
-               pCZTImagWork,                        // Pointer to imaginary array
-               pFFTCoeffs,                          // Pointer to FFT coefficients
-               SIGLIB_NULL_ARRAY_INDEX_PTR,         // Pointer to bit reverse address table - NOT USED
-               FFT_LENGTH,                          // FFT length
-               LOG2_FFT_LENGTH);                    // log2 FFT length
+                                                            // IFFT
+    SDA_Cifft (pCZTRealWork,                                // Pointer to real array
+               pCZTImagWork,                                // Pointer to imaginary array
+               pFFTCoeffs,                                  // Pointer to FFT coefficients
+               SIGLIB_NULL_ARRAY_INDEX_PTR,                 // Pointer to bit reverse address table - NOT USED
+               FFT_LENGTH,                                  // FFT length
+               LOG2_FFT_LENGTH);                            // log2 FFT length
 
-                                                    // Complex multiply
-    SDA_ComplexMultiply2 (pWMr,                     // Pointer to real source array 1
-                          pWMi,                     // Pointer to imaginary source array 1
-                          pCZTRealWork,             // Pointer to real source array 2
-                          pCZTImagWork,             // Pointer to imaginary source array 2
-                          pRealData,                // Pointer to real destination array
-                          pImagData,                // Pointer to imaginary destination array
-                          OUTPUT_LENGTH);           // Dataset lengths
+                                                            // Complex multiply
+    SDA_ComplexMultiply2 (pWMr,                             // Pointer to real source array 1
+                          pWMi,                             // Pointer to imaginary source array 1
+                          pCZTRealWork,                     // Pointer to real source array 2
+                          pCZTImagWork,                     // Pointer to imaginary source array 2
+                          pRealData,                        // Pointer to real destination array
+                          pImagData,                        // Pointer to imaginary destination array
+                          OUTPUT_LENGTH);                   // Dataset lengths
 
-                                                    // Scale chirp z-transform results
-    SDA_ComplexScalarDivide (pRealData,             // Pointer to real source array
-                             pImagData,             // Pointer to imaginary source array
+                                                            // Scale chirp z-transform results
+    SDA_ComplexScalarDivide (pRealData,                     // Pointer to real source array
+                             pImagData,                     // Pointer to imaginary source array
                              (SLData_t)(INPUT_LENGTH * FFT_LENGTH), // Divisor
-                             pRealData,             // Pointer to real destination array
-                             pImagData,             // Pointer to imaginary destination array
-                             OUTPUT_LENGTH);        // Dataset lengths
+                             pRealData,                     // Pointer to real destination array
+                             pImagData,                     // Pointer to imaginary destination array
+                             OUTPUT_LENGTH);                // Dataset lengths
 
 
-                                                    // Calculate real magnitude from complex
-    SDA_Magnitude (pRealData,                       // Pointer to real source array
-                   pImagData,                       // Pointer to imaginary source array
-                   pResults,                        // Pointer to magnitude destination array
-                   OUTPUT_LENGTH);                  // Dataset length
-                                                    // Scale results so peaks equal 100.0
-    SDA_Scale (pResults,                            // Pointer to source array
-               pResults,                            // Pointer to destination array
-               100.,                                // Peak level
-               OUTPUT_LENGTH);                      // Dataset length
-                                                    // dB scaling
-    SDA_20Log10 (pResults,                          // Pointer to source array
-                 pResults,                          // Pointer to destination array
-                 OUTPUT_LENGTH);                    // Dataset length
+                                                            // Calculate real magnitude from complex
+    SDA_Magnitude (pRealData,                               // Pointer to real source array
+                   pImagData,                               // Pointer to imaginary source array
+                   pResults,                                // Pointer to magnitude destination array
+                   OUTPUT_LENGTH);                          // Dataset length
+                                                            // Scale results so peaks equal 100.0
+    SDA_Scale (pResults,                                    // Pointer to source array
+               pResults,                                    // Pointer to destination array
+               100.,                                        // Peak level
+               OUTPUT_LENGTH);                              // Dataset length
+                                                            // dB scaling
+    SDA_20Log10 (pResults,                                  // Pointer to source array
+                 pResults,                                  // Pointer to destination array
+                 OUTPUT_LENGTH);                            // Dataset length
 
-    gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pResults,                          // Dataset
-                 OUTPUT_LENGTH,                     // Dataset length
-                 "chirp z-Transform",               // Dataset title
-                 StartFreq,                         // Minimum X value
-                 EndFreq,                           // Maximum X value
-                 "lines",                           // Graph type
-                 "blue",                            // Colour
-                 GPC_NEW);                          // New graph
+    gpc_plot_2d (h2DPlot,                                   // Graph handle
+                 pResults,                                  // Dataset
+                 OUTPUT_LENGTH,                             // Dataset length
+                 "chirp z-Transform",                       // Dataset title
+                 StartFreq,                                 // Minimum X value
+                 EndFreq,                                   // Maximum X value
+                 "lines",                                   // Graph type
+                 "blue",                                    // Colour
+                 GPC_NEW);                                  // New graph
     printf ("\nchirp z-Transform\n");
 
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
     gpc_close (h2DPlot);
 
-    fclose (fpInputFile);                           // Close input file
+    fclose (fpInputFile);                                   // Close input file
 
-    SUF_MemoryFree (pInput);                        // Free memory
+    SUF_MemoryFree (pInput);                                // Free memory
     SUF_MemoryFree (pRealData);
     SUF_MemoryFree (pImagData);
-    SUF_MemoryFree (pWindowCoeffs);
     SUF_MemoryFree (pAWNr);
     SUF_MemoryFree (pAWNi);
     SUF_MemoryFree (pvLr);

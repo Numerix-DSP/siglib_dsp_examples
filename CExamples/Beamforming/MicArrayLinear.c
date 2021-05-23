@@ -34,7 +34,7 @@ int main (void)
                         GAIN_MIN,                       // Minimum gain value (dB)
                         GAIN_MAX,                       // Maximum gain value (dB)
                         GPC_KEY_ENABLE);                // Legend / key mode
-    if (hPolarPlot == NULL) {
+    if (NULL == hPolarPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

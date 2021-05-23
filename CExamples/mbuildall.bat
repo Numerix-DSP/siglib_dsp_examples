@@ -1,6 +1,6 @@
 @echo off
 
-rem Batch file to build all the examples using the free Microsoft Visual Studio compiler
+rem Batch file to build all the examples using the free Microsoft Visual Studio compiler 64 bit
 
 call mb 180det
 call mb adpcm
@@ -20,6 +20,7 @@ call mb ChanCode
 call mb chirp_3d
 call mb chirp-z
 call mb chirp-z2
+call mb clipping
 call mb comb1
 call mb comb2
 call mb complex
@@ -27,11 +28,11 @@ call mb ComplexInterp
 call mb compshft
 call mb convolve
 call mb ConvolveComplex
-call mb copyovl
+call mb CopyWithOverlap
 call mb cornu_s
-call mb corr1
-call mb corr2
-call mb corr3
+call mb correlate1
+call mb correlate2
+call mb correlate3
 call mb costasl
 call mb covar
 call mb datatype
@@ -59,6 +60,7 @@ call mb envelope
 call mb envelope-hilbert
 call mb envelope-hilbert-simple
 call mb envelope-rms
+call mb EuclideanDistance
 call mb evm
 call mb FDConCor
 call mb FDFilt
@@ -108,8 +110,8 @@ call mb iirshft2
 call mb iirshft3
 call mb iirspln
 call mb IntDiff
-call mb interp
-call mb intleave
+call mb interleave
+call mb interpolation
 call mb inv_fir
 call mb isquare
 call mb kurtosis
@@ -136,6 +138,7 @@ call mb multiplx
 call mb NonCaus
 call mb Offset
 call mb OnePole
+call mb OnePoleCutOffFrequency
 call mb OnePoleTimeConstant
 call mb OrdNIIR
 call mb ovl_add
@@ -170,12 +173,15 @@ call mb round
 call mb sc-ofdm
 call mb sequence
 call mb sgram
+call mb shuffle
 call mb sig_gen
 call mb sig_gen_s
 call mb sine_fft
 call mb sinpower
 call mb sinx_x
+call mb sort
 call mb spec_inv
+call mb SpeedOfSoundInAir
 call mb stats
 call mb sortswap
 call mb SyncAsyn

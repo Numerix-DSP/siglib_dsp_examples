@@ -10,7 +10,6 @@
 #include <string.h>
 #include <siglib.h>                                 // SigLib DSP library
 #include <gnuplot_c.h>                              // Gnuplot/C
-#include <nhl.h>                                    // Numerix host library
 #include "Tx_FIR.h"                                 // Transmitter FIR low-pass filter
 
 // Define constants
@@ -78,7 +77,7 @@ static SLData_t         OutputArray[SAMPLE_LENGTH];
 
 static SLData_t         GaussianNoisePhase, GaussianNoiseValue; // Variables for injecting noise
 
-static WAV_FILE_INFO    WavInfo;
+static SLWavFileInfo_s  wavInfo;
 static SLFixData_t      TxDiBit;
 
 #if DISPLAY_TIME_DOMAIN
@@ -112,7 +111,7 @@ void main (void)
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
 
-    if (h2DPlot == NULL) {                          // Graph creation failed - e.g is server running ?
+    if (NULL == h2DPlot) {                          // Graph creation failed - e.g is server running ?
         printf ("Graph creation failure. Please check that the server is running\n");
         exit (1);
     }
@@ -123,7 +122,7 @@ void main (void)
 
                                                     // Initialise QPSK functions
     SIF_PiByFourDQpskModulate (pCarrierTable,                       // Carrier table pointer
-                               CARRIER_TABLE_FREQ / SAMPLE_RATE,    // Carrier frequency
+                               CARRIER_TABLE_FREQ / SAMPLE_RATE,    // Carrier phase increment per sample (radians / 2π)
                                CARRIER_SINE_TABLE_SIZE,             // Carrier sine table size
                                &TxCarrierPhase,                     // Carrier phase pointer
                                &TxSampleClock,                      // Sample clock pointer
@@ -148,8 +147,8 @@ void main (void)
         exit (1);
     }
 
-    WavInfo = wav_set_info (SAMPLE_RATE, 0, (short)1, (short)16, (short)2, (short)1);
-    wav_write_header (fpo, WavInfo);                // Write the header information
+    wavInfo = SUF_WavSetInfo ((int)SAMPLE_RATE, 0, (short)1, (short)16, (short)2, (short)1);
+    SUF_WavWriteHeader (fpo, wavInfo);                // Write the header information
 
     GaussianNoisePhase = SIGLIB_ZERO;
 
@@ -176,9 +175,9 @@ void main (void)
 #endif
                 SUF_MemoryFree (pCarrierTable);             // Free memory
 
-                WavInfo.NumberOfSamples = TotalSampleCount; // Set total data length
+                wavInfo.NumberOfSamples = TotalSampleCount; // Set total data length
                 rewind (fpo);                               // Rewind pointer to start of file
-                wav_write_header (fpo, WavInfo);            // Overwrite the header information
+                SUF_WavWriteHeader (fpo, wavInfo);            // Overwrite the header information
 
                 printf ("Total Tx Sample Count = %d\n", TotalSampleCount);
 
@@ -226,7 +225,7 @@ void main (void)
                          TX_PRE_FILTER_LENGTH,              // Filter length
                          SYMBOL_LENGTH);                    // Dataset length
 
-                wav_write_data (OutputArray, fpo, WavInfo, SYMBOL_LENGTH);
+                SUF_WavWriteData (OutputArray, fpo, wavInfo, SYMBOL_LENGTH);
                 TotalSampleCount += SYMBOL_LENGTH;
 
 #if DISPLAY_TIME_DOMAIN
@@ -252,8 +251,8 @@ void main (void)
 #endif
     SUF_MemoryFree (pCarrierTable);                 // Free memory
 
-    WavInfo.NumberOfSamples = TotalSampleCount;     // Set total data length
-    wav_write_header (fpo, WavInfo);                // Overwrite the header information
+    wavInfo.NumberOfSamples = TotalSampleCount;     // Set total data length
+    SUF_WavWriteHeader (fpo, wavInfo);                // Overwrite the header information
 
     fclose (fpi);                                   // Close files
     fclose (fpo);
@@ -299,7 +298,7 @@ void inject_noise (FILE *fpo)
                  TX_PRE_FILTER_LENGTH,              // Filter length
                  SYMBOL_LENGTH);                    // Dataset length
 
-        wav_write_data (OutputArray, fpo, WavInfo, SAMPLE_LENGTH);
+        SUF_WavWriteData (OutputArray, fpo, wavInfo, SAMPLE_LENGTH);
     }
 
     SDA_SignalGenerate (OutputArray,                // Pointer to destination array
@@ -335,7 +334,7 @@ void inject_noise (FILE *fpo)
              TX_PRE_FILTER_LENGTH,                  // Filter length
              SYMBOL_LENGTH);                        // Dataset length
 
-    wav_write_data (OutputArray, fpo, WavInfo, 100);
+    SUF_WavWriteData (OutputArray, fpo, wavInfo, 100);
 }
 
 

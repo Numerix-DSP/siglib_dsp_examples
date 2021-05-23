@@ -12,7 +12,7 @@
 #define ALPHA                   0.99
 
 // Declare global variables and arrays
-static SLData_t     *pSrcData, *pDstData;           // Dataset pointers
+static SLData_t     *pSrc, *pDst;                   // Dataset pointers
 static SLData_t     SinePhase;
 
 void main (void)
@@ -26,8 +26,14 @@ void main (void)
     SLData_t    PreviousInput = SIGLIB_ZERO;
     SLData_t    PreviousOutput = SIGLIB_ZERO;
 
-    pSrcData = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
-    pDstData = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
+    pSrc = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
+    pDst = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
+
+    if ((NULL == pSrc) || (NULL == pDst)) {
+
+        printf ("\n\nMemory allocation failed\n\n");
+        exit (0);
+    }
 
     h2DPlot =                                       // Initialize plot
         gpc_init_2d ("D.C. Removal",                // Plot title
@@ -36,14 +42,14 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
     SinePhase = SIGLIB_ZERO;
 
-    SDA_SignalGenerate (pSrcData,                   // Pointer to destination array
+    SDA_SignalGenerate (pSrc,                       // Pointer to destination array
                         SIGLIB_SINE_WAVE,           // Signal type - Sine wave
                         0.9,                        // Signal peak level
                         SIGLIB_FILL,                // Fill (overwrite) or add to existing array contents
@@ -56,7 +62,7 @@ void main (void)
                         SAMPLE_LENGTH);             // Output dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pSrcData,                          // Dataset
+                 pSrc,                              // Dataset
                  SAMPLE_LENGTH,                     // Dataset length
                  "Source Signal",                   // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -78,8 +84,8 @@ void main (void)
     pSrc -= SAMPLE_LENGTH;
     pDst -= SAMPLE_LENGTH;
 #else
-    SDA_IirRemoveDC (pSrcData,                         // Pointer to input array
-                  pDstData,                         // Pointer to destination array
+    SDA_IirRemoveDC (pSrc,                             // Pointer to input array
+                  pDst,                             // Pointer to destination array
                   &PreviousInput,                   // Previous input sample
                   &PreviousOutput,                  // Previous output sample
                   ALPHA,                            // Convergence rate
@@ -87,7 +93,7 @@ void main (void)
 #endif
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pDstData,                          // Dataset
+                 pDst,                              // Dataset
                  SAMPLE_LENGTH,                     // Dataset length
                  "D.C. Removed Signal",             // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -99,8 +105,8 @@ void main (void)
     printf ("\nHit <Carriage Return> to continue ....\n"); getchar (); // Wait for <Carriage Return>
     gpc_close (h2DPlot);
 
-    SUF_MemoryFree (pSrcData);                      // Free memory
-    SUF_MemoryFree (pDstData);
+    SUF_MemoryFree (pSrc);                          // Free memory
+    SUF_MemoryFree (pDst);
 }
 
 

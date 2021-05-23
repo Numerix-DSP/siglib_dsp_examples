@@ -16,7 +16,6 @@
 #define LPF_FILTER_LENGTH       27
 #define SAMPLE_LENGTH           256
 #define FFT_LENGTH              256
-#define LOG2_FFT_LENGTH         8
 
 // Declare global variables and arrays
 // Initialise filter coefficients
@@ -54,6 +53,13 @@ void main(void)
     modulated = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
     demodulated = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
 
+    if ((NULL == pInput) || (NULL == pCarrierTable) || (NULL == modulated) ||
+        (NULL == demodulated)) {
+
+        printf ("\n\nMemory allocation failure\n\n");
+        exit (0);
+    }
+
     h2DPlot =                                       // Initialize plot
         gpc_init_2d ("Amplitude Modulation / Demodulation",   // Plot title
                      "Time",                        // X-Axis label
@@ -61,7 +67,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

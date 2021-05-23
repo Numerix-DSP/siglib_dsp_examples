@@ -8,12 +8,11 @@
 #include <siglib_host_utils.h>                      // Optionally includes conio.h and time.h subset functions
 #include <string.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include <nhl.h>
 #include <gnuplot_c.h>                              // Gnuplot/C
 
 // Define constants
 #define FFT_LENGTH              512
-#define LOG2_FFT_LENGTH         9
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define HALF_FFT_LENGTH         (FFT_LENGTH >> 1)
 
 // Declare global variables and arrays
@@ -78,7 +77,7 @@ void main (int argc, char **argv)
                          GPC_AUTO_SCALE,            // Scaling mode
                          GPC_SIGNED,                // Sign mode
                          GPC_KEY_ENABLE);           // Legend / key mode
-        if (hSpectrogram == NULL) {
+        if (NULL == hSpectrogram) {
             printf ("\nPlot creation failure.\n");
             exit (1);
         }
@@ -96,7 +95,7 @@ void main (int argc, char **argv)
                                   1.0,                      // Maximum Z value
                                   GPC_COLOUR,               // Colour mode
                                   GPC_KEY_ENABLE);          // Legend / key mode
-        if (hSpectrogram == NULL) {
+        if (NULL == hSpectrogram) {
             printf ("\nPlot creation failure.\n");
             exit (1);
         }
@@ -117,7 +116,7 @@ void main (int argc, char **argv)
     i = 0;
 
 
-    while ((sig_read_data (pInputData, fpInputFile, FFT_LENGTH) != 0) && !_kbhit()) {
+    while ((SUF_SigReadData (pInputData, fpInputFile, FFT_LENGTH) != 0) && !_kbhit()) {
                                                             // Apply the overlap to the data
         while (SDA_CopyWithOverlap (pInputData,             // Pointer to source array
                                     pProcessData,           // Pointer to destination array
@@ -135,7 +134,7 @@ void main (int argc, char **argv)
                                                     // Apply window to real data
             SDA_Window (pProcessData,               // Pointer to source array
                         pProcessData,               // Pointer to destination array
-                        pWindowCoeffs,              // Pointer to window oefficients
+                        pWindowCoeffs,              // Pointer to window coefficients
                         FFT_LENGTH);                // Window length
 
                                                     // Perform real FFT

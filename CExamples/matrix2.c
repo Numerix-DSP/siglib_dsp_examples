@@ -7,7 +7,6 @@
 // Include files
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
-#include "nhl.h"
 
 // Define constants
 #define NUMBER_OF_ROWS          3       // Number of rows and columns in matrix
@@ -22,10 +21,10 @@
 // Declare global variables and arrays
 
 static SLData_t SrcMatrix [MAX_DIMENSION][MAX_DIMENSION] = {
-    { 0.0,  1.0,  2.0,  3.0},
-    { 4.0,  5.0,  6.0,  7.0},
-    { 8.0,  9.0, 10.0, 11.0},
-    {12.0, 13.0, 14.0, 15.0}
+    { 1.0,  2.0,  3.0,  4.0},
+    { 5.0,  6.0,  7.0,  8.0},
+    { 9.0, 10.0, 11.0, 12.0},
+    {13.0, 14.0, 15.0, 16.0}
 };
 
 static SLData_t DstMatrix1 [NUMBER_OF_ROWS][NUMBER_OF_COLUMNS] = {
@@ -43,18 +42,18 @@ static SLData_t DstMatrix2 [MAX_DIMENSION+1][MAX_DIMENSION+1] = {
 };
 
 static SLData_t InsertMatrix [] = {
-    1.0, 2.0, 3.0, 4.0, 5.0
+    81.0, 82.0, 83.0, 84.0, 85.0
 };
 
 static SLData_t LargeSrcMatrix [LARGE_ARRAY_DIMENSION][LARGE_ARRAY_DIMENSION] = {
-    { 0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0},
-    {10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0},
-    {20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0},
-    {30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0},
-    {40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0},
-    {50.0, 51.0, 52.0, 53.0, 54.0, 55.0, 56.0, 57.0},
-    {60.0, 61.0, 62.0, 63.0, 64.0, 65.0, 66.0, 67.0},
-    {70.0, 71.0, 72.0, 73.0, 74.0, 75.0, 76.0, 77.0}
+    { 1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0},
+    {11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0},
+    {21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0},
+    {31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0},
+    {41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0},
+    {51.0, 52.0, 53.0, 54.0, 55.0, 56.0, 57.0, 58.0},
+    {61.0, 62.0, 63.0, 64.0, 65.0, 66.0, 67.0, 68.0},
+    {71.0, 72.0, 73.0, 74.0, 75.0, 76.0, 77.0, 78.0}
 };
 
 
@@ -63,8 +62,9 @@ void main (void)
 {
     SLArrayIndex_t  i;
 
+
     printf ("Source matrix 1\n");
-    print_matrix ((SLData_t *)SrcMatrix, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS);
+    SUF_PrintMatrix ((SLData_t *)SrcMatrix, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS);
 
                     // Transpose
     printf ("Not in-place transpose\n");
@@ -72,17 +72,17 @@ void main (void)
                    (SLData_t *)DstMatrix1,          // Pointer to destination matrix
                    NUMBER_OF_ROWS,                  // Source matrix # of rows
                    NUMBER_OF_COLUMNS);              // Source matrix # cols
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
                     // In place
     printf ("Source matrix 2\n");
-    print_matrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
     printf ("In-place transpose\n");
     SMX_Transpose ((SLData_t *)SrcMatrix,           // Pointer to source matrix
                    (SLData_t *)SrcMatrix,           // Pointer to destination matrix
                    MAX_DIMENSION,                   // Source matrix # of rows
                    MAX_DIMENSION);                  // Source matrix # cols
-    print_matrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
 
                     // Re-set Source matrix
     SMX_Transpose ((SLData_t *)SrcMatrix,           // Pointer to source matrix
@@ -96,7 +96,7 @@ void main (void)
                          (SLData_t *)DstMatrix1,    // Pointer to destination matrix
                          NUMBER_OF_ROWS,            // Number of rows in matrix
                          NUMBER_OF_COLUMNS);        // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
                     // Rotate anti-clockwise
     printf ("Source matrix 1 rotated Anti-clockwise\n");
@@ -104,7 +104,7 @@ void main (void)
                              (SLData_t *)DstMatrix1,// Pointer to destination matrix
                              NUMBER_OF_ROWS,        // Number of rows in matrix
                              NUMBER_OF_COLUMNS);    // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
                     // Rotate clockwise
     printf ("Source matrix 2 rotated clockwise\n");
@@ -112,7 +112,7 @@ void main (void)
                          (SLData_t *)DstMatrix1,    // Pointer to destination matrix
                          MAX_DIMENSION,             // Number of rows in matrix
                          MAX_DIMENSION);            // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
 
                     // Rotate anti-clockwise
     printf ("Source matrix 2 rotated Anti-clockwise\n");
@@ -120,7 +120,7 @@ void main (void)
                              (SLData_t *)DstMatrix1,// Pointer to destination matrix
                              MAX_DIMENSION,         // Number of rows in matrix
                              MAX_DIMENSION);        // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
 
     printf ("Hit <Carriage Return> to continue . . .\n"); getchar ();
 
@@ -140,11 +140,11 @@ void main (void)
                         (SLData_t *)DstMatrix2,     // Pointer to destination matrix
                         MAX_DIMENSION);             // Longtst dimension (Row or column) in matrix
     printf ("Modified matrix 2\n");
-    print_matrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
 
 
     printf ("Source matrix 1\n");
-    print_matrix ((SLData_t *)SrcMatrix, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS);
+    SUF_PrintMatrix ((SLData_t *)SrcMatrix, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS);
 
     printf ("Sum of columns in source matrix 1\n");
     SMX_Sum ((SLData_t *)SrcMatrix,                 // Pointer to source matrix
@@ -181,7 +181,7 @@ void main (void)
     printf ("Hit <Carriage Return> to continue . . .\n"); getchar ();
 
     printf ("Matrix 2\n");
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
     printf ("Inserted row #3 into source matrix 1\n");
     SMX_InsertRow ((SLData_t *)DstMatrix1,          // Pointer to source matrix
@@ -191,7 +191,7 @@ void main (void)
                    NUMBER_OF_ROWS_T,                // Number of rows in matrix
                    NUMBER_OF_COLUMNS_T);            // Number of columns in matrix
     printf ("Modified matrix 2\n");
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
     printf ("Inserted column #2 into source matrix 1\n");
     SMX_InsertColumn ((SLData_t *)DstMatrix1,       // Pointer to source matrix
@@ -201,19 +201,19 @@ void main (void)
                       NUMBER_OF_ROWS_T,             // Number of rows in matrix
                       NUMBER_OF_COLUMNS_T);         // Number of columns in matrix
     printf ("Modified matrix 2\n");
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
     printf ("Hit <Carriage Return> to continue . . .\n"); getchar ();
 
     printf ("Original - Odd length\n");
-    print_matrix ((SLData_t *)LargeSrcMatrix, 5, 5);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, 5, 5);
 
     printf ("Reflect - Odd length\n");
     SMX_Reflect ((SLData_t *)LargeSrcMatrix,        // Pointer to source matrix
                  (SLData_t *)LargeSrcMatrix,        // Pointer to destination matrix
                  5,                                 // Number of rows in matrix
                  5);                                // Number of columns in matrix
-    print_matrix ((SLData_t *)LargeSrcMatrix, 5, 5);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, 5, 5);
     SMX_Reflect ((SLData_t *)LargeSrcMatrix,        // Pointer to source matrix
                  (SLData_t *)LargeSrcMatrix,        // Pointer to destination matrix
                  5,                                 // Number of rows in matrix
@@ -224,21 +224,21 @@ void main (void)
               (SLData_t *)LargeSrcMatrix,           // Pointer to destination matrix
               5,                                    // Number of rows in matrix
               5);                                   // Number of columns in matrix
-    print_matrix ((SLData_t *)LargeSrcMatrix, 5, 5);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, 5, 5);
     SMX_Flip ((SLData_t *)LargeSrcMatrix,           // Pointer to source matrix
               (SLData_t *)LargeSrcMatrix,           // Pointer to destination matrix
               5,                                    // Number of rows in matrix
               5);                                   // Number of columns in matrix
 
     printf ("Original - Even length\n");
-    print_matrix ((SLData_t *)LargeSrcMatrix, 6, 6);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, 6, 6);
 
     printf ("Reflect - Even length\n");
     SMX_Reflect ((SLData_t *)LargeSrcMatrix,        // Pointer to source matrix
                  (SLData_t *)LargeSrcMatrix,        // Pointer to destination matrix
                  6,                                 // Number of rows in matrix
                  6);                                // Number of columns in matrix
-    print_matrix ((SLData_t *)LargeSrcMatrix, 6, 6);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, 6, 6);
     SMX_Reflect ((SLData_t *)LargeSrcMatrix,        // Pointer to source matrix
                  (SLData_t *)LargeSrcMatrix,        // Pointer to destination matrix
                  6,                                 // Number of rows in matrix
@@ -249,7 +249,7 @@ void main (void)
               (SLData_t *)LargeSrcMatrix,           // Pointer to destination matrix
               6,                                    // Number of rows in matrix
               6);                                   // Number of columns in matrix
-    print_matrix ((SLData_t *)LargeSrcMatrix, 6, 6);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, 6, 6);
     SMX_Flip ((SLData_t *)LargeSrcMatrix,           // Pointer to source matrix
               (SLData_t *)LargeSrcMatrix,           // Pointer to destination matrix
               6,                                    // Number of rows in matrix
@@ -260,9 +260,9 @@ void main (void)
 
     printf ("Region Insert / Extract\n");
     printf ("Original matrix\n");
-    print_matrix ((SLData_t *)LargeSrcMatrix, LARGE_ARRAY_DIMENSION, LARGE_ARRAY_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, LARGE_ARRAY_DIMENSION, LARGE_ARRAY_DIMENSION);
     printf ("Matrix to insert\n");
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
     printf ("Inserting modified matrix 2 into large matrix at (3,4)\n");
     SMX_InsertRegion ((SLData_t *)LargeSrcMatrix,   // Pointer to source matrix
@@ -274,7 +274,7 @@ void main (void)
                       NUMBER_OF_COLUMNS_T,          // Number of columns in new data matrix
                       LARGE_ARRAY_DIMENSION,        // Number of rows in matrix
                       LARGE_ARRAY_DIMENSION);       // Number of columns in matrix
-    print_matrix ((SLData_t *)LargeSrcMatrix, LARGE_ARRAY_DIMENSION, LARGE_ARRAY_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)LargeSrcMatrix, LARGE_ARRAY_DIMENSION, LARGE_ARRAY_DIMENSION);
 
     printf ("Extracting region from large matrix from (2,3)\n");
     SMX_ExtractRegion ((SLData_t *)LargeSrcMatrix,  // Pointer to source matrix
@@ -285,13 +285,14 @@ void main (void)
                        NUMBER_OF_COLUMNS_T,         // Number of columns in region to extract
                        LARGE_ARRAY_DIMENSION);      // Number of columns in matrix
     printf ("Extracted region\n");
-    print_matrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, NUMBER_OF_ROWS_T, NUMBER_OF_COLUMNS_T);
 
 
     printf ("Hit <Carriage Return> to continue . . .\n"); getchar ();
 
+
     printf ("Source matrix 1\n");
-    print_matrix ((SLData_t *)SrcMatrix, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS);
+    SUF_PrintMatrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
 
     printf ("Insert new row - 0\n");
     SMX_InsertNewRow ((SLData_t *)SrcMatrix,        // Pointer to source matrix
@@ -300,15 +301,15 @@ void main (void)
                       0,                            // Row to insert new data into
                       MAX_DIMENSION,                // Number of rows in matrix
                       MAX_DIMENSION);               // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix2, MAX_DIMENSION+1, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION+1, MAX_DIMENSION);
 
     printf ("Delete old row - 0\n");
     SMX_DeleteOldRow ((SLData_t *)DstMatrix2,       // Pointer to source matrix
-                      (SLData_t *)DstMatrix1,       // Pointer to destination matrix
+                      (SLData_t *)DstMatrix2,       // Pointer to destination matrix
                       0,                            // Row number to delete
                       MAX_DIMENSION+1,              // Number of rows in matrix
                       MAX_DIMENSION);               // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
 
     printf ("Insert new row - 2\n");
     SMX_InsertNewRow ((SLData_t *)SrcMatrix,        // Pointer to source matrix
@@ -317,15 +318,32 @@ void main (void)
                       2,                            // Row to insert new data into
                       MAX_DIMENSION,                // Number of rows in matrix
                       MAX_DIMENSION);               // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix2, MAX_DIMENSION+1, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION+1, MAX_DIMENSION);
 
     printf ("Delete old row - 2\n");
     SMX_DeleteOldRow ((SLData_t *)DstMatrix2,       // Pointer to source matrix
-                      (SLData_t *)DstMatrix1,       // Pointer to destination matrix
+                      (SLData_t *)DstMatrix2,       // Pointer to destination matrix
                       2,                            // Row number to delete
                       MAX_DIMENSION+1,              // Number of rows in matrix
                       MAX_DIMENSION);               // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
+
+    printf ("Insert new row - 4\n");
+    SMX_InsertNewRow ((SLData_t *)SrcMatrix,        // Pointer to source matrix
+                      (SLData_t *)InsertMatrix,     // New data to insert into row
+                      (SLData_t *)DstMatrix2,       // Pointer to destination matrix
+                      4,                            // Row to insert new data into
+                      MAX_DIMENSION,                // Number of rows in matrix
+                      MAX_DIMENSION);               // Number of columns in matrix
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION+1, MAX_DIMENSION);
+
+    printf ("Delete old row - 4\n");
+    SMX_DeleteOldRow ((SLData_t *)DstMatrix2,       // Pointer to source matrix
+                      (SLData_t *)DstMatrix2,       // Pointer to destination matrix
+                      4,                            // Row number to delete
+                      MAX_DIMENSION+1,              // Number of rows in matrix
+                      MAX_DIMENSION);               // Number of columns in matrix
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
 
 
     printf ("Insert new column - 0\n");
@@ -335,15 +353,15 @@ void main (void)
                          0,                         // Column to insert new data into
                          MAX_DIMENSION,             // Number of rows in matrix
                          MAX_DIMENSION);            // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION+1);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION+1);
 
     printf ("Delete old column - 0\n");
     SMX_DeleteOldColumn ((SLData_t *)DstMatrix2,    // Pointer to source matrix
-                         (SLData_t *)DstMatrix1,    // Pointer to destination matrix
+                         (SLData_t *)DstMatrix2,    // Pointer to destination matrix
                          0,                         // Column number to delete
                          MAX_DIMENSION,             // Number of rows in matrix
                          MAX_DIMENSION+1);          // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
 
     printf ("Insert new column - 2\n");
     SMX_InsertNewColumn ((SLData_t *)SrcMatrix,     // Pointer to source matrix
@@ -352,21 +370,38 @@ void main (void)
                          2,                         // Column to insert new data into
                          MAX_DIMENSION,             // Number of rows in matrix
                          MAX_DIMENSION);            // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION+1);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION+1);
 
     printf ("Delete old column - 2\n");
     SMX_DeleteOldColumn ((SLData_t *)DstMatrix2,    // Pointer to source matrix
-                         (SLData_t *)DstMatrix1,    // Pointer to destination matrix
+                         (SLData_t *)DstMatrix2,    // Pointer to destination matrix
                          2,                         // Column number to delete
                          MAX_DIMENSION,             // Number of rows in matrix
                          MAX_DIMENSION+1);          // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
+
+    printf ("Insert new column - 4\n");
+    SMX_InsertNewColumn ((SLData_t *)SrcMatrix,     // Pointer to source matrix
+                         (SLData_t *)InsertMatrix,  // New data to insert into column
+                         (SLData_t *)DstMatrix2,    // Pointer to destination matrix
+                         4,                         // Column to insert new data into
+                         MAX_DIMENSION,             // Number of rows in matrix
+                         MAX_DIMENSION);            // Number of columns in matrix
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION+1);
+
+    printf ("Delete old column - 4\n");
+    SMX_DeleteOldColumn ((SLData_t *)DstMatrix2,    // Pointer to source matrix
+                         (SLData_t *)DstMatrix2,    // Pointer to destination matrix
+                         4,                         // Column number to delete
+                         MAX_DIMENSION,             // Number of rows in matrix
+                         MAX_DIMENSION+1);          // Number of columns in matrix
+    SUF_PrintMatrix ((SLData_t *)DstMatrix2, MAX_DIMENSION, MAX_DIMENSION);
 
 
     printf ("Hit <Carriage Return> to continue . . .\n"); getchar ();
 
     printf ("Source matrix 1\n");
-    print_matrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)SrcMatrix, MAX_DIMENSION, MAX_DIMENSION);
 
     printf ("Swapping rows 1 and 3\n");
     SMX_SwapRows ((SLData_t *)SrcMatrix,            // Pointer to source matrix
@@ -375,7 +410,7 @@ void main (void)
                   3,                                // Row number 2 to swap
                   MAX_DIMENSION,                    // Number of rows in matrix
                   MAX_DIMENSION);                   // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
 
     printf ("Swapping columns 1 and 3\n");
     SMX_SwapColumns ((SLData_t *)SrcMatrix,         // Pointer to source matrix
@@ -384,7 +419,7 @@ void main (void)
                      3,                             // Column number 2 to swap
                      MAX_DIMENSION,                 // Number of rows in matrix
                      MAX_DIMENSION);                // Number of columns in matrix
-    print_matrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
+    SUF_PrintMatrix ((SLData_t *)DstMatrix1, MAX_DIMENSION, MAX_DIMENSION);
 
 }
 

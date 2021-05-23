@@ -109,8 +109,8 @@ void   main(void)
     pCostasLpLPF2State = SUF_VectorArrayAllocate (COSTAS_LP_LPF_LENGTH);
     pVCOLookUpTable = SUF_CostasLoopVCOArrayAllocate (VCO_SINE_TABLE_SIZE);
 
-    if ((pData == NULL) || (pCarrierTable == NULL) || (pCostasLpLPFCoeffs == NULL) || (pCostasLpLPF1State == NULL) ||
-        (pCostasLpLPF2State == NULL) || (pVCOLookUpTable == NULL)) {
+    if ((NULL == pData) || (NULL == pCarrierTable) || (NULL == pCostasLpLPFCoeffs) || (NULL == pCostasLpLPF1State) ||
+        (NULL == pCostasLpLPF2State) || (NULL == pVCOLookUpTable)) {
 
         printf ("Memory allocation failure\n\n");
     }
@@ -129,7 +129,7 @@ void   main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -137,7 +137,7 @@ void   main(void)
 #if DISPLAY_DEBUG_INFO
     DebugArrayOffset = 0;
     SDA_Clear (DebugArray,                          // Pointer to destination array
-    SAMPLE_LENGTH);                      // Dataset length
+    SAMPLE_LENGTH);                                 // Dataset length
 #endif
 #if DISPLAY_BIT_PATTERN
     SUF_ClearDebugfprintf ();
@@ -148,15 +148,15 @@ void   main(void)
 #endif
 
     SIF_BpskModulate (pCarrierTable,                        // Carrier table pointer
-    (CARRIER_TABLE_FREQ / SAMPLE_RATE),   // Carrier frequency
-    &SampleCount,                         // Transmitter sample count - tracks samples
-    CARRIER_SINE_TABLE_SIZE);             // Carrier sine table size
+                      (CARRIER_TABLE_FREQ / SAMPLE_RATE),   // Carrier phase increment per sample (radians / 2π)
+                      &SampleCount,                         // Transmitter sample count - tracks samples
+                      CARRIER_SINE_TABLE_SIZE);             // Carrier sine table size
 
 
     SIF_BpskDemodulate (&CostasLpVCOPhase,          // VCO phase
                         pVCOLookUpTable,            // VCO look up table
                         VCO_SINE_TABLE_SIZE,        // VCO look up table size
-                        CARRIER_FREQ / SAMPLE_RATE, // Carrier frequency
+                        CARRIER_FREQ / SAMPLE_RATE, // Carrier phase increment per sample (radians / 2π)
                         pCostasLpLPF1State,         // Pointer to loop filter 1 state
                         &CostasLpLPF1Index,         // Pointer to loop filter 1 index
                         pCostasLpLPF2State,         // Pointer to loop filter 2 state
@@ -168,7 +168,7 @@ void   main(void)
                         &RxSampleClock,             // Pointer to Rx sample clock
                         &RxSampleSum);              // Pointer to Rx sample sum - used to decide which bit was Tx'd
 
-    TxCarrierPhase = SIGLIB_ZERO;           // Initialise BPSK transmitter phase
+    TxCarrierPhase = SIGLIB_ZERO;                   // Initialise BPSK transmitter phase
     // The phase of the transmitter can be rotated by changing this value
 
     // Clear demodulated data input array - This is important because we are going to be ORing in the received bits

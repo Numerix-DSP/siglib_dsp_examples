@@ -71,6 +71,10 @@ echo chirp-z2
 pause
 chirp-z2
 
+echo clipping
+pause
+clipping
+
 echo comb1
 pause
 comb1
@@ -99,23 +103,23 @@ echo ConvolveComplex
 pause
 ConvolveComplex
 
-echo copyovl
+echo CopyWithOverlap
 pause
-copyovl
+CopyWithOverlap
 
 echo cornu_s
 pause
 cornu_s
 
-echo corr1
+echo correlate1
 pause
 corr1
 
-echo corr2
+echo correlate2
 pause
 corr2
 
-echo corr3
+echo correlate3
 pause
 corr3
 
@@ -222,6 +226,10 @@ envelope-hilbert-simple
 echo envelope-rms
 pause
 envelope-rms
+
+echo EuclideanDistance
+pause
+EuclideanDistance
 
 echo evm
 pause
@@ -415,13 +423,13 @@ echo IntDiff
 pause
 IntDiff
 
-echo interp
+echo interleave
 pause
-interp
+interleave
 
-echo intleave
+echo interpolation
 pause
-intleave
+interpolation
 
 echo inv_fir
 pause
@@ -526,6 +534,10 @@ Offset
 echo OnePole
 pause
 OnePole
+
+echo OnePoleCutOffFrequency
+pause
+OnePoleCutOffFrequency
 
 echo OnePoleTimeConstant
 pause
@@ -663,6 +675,10 @@ echo sgram
 pause
 sgram
 
+echo shuffle
+pause
+shuffle
+
 echo sig_gen
 pause
 sig_gen
@@ -683,9 +699,17 @@ echo sinx_x
 pause
 sinx_x
 
+echo sort
+pause
+sort
+
 echo spec_inv
 pause
 spec_inv
+
+echo SpeedOfSoundInAir
+pause
+SpeedOfSoundInAir
 
 echo stats
 pause

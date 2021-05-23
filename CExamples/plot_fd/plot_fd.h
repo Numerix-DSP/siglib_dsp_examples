@@ -64,8 +64,8 @@ SLError_t plot_frequency_domain (SLData_t *pSrc,
     pFDPResults = SUF_VectorArrayAllocate (DFTLength);          // Results data array
     pWindowCoeffs = SUF_VectorArrayAllocate (DFTLength);        // Window coeffs data array
 
-    if ((pFDPSrcReal == NULL) || (pFDPRealData == NULL) || (pFDPImagData == NULL) || (pFDPResults == NULL) ||
-        (pWindowCoeffs == NULL)) {
+    if ((NULL == pFDPSrcReal) || (NULL == pFDPRealData) || (NULL == pFDPImagData) || (NULL == pFDPResults) ||
+        (NULL == pWindowCoeffs)) {
         printf ("Memory allocation error ...\n");
         return (SIGLIB_MEM_ALLOC_ERROR);
     }
@@ -81,7 +81,7 @@ SLError_t plot_frequency_domain (SLData_t *pSrc,
       FirstTimeFlag = 0;
     }
 
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("Graph creation error ...\n");
         return (SIGLIB_ERROR);                      // Graph creation failed
     }
@@ -212,8 +212,8 @@ SLError_t plot_complex_frequency_domain (SLData_t *pSrcReal,
     pFDPResults = SUF_VectorArrayAllocate (DFTLength);          // Results data array
     pWindowCoeffs = SUF_VectorArrayAllocate (DFTLength);        // Window coeffs data array
 
-    if ((pFDPSrcReal == NULL) || (pFDPSrcImag == NULL) || (pFDPRealData == NULL) || (pFDPImagData == NULL) || (pFDPResults == NULL) ||
-        (pWindowCoeffs == NULL)) {
+    if ((NULL == pFDPSrcReal) || (NULL == pFDPSrcImag) || (NULL == pFDPRealData) || (NULL == pFDPImagData) || (NULL == pFDPResults) ||
+        (NULL == pWindowCoeffs)) {
         printf ("Memory allocation error ...\n");
         return (SIGLIB_MEM_ALLOC_ERROR);
     }
@@ -229,7 +229,7 @@ SLError_t plot_complex_frequency_domain (SLData_t *pSrcReal,
       FirstTimeFlag = 0;
     }
 
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("Graph creation error ...\n");
         return (SIGLIB_ERROR);                      // Graph creation failed
     }
@@ -343,7 +343,7 @@ SLError_t plot_frequency_magnitude (SLData_t *pSrcReal,
 
     pFDPResults = SUF_VectorArrayAllocate (DFTLength);  // Results data array
 
-    if (pFDPResults == NULL) {
+    if (NULL == pFDPResults) {
         printf ("Memory allocation error ...\n");
         return (SIGLIB_MEM_ALLOC_ERROR);
     }
@@ -359,7 +359,7 @@ SLError_t plot_frequency_magnitude (SLData_t *pSrcReal,
         FirstTimeFlag = 0;
     }
 
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("Graph creation error ...\n");
         return (SIGLIB_ERROR);                      // Graph creation failed
     }
@@ -408,7 +408,7 @@ SLError_t plot_time_domain (SLData_t *pSrcReal,
         FirstTimeFlag = 0;
     }
 
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("Graph creation error ...\n");
         return (SIGLIB_ERROR);                      // Graph creation failed
     }
@@ -452,7 +452,7 @@ SLError_t plot_complex_time_domain (SLData_t *pSrcReal,
           FirstTimeFlag = 0;
     }
 
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("Graph creation error ...\n");
         return (SIGLIB_ERROR);                      // Graph creation failed
     }

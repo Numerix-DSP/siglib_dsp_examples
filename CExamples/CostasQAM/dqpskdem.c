@@ -24,7 +24,6 @@
 #include <string.h>
 #include <siglib.h>                                 // SigLib DSP library
 #include <gnuplot_c.h>                              // Gnuplot/C
-#include <nhl.h>                                    // Header for .wav file I/O functions
 #include "../plot_fd/plot_fd.h"                     // Frequency domain plots
 #include <dpchar.h>
 #include "Rx_FIR.h"                                 // Demodulator pre-filter to reduce the out-of-band noise.
@@ -213,37 +212,37 @@ static const SLFixData_t ConstellationPointDeltaDibits[2*CONSTELLATION_POINTS] =
 };
 
 
-static SLData_t     *pData;                         // Processing array
+static SLData_t         *pData;                         // Processing array
 
 
                                     // Data for synchronization detector
-#define SYNCH_SEQUENCE_WORD_LEN 2                               // Process dibits
-#define SYNCH_SEQUENCE_LEN  14                                  // Number of bits in synch sequence length
-static SLFixData_t      SynchSequence = 0x0147e;                // Synchronization sequence - 01,0100,0111,1110
-static SLFixData_t      SynchSequenceBitMask;                   // Bit synch. mask
-static SLFixData_t      SynchSequenceDetectorState;             // State variable for bit synch. detector
-static SLArrayIndex_t   SynchDetectedFlag;                      // Flag set to >= 0 when synch detected
+#define SYNCH_SEQUENCE_WORD_LEN 2                       // Process dibits
+#define SYNCH_SEQUENCE_LEN  14                          // Number of bits in synch sequence length
+static SLFixData_t      SynchSequence = 0x0147e;        // Synchronization sequence - 01,0100,0111,1110
+static SLFixData_t      SynchSequenceBitMask;           // Bit synch. mask
+static SLFixData_t      SynchSequenceDetectorState;     // State variable for bit synch. detector
+static SLArrayIndex_t   SynchDetectedFlag;              // Flag set to >= 0 when synch detected
 
                                     // Debug arrays
 #if DISPLAY_CONSTELLATION
 static SLComplexRect_s ReceivedConstellationPoints[MAX_CONST_POINTS_PER_BURST];     // Constellation diagram array
 #endif
 #if DISPLAY_EYE_DIAGRAM
-static SLData_t    DebugRealFilterOutput[SAMPLE_LENGTH];
-static SLData_t    DebugImagFilterOutput[SAMPLE_LENGTH];
-static SLData_t    DebugELGTriggerOutput[SAMPLE_LENGTH];
+static SLData_t         DebugRealFilterOutput[SAMPLE_LENGTH];
+static SLData_t         DebugImagFilterOutput[SAMPLE_LENGTH];
+static SLData_t         DebugELGTriggerOutput[SAMPLE_LENGTH];
 #if PER_SAMPLE
-static SLArrayIndex_t  TriggerIndexCount;
+static SLArrayIndex_t   TriggerIndexCount;
 #endif
 #endif
 
-static WAV_FILE_INFO WavInfo;
+static SLWavFileInfo_s  wavInfo;
 
 
-static SLError_t    ClearDemodOutput (void);
-static SLError_t    DemodOutput (SLInt8_t Input);
+static SLError_t        ClearDemodOutput (void);
+static SLError_t        DemodOutput (SLInt8_t Input);
 
-static SLData_t     *pInput;                                    // Array to handle input before decimation
+static SLData_t         *pInput;                            // Array to handle input before decimation
 #if ENABLE_DECIMATE
 #define DECIMATION_RATIO    4
 #else
@@ -256,22 +255,22 @@ void main (int argc, char **argv)
 
 {
 #if DISPLAY_TIME_DOMAIN
-    h_GPC_Plot      *hTimeDomainGraph;                  // Declare time domain graph object
+    h_GPC_Plot      *hTimeDomainGraph;                      // Declare time domain graph object
 #endif
 #if DISPLAY_EYE_DIAGRAM
-    h_GPC_Plot      *hEyeDiagram;                       // Declare eye diagram graph object
+    h_GPC_Plot      *hEyeDiagram;                           // Declare eye diagram graph object
 #endif
 #if DISPLAY_CONSTELLATION
-    h_GPC_Plot      *hConstellationDiagram;             // Declare constellation diagram graph object
+    h_GPC_Plot      *hConstellationDiagram;                 // Declare constellation diagram graph object
 #endif
     SLError_t       SigLibErrorCode;
     SLArrayIndex_t  i, j;
     SLFixData_t     RxDiBit;
-    SLArrayIndex_t  FirstNonZeroSampleIndex;            // First non zero sample - used in silence threshold detection
-    SLArrayIndex_t  ProcessSampleLength;                // Length of data set to process
-    SLArrayIndex_t  RxSymbolCount;                      // Number of symbols returned from demodulation function
+    SLArrayIndex_t  FirstNonZeroSampleIndex;                // First non zero sample - used in silence threshold detection
+    SLArrayIndex_t  ProcessSampleLength;                    // Length of data set to process
+    SLArrayIndex_t  RxSymbolCount;                          // Number of symbols returned from demodulation function
 
-    SLArrayIndex_t  BurstSymbolCount = 0;               // Number of symbols received in a burst
+    SLArrayIndex_t  BurstSymbolCount = 0;                   // Number of symbols received in a burst
     SLData_t        CostasLoopVCOModulationIndex = COSTAS_LP_VCO_ACQ_MODE_MODULATION_GAIN;
 
     FILE            *pInputWavFile;
@@ -290,15 +289,15 @@ void main (int argc, char **argv)
 #endif
 
 #if DISPLAY_CONSTELLATION
-    SLArrayIndex_t  ConstellationBurstCount = 0;    // Initialise the number of constellation points in a block
+    SLArrayIndex_t  ConstellationBurstCount = 0;            // Initialise the number of constellation points in a block
 
-    hConstellationDiagram =                         // Initialize plot
-        gpc_init_xy ("Constellation Diagram",       // Plot title
-                     "X-Axis",                      // X-Axis label
-                     "Y-Axis",                      // Y-Axis label
-                     120.,                          // Dimension - this is square
-                     GPC_KEY_ENABLE);               // Legend / key mode
-    if (hConstellationDiagram == NULL) {            // Graph creation failed
+    hConstellationDiagram =                                 // Initialize plot
+        gpc_init_xy ("Constellation Diagram",               // Plot title
+                     "X-Axis",                              // X-Axis label
+                     "Y-Axis",                              // Y-Axis label
+                     120.,                                  // Dimension - this is square
+                     GPC_KEY_ENABLE);                       // Legend / key mode
+    if (NULL == hConstellationDiagram) {                    // Graph creation failed
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -310,12 +309,12 @@ void main (int argc, char **argv)
 #endif
 #endif
 
-    ClearDemodOutput ();                                        // Clear the demodulate data output file
-                                                                // Initialize numerical bit synch. detector
+    ClearDemodOutput ();                                            // Clear the demodulate data output file
+                                                                    // Initialize numerical bit synch. detector
     SIF_DetectNumericalBitSequence (&SynchSequenceBitMask,          // Synchronization sequence bit mask
                                     &SynchSequenceDetectorState,    // Detector state variable
                                     SYNCH_SEQUENCE_LEN);            // Synchronization sequence length
-    SynchDetectedFlag = SIGLIB_SEQUENCE_NOT_DETECTED;           // Synch has not been detected
+    SynchDetectedFlag = SIGLIB_SEQUENCE_NOT_DETECTED;               // Synch has not been detected
 
 #if (DEBUG_LOG_FILE || DEBUG_DIBITS_TO_LOG_FILE)
     SUF_ClearDebugfprintf();
@@ -344,10 +343,10 @@ void main (int argc, char **argv)
         exit (1);
     }
 
-    WavInfo = wav_read_header (pInputWavFile);
-    wav_display_info (WavInfo);
-    if (WavInfo.NumberOfChannels != 1) {                // Check how many channels
-        printf ("Number of channels in %s = %d\n", WavFilename, WavInfo.NumberOfChannels);
+    wavInfo = SUF_WavReadHeader (pInputWavFile);
+    SUF_WavDisplayInfo (wavInfo);
+    if (wavInfo.NumberOfChannels != 1) {                // Check how many channels
+        printf ("Number of channels in %s = %d\n", WavFilename, wavInfo.NumberOfChannels);
         printf ("This app requires a mono .wav file\n");
         exit (1);
     }
@@ -371,11 +370,11 @@ void main (int argc, char **argv)
     pELGImagOutputSynchDelay = SUF_VectorArrayAllocate (ELG_SYNCH_DELAY_ARRAY_LENGTH);
 
 
-    if ((pData == NULL) || (pCostasLpLPFCoeffs == NULL) || (pCostasLpLPF1State == NULL) ||
-        (pCostasLpLPF2State == NULL) || (pCostasLpVCOLookUpTable == NULL) || (pInput == NULL) ||
-        (pELGMatchedFilterState == NULL) || (pELGEarlyGateDelay == NULL) ||
-        (pELGLoopFilterCoeffs == NULL) || (pELGLoopFilterState == NULL) ||
-        (pELGRealOutputSynchDelay == NULL) || (pELGImagOutputSynchDelay == NULL)) {
+    if ((NULL == pData) || (NULL == pCostasLpLPFCoeffs) || (NULL == pCostasLpLPF1State) ||
+        (NULL == pCostasLpLPF2State) || (NULL == pCostasLpVCOLookUpTable) || (NULL == pInput) ||
+        (NULL == pELGMatchedFilterState) || (NULL == pELGEarlyGateDelay) ||
+        (NULL == pELGLoopFilterCoeffs) || (NULL == pELGLoopFilterState) ||
+        (NULL == pELGRealOutputSynchDelay) || (NULL == pELGImagOutputSynchDelay)) {
 
         printf ("Memory allocation failure\n");
         exit (0);
@@ -383,28 +382,28 @@ void main (int argc, char **argv)
 
                 // Always initialise to largest size first
 #if (DISPLAY_TIME_DOMAIN)
-    hTimeDomainGraph =                              // Initialize plot
-        gpc_init_2d ("Pi/4 DQPSK Demodulator Time Domain",    // Plot title
-                     "Time",                        // X-Axis label
-                     "Magnitude",                   // Y-Axis label
-                     310.0,                         // Scaling mode
-                     GPC_SIGNED,                    // Sign mode
-                     GPC_KEY_ENABLE);               // Legend / key mode
+    hTimeDomainGraph =                                      // Initialize plot
+        gpc_init_2d ("Pi/4 DQPSK Demodulator Time Domain",  // Plot title
+                     "Time",                                // X-Axis label
+                     "Magnitude",                           // Y-Axis label
+                     310.0,                                 // Scaling mode
+                     GPC_SIGNED,                            // Sign mode
+                     GPC_KEY_ENABLE);                       // Legend / key mode
 
-    if (hTimeDomainGraph == NULL) {
+    if (NULL == hTimeDomainGraph) {
         printf ("Plot creation failure.\n");
         exit (1);
     }
 #endif
 #if (DISPLAY_EYE_DIAGRAM)
-    hEyeDiagram =                                   // Initialize plot
-        gpc_init_2d ("Pi/4 DQPSK Demodulator Eye Diagram",    // Plot title
-                     "Time",                        // X-Axis label
-                     "Magnitude",                   // Y-Axis label
-                     GPC_AUTO_SCALE,                // Scaling mode
-                     GPC_SIGNED,                    // Sign mode
-                     GPC_KEY_ENABLE);               // Legend / key mode
-    if (hEyeDiagram == NULL) {
+    hEyeDiagram =                                           // Initialize plot
+        gpc_init_2d ("Pi/4 DQPSK Demodulator Eye Diagram",  // Plot title
+                     "Time",                                // X-Axis label
+                     "Magnitude",                           // Y-Axis label
+                     GPC_AUTO_SCALE,                        // Scaling mode
+                     GPC_SIGNED,                            // Sign mode
+                     GPC_KEY_ENABLE);                       // Legend / key mode
+    if (NULL == hEyeDiagram) {
         printf ("Plot creation failure.\n");
         exit (1);
     }
@@ -416,39 +415,39 @@ SUF_Debugfprintf ("Calling SIF_CostasQamDemodulate\n");
 #endif
                                 // Initialise the Costas loop QAM demodulator
     SigLibErrorCode =
-        SIF_CostasQamDemodulate (&CostasLpVCOPhase,                     // VCO phase
-                                 pCostasLpVCOLookUpTable,               // VCO look up table
-                                 COSTAS_LP_VCO_TABLE_SIZE,              // VCO look up table size
-                                 SYMBOL_RATE / SAMPLE_RATE,             // Low-pass filter cut-off frequency
-                                 pCostasLpLPF1State,                    // Pointer to loop filter 1 state
-                                 &CostasLpLPF1Index,                    // Pointer to loop filter 1 index
-                                 pCostasLpLPF2State,                    // Pointer to loop filter 2 state
-                                 &CostasLpLPF2Index,                    // Pointer to loop filter 2 index
-                                 pCostasLpLPFCoeffs,                    // Pointer to loop filter coefficients
-                                 COSTAS_LP_LPF_LENGTH,                  // Loop filter length
-                                 &CostasLpLoopFilterState,              // Pointer to loop filter state
-                                 &CostasLpState,                        // Pointer to delayed sample
-                                 pELGMatchedFilterState,                // Pointer to matched filter state array
-                                 &ELGMatchedFilterIndex,                // Pointer to matched filter index
-                                 &ELGMatchedFilterSum,                  // Pointer to matched filter sum
-                                 pELGEarlyGateDelay,                    // Pointer to early gate state array
-                                 &ELGEarlyGateDelayIndex,               // Pointer to early gate delay index
-                                 ELG_EARLY_GATE_DELAY_LENGTH,           // Early gate delay length
-                                 pELGLoopFilterState,                   // Pointer to loop filter state array
-                                 pELGLoopFilterCoeffs,                  // Pointer to loop filter coefficients
-                                 &ELGLoopFilterIndex,                   // Pointer to loop filter index
-                                 ELG_LOOP_FILTER_LENGTH,                // Loop filter length
-                                 ELG_LOOP_FILTER_FC/SAMPLE_RATE,        // Loop filter cut-off / centre frequency
-                                 &ELGPulseDetectorThresholdFlag,        // Pointer to pulse detector threshold flag
-                                 &ELGZeroCrossingPreviousSample,        // Pointer to zero crossing previous sample
-                                 &ELGTriggerCount,                      // Pointer to trigger counter
-                                 &ELGTriggerDetectedFlag,               // Pointer to trigger detected flag
-                                 &ELGTriggerUpdatedFlag,                // Pointer to trigger updated flag
-                                 &ELGTriggerLatency,                    // Pointer to ELG trigger latency
-                                 SYMBOL_LENGTH,                         // Samples per symbol
-                                 pELGRealOutputSynchDelay,              // Pointer to ELG real output synchronization delay state array
-                                 pELGImagOutputSynchDelay,              // Pointer to ELG imaginary output synchronization delay state array
-                                 &ELGOutputSynchDelayIndex);            // Pointer to ELG synchronization delay index
+        SIF_CostasQamDemodulate (&CostasLpVCOPhase,                 // VCO phase
+                                 pCostasLpVCOLookUpTable,           // VCO look up table
+                                 COSTAS_LP_VCO_TABLE_SIZE,          // VCO look up table size
+                                 SYMBOL_RATE / SAMPLE_RATE,         // Low-pass filter cut-off frequency
+                                 pCostasLpLPF1State,                // Pointer to loop filter 1 state
+                                 &CostasLpLPF1Index,                // Pointer to loop filter 1 index
+                                 pCostasLpLPF2State,                // Pointer to loop filter 2 state
+                                 &CostasLpLPF2Index,                // Pointer to loop filter 2 index
+                                 pCostasLpLPFCoeffs,                // Pointer to loop filter coefficients
+                                 COSTAS_LP_LPF_LENGTH,              // Loop filter length
+                                 &CostasLpLoopFilterState,          // Pointer to loop filter state
+                                 &CostasLpState,                    // Pointer to delayed sample
+                                 pELGMatchedFilterState,            // Pointer to matched filter state array
+                                 &ELGMatchedFilterIndex,            // Pointer to matched filter index
+                                 &ELGMatchedFilterSum,              // Pointer to matched filter sum
+                                 pELGEarlyGateDelay,                // Pointer to early gate state array
+                                 &ELGEarlyGateDelayIndex,           // Pointer to early gate delay index
+                                 ELG_EARLY_GATE_DELAY_LENGTH,       // Early gate delay length
+                                 pELGLoopFilterState,               // Pointer to loop filter state array
+                                 pELGLoopFilterCoeffs,              // Pointer to loop filter coefficients
+                                 &ELGLoopFilterIndex,               // Pointer to loop filter index
+                                 ELG_LOOP_FILTER_LENGTH,            // Loop filter length
+                                 ELG_LOOP_FILTER_FC/SAMPLE_RATE,    // Loop filter cut-off / centre frequency
+                                 &ELGPulseDetectorThresholdFlag,    // Pointer to pulse detector threshold flag
+                                 &ELGZeroCrossingPreviousSample,    // Pointer to zero crossing previous sample
+                                 &ELGTriggerCount,                  // Pointer to trigger counter
+                                 &ELGTriggerDetectedFlag,           // Pointer to trigger detected flag
+                                 &ELGTriggerUpdatedFlag,            // Pointer to trigger updated flag
+                                 &ELGTriggerLatency,                // Pointer to ELG trigger latency
+                                 SYMBOL_LENGTH,                     // Samples per symbol
+                                 pELGRealOutputSynchDelay,          // Pointer to ELG real output synchronization delay state array
+                                 pELGImagOutputSynchDelay,          // Pointer to ELG imaginary output synchronization delay state array
+                                 &ELGOutputSynchDelayIndex);        // Pointer to ELG synchronization delay index
 
                                                     // Initialize pre-filter
     SIF_Fir (RxPreFilterState,                      // Pointer to filter state array
@@ -477,9 +476,9 @@ SUF_Debugfprintf ("Returned from SIF_RootRaisedCosineFilter\n");
     DemodulatorState = DEMODULATOR_RESET;           // Set initial demodulator state
 
                                                     // Main data processing loop
-    while ((ProcessSampleLength = (SLArrayIndex_t)wav_read_data (pInput, pInputWavFile, WavInfo, DECIMATION_RATIO*SAMPLE_LENGTH)) != 0) {   // Successively read arrays of 128 samples*/
+    while ((ProcessSampleLength = (SLArrayIndex_t)SUF_WavReadData (pInput, pInputWavFile, wavInfo, DECIMATION_RATIO*SAMPLE_LENGTH)) != 0) {   // Successively read arrays of 128 samples*/
 #if DEBUG_LOG_FILE
-    SampleCount += ProcessSampleLength;                         // Increment SampleCount by number of samples to process
+    SampleCount += ProcessSampleLength;             // Increment SampleCount by number of samples to process
 //    SUF_DebugPrintArray (pInput, ProcessSampleLength);          // Print array contents
 #endif
 
@@ -559,21 +558,21 @@ SUF_Debugfprintf ("Returned from SIF_RootRaisedCosineFilter\n");
 
 #if DISPLAY_CONSTELLATION
                 if (ConstellationBurstCount > 20) {         // Check that we have enough points to make it worthwhile displaying constellation
-                    gpc_plot_xy (hConstellationDiagram,         // Graph handle
-                                 (ComplexRect_s *)ReceivedConstellationPoints,    // Array of complex dataset
-                                 (int)ConstellationBurstCount,  // Dataset length
-                                 "Constellation Diagram",       // Dataset title
-                                 "lines",                       // Graph type
-                                 // "points pt 7 ps 0.5",          // Graph type
-                                 "blue",                        // Colour
-                                 GPC_NEW);                      // New graph
+                    gpc_plot_xy (hConstellationDiagram,                         // Graph handle
+                                 (ComplexRect_s *)ReceivedConstellationPoints,  // Array of complex dataset
+                                 (int)ConstellationBurstCount,                  // Dataset length
+                                 "Constellation Diagram",                       // Dataset title
+                                 "lines",                                       // Graph type
+                                 // "points pt 7 ps 0.5",                          // Graph type
+                                 "blue",                                        // Colour
+                                 GPC_NEW);                                      // New graph
 
                     ConstellationBurstCount = 0;
                     printf ("Hit any key to continue..."); getchar ();
                 }
 #endif
 
-                SynchDetectedFlag = SIGLIB_SEQUENCE_NOT_DETECTED;       // Reset synch detected flag
+                SynchDetectedFlag = SIGLIB_SEQUENCE_NOT_DETECTED;   // Reset synch detected flag
                 DemodOutput (4);                            // Output a <Carriage Return> separator to demod output file
 #if DEBUG_DIBITS_TO_LOG_FILE
                 SUF_Debugfprintf ("\n");
@@ -590,15 +589,15 @@ SUF_Debugfprintf ("Returned from SIF_RootRaisedCosineFilter\n");
 
 #if DISPLAY_TIME_DOMAIN
             if (FirstNonZeroSampleIndex != SIGLIB_SIGNAL_NOT_PRESENT) {
-                gpc_plot_2d (hTimeDomainGraph,           // Graph handle
-                             pData,                      // Dataset
-                             ProcessSampleLength,        // Dataset length
-                             "Input data",               // Dataset title
-                             SIGLIB_ZERO,                // Minimum X value
+                gpc_plot_2d (hTimeDomainGraph,                  // Graph handle
+                             pData,                             // Dataset
+                             ProcessSampleLength,               // Dataset length
+                             "Input data",                      // Dataset title
+                             SIGLIB_ZERO,                       // Minimum X value
                              (double)(ProcessSampleLength - 1), // Maximum X value
-                             "lines",                    // Graph type
-                             "blue",                     // Colour
-                             GPC_NEW);                   // New graph
+                             "lines",                           // Graph type
+                             "blue",                            // Colour
+                             GPC_NEW);                          // New graph
                 printf ("Please hit <Carriage Return> to continue . . ."); getchar ();
             }
 #endif
@@ -941,52 +940,52 @@ SUF_Debugfprintf ("Returned from SIF_RootRaisedCosineFilter\n");
         if (FirstNonZeroSampleIndex != SIGLIB_SIGNAL_NOT_PRESENT) {
             for (i = 0; i < (10 * EYE_DIAGRAM_SIZE); i += EYE_DIAGRAM_SIZE) {
               if (i == 0) {
-                gpc_plot_2d (hEyeDiagram,                 // Graph handle
-                             DebugRealFilterOutput+i,     // Dataset
-                             EYE_DIAGRAM_SIZE,            // Dataset length
-                             "Real data",                 // Dataset title
-                             SIGLIB_ZERO,                 // Minimum X value
-                             (double)(EYE_DIAGRAM_SIZE - 1), // Maximum X value
-                             "lines",                     // Graph type
-                             "blue",                      // Colour
-                             GPC_NEW);                    // New graph
+                gpc_plot_2d (hEyeDiagram,                       // Graph handle
+                             DebugRealFilterOutput+i,           // Dataset
+                             EYE_DIAGRAM_SIZE,                  // Dataset length
+                             "Real data",                       // Dataset title
+                             SIGLIB_ZERO,                       // Minimum X value
+                             (double)(EYE_DIAGRAM_SIZE - 1),    // Maximum X value
+                             "lines",                           // Graph type
+                             "blue",                            // Colour
+                             GPC_NEW);                          // New graph
               }
               else {
-                gpc_plot_2d (hEyeDiagram,                 // Graph handle
-                             DebugRealFilterOutput+i,     // Dataset
-                             EYE_DIAGRAM_SIZE,            // Dataset length
-                             "Real data",                 // Dataset title
-                             SIGLIB_ZERO,                 // Minimum X value
-                             (double)(EYE_DIAGRAM_SIZE - 1), // Maximum X value
-                             "lines",                     // Graph type
-                             "blue",                      // Colour
-                             GPC_ADD);                    // New graph
+                gpc_plot_2d (hEyeDiagram,                       // Graph handle
+                             DebugRealFilterOutput+i,           // Dataset
+                             EYE_DIAGRAM_SIZE,                  // Dataset length
+                             "Real data",                       // Dataset title
+                             SIGLIB_ZERO,                       // Minimum X value
+                             (double)(EYE_DIAGRAM_SIZE - 1),    // Maximum X value
+                             "lines",                           // Graph type
+                             "blue",                            // Colour
+                             GPC_ADD);                          // New graph
               }
-                gpc_plot_2d (hEyeDiagram,                 // Graph handle
-                             DebugImagFilterOutput+i,     // Dataset
-                             EYE_DIAGRAM_SIZE,            // Dataset length
-                             "Imaginary data",            // Dataset title
-                             SIGLIB_ZERO,                 // Minimum X value
-                             (double)(EYE_DIAGRAM_SIZE - 1), // Maximum X value
-                             "lines",                     // Graph type
-                             "red",                       // Colour
-                             GPC_ADD);                    // New graph
+                gpc_plot_2d (hEyeDiagram,                       // Graph handle
+                             DebugImagFilterOutput+i,           // Dataset
+                             EYE_DIAGRAM_SIZE,                  // Dataset length
+                             "Imaginary data",                  // Dataset title
+                             SIGLIB_ZERO,                       // Minimum X value
+                             (double)(EYE_DIAGRAM_SIZE - 1),    // Maximum X value
+                             "lines",                           // Graph type
+                             "red",                             // Colour
+                             GPC_ADD);                          // New graph
             }
 #if DISPLAY_TRIGGER
-                                                    // Scale the trigger to plot
-            SDA_Multiply (DebugELGTriggerOutput,    // Input data pointer
-                          60.0,                     // Scaling factor
-                          DebugELGTriggerOutput,    // Output data pointer
-                          EYE_DIAGRAM_SIZE);        // Dataset length
-            gpc_plot_2d (hEyeDiagram,               // Graph handle
-                         DebugELGTriggerOutput,     // Dataset
-                         EYE_DIAGRAM_SIZE,          // Dataset length
-                         "DebugELGTriggerOutput",   // Dataset title
-                         SIGLIB_ZERO,               // Minimum X value
-                         (double)(EYE_DIAGRAM_SIZE - 1), // Maximum X value
-                         "lines",                   // Graph type
-                         "cyan",                    // Colour
-                         GPC_ADD);                  // New graph
+                                                            // Scale the trigger to plot
+            SDA_Multiply (DebugELGTriggerOutput,            // Input data pointer
+                          60.0,                             // Scaling factor
+                          DebugELGTriggerOutput,            // Output data pointer
+                          EYE_DIAGRAM_SIZE);                // Dataset length
+            gpc_plot_2d (hEyeDiagram,                       // Graph handle
+                         DebugELGTriggerOutput,             // Dataset
+                         EYE_DIAGRAM_SIZE,                  // Dataset length
+                         "DebugELGTriggerOutput",           // Dataset title
+                         SIGLIB_ZERO,                       // Minimum X value
+                         (double)(EYE_DIAGRAM_SIZE - 1),    // Maximum X value
+                         "lines",                           // Graph type
+                         "cyan",                            // Colour
+                         GPC_ADD);                          // New graph
 #endif
             printf ("Please hit <Carriage Return> to continue . . ."); getchar ();
         }
@@ -996,9 +995,9 @@ SUF_Debugfprintf ("Returned from SIF_RootRaisedCosineFilter\n");
     TriggerIndexCount = 0;
 #endif
 #endif
-        }                   // End of processing loop
+        }                                           // End of processing loop
 
-    }                       // End of while we have data from the .wav file
+    }                                               // End of while we have data from the .wav file
 
 #if DEBUG_LOG_FILE
     SUF_Debugfprintf ("Got to the end\n");
@@ -1049,7 +1048,7 @@ SLError_t ClearDemodOutput (void)
 {
     FILE *fp_LogFile;
     fp_LogFile = fopen ( "DemodOutput.txt", "w");
-    if (fp_LogFile == NULL) {
+    if (NULL == fp_LogFile) {
         return (SIGLIB_FILE_ERROR);
     }
     fclose (fp_LogFile);
@@ -1077,7 +1076,7 @@ SLError_t DemodOutput (SLInt8_t Input)
 {
     FILE *fp_LogFile;
     fp_LogFile = fopen ("DemodOutput.txt", "a");
-    if (fp_LogFile == NULL) {
+    if (NULL == fp_LogFile) {
         return (SIGLIB_FILE_ERROR);
     }
 

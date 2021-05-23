@@ -111,7 +111,7 @@ void main (void)
     h_GPC_Plot   *h2DPlot;                          // Plot objects
 #endif
 #if DISPLAY_CONSTELLATION
-    h_GPC_Plot   *hConstellationDiagramGraph;
+    h_GPC_Plot   *hConstellationDiagram;
 #endif
 
 #if DISPLAY_TIME_DOMAIN
@@ -149,7 +149,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -162,19 +162,19 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_DISABLE);              // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 #endif
 #if DISPLAY_CONSTELLATION
-    hConstellationDiagramGraph =                    // Initialize plot
+    hConstellationDiagram =                         // Initialize plot
         gpc_init_xy ("QPSK Constellation Diagram",  // Plot title
                      "X-Axis",                      // X-Axis label
                      "Y-Axis",                      // Y-Axis label
                      2.0,                           // Dimension - this is square
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (hConstellationDiagramGraph == NULL) {       // Graph creation failed
+    if (NULL == hConstellationDiagram) {            // Graph creation failed
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -187,7 +187,7 @@ void main (void)
 
                                                             // Initialise QPSK functions
     SIF_QpskModulate (pCarrierTable,                        // Carrier table pointer
-                      CARRIER_TABLE_FREQ / SAMPLE_RATE,     // Carrier frequency
+                      CARRIER_TABLE_FREQ / SAMPLE_RATE,     // Carrier phase increment per sample (radians / 2π)
                       CARRIER_SINE_TABLE_SIZE,              // Carrier sine table size
                       &TxCarrierPhase,                      // Carrier phase pointer
                       &TxSampleClock,                       // Sample clock pointer
@@ -203,7 +203,7 @@ void main (void)
                       RRCF_ENABLE);                         // RRCF enable / disable switch
 
     SIF_QpskDemodulate (pCarrierTable,                      // Carrier table pointer
-                        CARRIER_TABLE_FREQ / SAMPLE_RATE,   // Carrier frequency
+                        CARRIER_TABLE_FREQ / SAMPLE_RATE,   // Carrier phase increment per sample (radians / 2π)
                         CARRIER_SINE_TABLE_SIZE,            // Carrier sine table size
                         &RxCarrierPhase,                    // Carrier phase pointer
                         &RxSampleClock,                     // Sample clock pointer
@@ -394,7 +394,7 @@ void main (void)
 #endif
 
 #if DISPLAY_CONSTELLATION
-    gpc_plot_xy (hConstellationDiagramGraph,            // Graph handle
+    gpc_plot_xy (hConstellationDiagram,            // Graph handle
                  (ComplexRect_s *)ConstellationPoints,  // Array of complex dataset
                  (int)RxSymbolCount,                    // Dataset length
                  "Constellation Diagram",               // Dataset title

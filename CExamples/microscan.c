@@ -13,8 +13,8 @@
 // Define constants
 #define SAMPLE_LENGTH       512
 #define FFT_LENGTH          512
-#define LOG2_FFT_LENGTH     9
-#define WINDOW_SIZE         FFT_LENGTH
+#define LOG2_FFT_LENGTH     ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
+#define WINDOW_LENGTH       FFT_LENGTH
 
 #define BAUD_RATE           0.02
 #define CARRIER_FREQ        0.12
@@ -116,7 +116,7 @@ void main(void)
     pDisplayArray = SUF_VectorArrayAllocate (SAMPLE_LENGTH);
     pRealData = SUF_VectorArrayAllocate (FFT_LENGTH);
     pImagData = SUF_VectorArrayAllocate (FFT_LENGTH);
-    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_SIZE);
+    pWindowCoeffs = SUF_VectorArrayAllocate (WINDOW_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
     pTempDelay = SUF_VectorArrayAllocate (FIR_FILTER_GROUP_DELAY);
     pLookUpTable = SUF_VectorArrayAllocate (SINE_TABLE_SIZE);
@@ -137,7 +137,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -314,8 +314,8 @@ void main(void)
                                                     // Window modulated data
     SDA_Window (pPNSequence,                        // Pointer to source array
                 pRealData,                          // Pointer to destination array
-                pWindowCoeffs,                      // Pointer to window oefficients
-                WINDOW_SIZE);                       // Window length
+                pWindowCoeffs,                      // Pointer to window coefficients
+                WINDOW_LENGTH);                     // Window length
 
                                                     // Perform real FFT
     SDA_Rfft (pRealData,                            // Pointer to real array

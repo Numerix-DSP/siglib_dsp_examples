@@ -3,23 +3,23 @@
 
 // Include files
 #include <stdio.h>
-#include <siglib_host_utils.h>                      // Optionally includes conio.h and time.h subset functions
-#include <siglib.h>                                 // SigLib DSP library
+#include <siglib_host_utils.h>                              // Optionally includes conio.h and time.h subset functions
+#include <siglib.h>                                         // SigLib DSP library
 
 // Define constants
-#define DEBUG                   0                   // Debug mode - global debug switch
+#define DEBUG                   0                           // Debug mode - global debug switch
 
-#define TRACE_BACK_DEPTH        15                  // Trace back depth - 5 * K
-#define TRACE_BACK_TABLE_LENGTH (TRACE_BACK_DEPTH+1)    // Trace back depth - 5 * K
+#define TRACE_BACK_DEPTH        15                          // Trace back depth - 5 * K
+#define TRACE_BACK_TABLE_LENGTH (TRACE_BACK_DEPTH+1)        // Trace back depth - 5 * K
 
-#define INPUT_STRING_LENGTH     43                  // Input string length
+#define INPUT_STRING_LENGTH     43                          // Input string length
 
 // Declare global variables and arrays
 static char             InputString[] = "The quick brown fox jumps over the lazy dog";
 
 static SLData_t         ChannelData[SIGLIB_VITK3_SAMPLES_PER_BYTE];    // 16 coded samples for each 8 bit input char
 
-                                                    // Viterbi decoder persistent data
+                                                            // Viterbi decoder persistent data
 static SLArrayIndex_t   VitDecSurvivorStateHistoryTable[TRACE_BACK_TABLE_LENGTH][SIGLIB_VITK3_NUMBER_OF_STATES]; // History table of survivor states
 static SLData_t         VitDecAccumulatedErrorTable[SIGLIB_VITK3_NUMBER_OF_STATES];                        // Error accumulation table
 
@@ -39,7 +39,7 @@ void main (void)
     char                ViterbiOutput;
     SLFixData_t         ch;
     SLFixData_t         ExitFlag = 0;
-    SLData_t            Noise = SIGLIB_ZERO;        // Noise level to add to channel signal - 1.5 and 1.6 cause BER to increase
+    SLData_t            Noise = SIGLIB_ZERO;                // Noise level to add to channel signal - 1.5 and 1.6 cause BER to increase
 
     SIF_ViterbiDecoderK3 (&VitDecOutputBitCount,                                // Counts the bits into the output word so they are correctly aligned
                           &VitDecDecodedByte,                                   // This is where the decoded bits are built up into a byte
@@ -55,13 +55,15 @@ void main (void)
 
     while (!ExitFlag) {
         if (_kbhit()) {
-            if ((ch = (SLFixData_t)_getch ()) == '+') {
+            ch = (SLFixData_t)_getch ();
+            if (ch == '+') {
                 Noise += 0.1;
             }
-            else if ((ch = (SLFixData_t)_getch ()) == '-') {
+            else if (ch == '-') {
                 Noise -= 0.1;
-                if (Noise < SIGLIB_ZERO)
+                if (Noise < SIGLIB_ZERO) {
                     Noise = SIGLIB_ZERO;
+                }
             }
             else {
                 ExitFlag = 1;
@@ -69,24 +71,24 @@ void main (void)
         }
 
         for (i = 0; i < INPUT_STRING_LENGTH; i++) {
-                                                        // Convolutionally encode the input byte
+                                                            // Convolutionally encode the input byte
             ConvEncOutput =
-                SDS_ConvEncoderK3 (InputString[i],      // Input character
-                                   &ConvEncHistory);    // Pointer to history word
+                SDS_ConvEncoderK3 (InputString[i],          // Input character
+                                   &ConvEncHistory);        // Pointer to history word
 
 #if DEBUG
         printf ("Tx = %x\n", ConvEncOutput);
 #endif
 
-                                                        // Convert 1s and 0s to +1s and -1s to simulate the channel
+                                                            // Convert 1s and 0s to +1s and -1s to simulate the channel
             for (j = 0; j < 16; j++) {
                 ChannelData[j] = (SLData_t)((2 * ((ConvEncOutput >> j) & 0x1)) - 1);
 
-                                                        // Add noise
+                                                            // Add noise
                 ChannelData[j] += ((SLData_t)(rand() - (RAND_MAX / 2)) / ((RAND_MAX - (RAND_MAX / 2)))) * Noise;
             }
 
-                                                        // Now put the received vector into the Viterbi decoder
+                                                            // Now put the received vector into the Viterbi decoder
             ViterbiOutput =
                 (char)SDS_ViterbiDecoderK3 (ChannelData,                                        // Source data pointer
                                             &VitDecOutputBitCount,                              // Counts the bits into the output word so they are correctly aligned

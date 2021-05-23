@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
 #include <gnuplot_c.h>                              // Gnuplot/C
-#include "nhl.h"
 
 // Define constants
 #define PLOT_RESULTS            1                   // Set to 1 to plot results as well as print them
@@ -18,7 +17,7 @@
 #define IMPULSE_RESPONSE_LENGTH 1024
 #define PLOT_LENGTH             (IMPULSE_RESPONSE_LENGTH/2)
 #define FFT_LENGTH              1024
-#define LOG2_FFT_LENGTH         10
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 #define FILTER_ORDER            2                           // Filter length
 #define IIR_FILTER_STAGES       ((FILTER_ORDER+1)>>1)       // Number of biquads in filter
@@ -48,8 +47,8 @@ void main (void)
     pSrc = SUF_VectorArrayAllocate (IMPULSE_RESPONSE_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
-    if ((pIIRCoeffs == NULL) || (pRealData == NULL) || (pImagData == NULL) || (pResults == NULL) ||
-        (pSrc == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pIIRCoeffs) || (NULL == pRealData) || (NULL == pImagData) || (NULL == pResults) ||
+        (NULL == pSrc) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMemory allocation failed\n\n");
         exit (0);
@@ -62,7 +61,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

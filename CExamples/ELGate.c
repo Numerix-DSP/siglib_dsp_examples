@@ -116,8 +116,8 @@ void main (void)
     pELGOutputSynchDelay = SUF_VectorArrayAllocate (ELG_SYNCH_DELAY_ARRAY_LENGTH);
 
 
-    if ((pSrc == NULL) || (pDelayedSrc == NULL) || (pTriggerOutput == NULL) || (pELGMatchedFilterState == NULL) ||
-        (pELGEarlyGateDelay == NULL) || (pELGLoopFilterCoeffs == NULL) || (pELGLoopFilterState == NULL) || (pELGOutputSynchDelay == NULL)) {
+    if ((NULL == pSrc) || (NULL == pDelayedSrc) || (NULL == pTriggerOutput) || (NULL == pELGMatchedFilterState) ||
+        (NULL == pELGEarlyGateDelay) || (NULL == pELGLoopFilterCoeffs) || (NULL == pELGLoopFilterState) || (NULL == pELGOutputSynchDelay)) {
 
         printf ("Memory allocation failure\n");
         exit (0);
@@ -127,7 +127,7 @@ void main (void)
 #else
     pELGMatchedFilterSignal = SUF_VectorArrayAllocate (SYMBOL_LENGTH);      // One complete symbol used to create matched filter
     pELGMatchedFilterCoeffs = SUF_VectorArrayAllocate (SYMBOL_LENGTH);
-    if ((pELGMatchedFilterSignal == NULL) || (pELGMatchedFilterCoeffs == NULL)) {
+    if ((NULL == pELGMatchedFilterSignal) || (NULL == pELGMatchedFilterCoeffs)) {
 
         printf ("Memory allocation failure\n");
         exit (0);
@@ -142,7 +142,7 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

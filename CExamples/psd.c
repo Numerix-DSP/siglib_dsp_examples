@@ -26,7 +26,7 @@
 
 // Define constants
 #define FFT_LENGTH              512                 // Length of fast power spectrum data set
-#define LOG2_FFT_LENGTH         9
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define ARB_FFT_LENGTH          200                                                 // Length of regular power spectrum data set
 #define RESULT_LENGTH           ((FFT_LENGTH >> SIGLIB_AI_ONE)+SIGLIB_AI_ONE)       // Note the result length is N/2+1
 #define ARB_FFT_RESULT_LENGTH   ((ARB_FFT_LENGTH >> SIGLIB_AI_ONE)+SIGLIB_AI_ONE)   // Note the result length is N/2+1
@@ -64,10 +64,10 @@ void main(void)
     WMrPtr = SUF_VectorArrayAllocate (ARB_FFT_LENGTH);
     WMiPtr = SUF_VectorArrayAllocate (ARB_FFT_LENGTH);
 
-    if ((pRealData1 == NULL) || (pImagData1 == NULL) || (pRealData2 == NULL) || (pImagData2 == NULL) ||
-        (AWNrPtr == NULL) || (AWNiPtr == NULL) ||
-        (vLrPtr == NULL) || (vLiPtr == NULL) || (CZTRealWorkPtr == NULL) || (CZTImagWorkPtr == NULL) ||
-        (WMrPtr == NULL) || (WMiPtr == NULL) || (pFFTCoeffs == NULL)) {
+    if ((NULL == pRealData1) || (NULL == pImagData1) || (NULL == pRealData2) || (NULL == pImagData2) ||
+        (NULL == AWNrPtr) || (NULL == AWNiPtr) ||
+        (NULL == vLrPtr) || (NULL == vLiPtr) || (NULL == CZTRealWorkPtr) || (NULL == CZTImagWorkPtr) ||
+        (NULL == WMrPtr) || (NULL == WMiPtr) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMalloc failed\n\n");
         exit (0);
@@ -80,7 +80,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

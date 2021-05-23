@@ -5,6 +5,13 @@
 #include <stdio.h>
 #include <siglib.h>                                 // SigLib DSP library
 
+#define LOG_TABLE_LENGTH    24
+#define LOG_TABLE_START     440.
+#define LOG_TABLE_END       1760.
+
+SLData_t logTable[LOG_TABLE_LENGTH];
+
+
 void main (void)
 
 {
@@ -18,4 +25,12 @@ void main (void)
     printf ("SDS_Combinations (%lf, %lf) = %lf\n", 5.0, 3.0, SDS_Combinations (5.0,     // n
                                                                                3.0));   // k
 
+    printf ("\n\nLogarithmic distribution showing musical note frequencies over two 12-TET octaves\n\n");
+    SDA_LogDistribution (logTable,                          // Pointer to destination array
+                         LOG_TABLE_START,                   // Start value
+                         LOG_TABLE_END,                     // End value
+                         LOG_TABLE_LENGTH);                 // Number of steps
+
+    SUF_PrintArray (logTable,                               // Pointer to data array
+                    LOG_TABLE_LENGTH);                      // Table length
 }

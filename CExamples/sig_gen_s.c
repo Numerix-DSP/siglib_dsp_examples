@@ -9,7 +9,7 @@
 // Define constants
 #define SAMPLE_LENGTH           512
 #define FFT_LENGTH              512
-#define LOG2_FFT_LENGTH         9
+#define LOG2_FFT_LENGTH         ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 
 #define GAUS_NOISE_VARIANCE     SIGLIB_FOUR
 #define GAUS_NOISE_OFFSET       SIGLIB_ZERO
@@ -54,14 +54,14 @@ void main (void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
 
     ImpulsePhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_IMPULSE,         // Signal type - Impulse function
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -90,7 +90,7 @@ void main (void)
 
     ImpulsePhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_IMPULSE,         // Signal type - Impulse function
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -118,7 +118,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_WHITE_NOISE,     // Signal type - random white noise
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -164,7 +164,7 @@ void main (void)
     SinePhase = SIGLIB_ZERO;
     CosinePhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_SINE_WAVE,       // Signal type - Sine wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -192,7 +192,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_SINE_WAVE,       // Signal type - Sine wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -220,7 +220,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_COS_WAVE,        // Signal type - Cosine wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -250,7 +250,7 @@ void main (void)
     SinePhase = SIGLIB_ZERO;
     CosinePhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_SINE_WAVE,       // Signal type - Sine wave
                             SIGLIB_HALF,            // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -278,7 +278,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_COS_WAVE,        // Signal type - Cosine wave
                             SIGLIB_HALF,            // Signal peak level
                             SIGLIB_ADD,             // Fill (overwrite) or add to existing array contents
@@ -307,7 +307,7 @@ void main (void)
 
     SqPhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_SQUARE_WAVE,     // Signal type - Square wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -335,7 +335,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_SQUARE_WAVE,     // Signal type - Square wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -364,7 +364,7 @@ void main (void)
 
     TriPhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_TRIANGLE_WAVE,   // Signal type - Triangular wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -392,7 +392,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_TRIANGLE_WAVE,   // Signal type - Triangular wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -420,7 +420,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_TRIANGLE_WAVE,   // Signal type - Triangular wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -448,7 +448,7 @@ void main (void)
 
     TriPhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_TRIANGLE_WAVE,   // Signal type - Triangular wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -476,7 +476,7 @@ void main (void)
 
 
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_TRIANGLE_WAVE,   // Signal type - Triangular wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -505,7 +505,7 @@ void main (void)
 
     TriPhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_TRIANGLE_WAVE,   // Signal type - Triangular wave
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -534,7 +534,7 @@ void main (void)
 
     ImpulsePhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_IMPULSE_STREAM,  // Signal type - Impulse stream
                             OUTPUT_MAGNITUDE,       // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -565,7 +565,7 @@ void main (void)
     PnsPhase = SIGLIB_ZERO;
                                                     // Create a uni-polar PRN sequence
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_PN_SEQUENCE,     // Signal type - Pseudo random number sequence
                             OUTPUT_MAGNITUDE,       // Signal magnitude range
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -594,7 +594,7 @@ void main (void)
 
                                                     // Create a bi-polar PRN sequence
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_PN_SEQUENCE,     // Signal type - Pseudo random number sequence
                             SIGLIB_TWO,             // Signal magnitude range
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -629,7 +629,7 @@ void main (void)
     ChirpPhase = SIGLIB_ZERO;
     ChirpValue = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_CHIRP_NL,        // Signal type - Chirp with non linear frequency ramp
                             0.45,                   // Signal peak level
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents
@@ -685,7 +685,7 @@ void main (void)
     ChirpPhase = SIGLIB_ZERO;
     ChirpValue = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,                        // Output array pointer
+        SDS_SignalGenerate (pRealData+i,                        // Output sample pointer
                             SIGLIB_CHIRP_LIN,                   // Signal type - Chirp with linear frequency ramp
                             CHIRP_MAGNITUDE,                    // Signal peak level
                             SIGLIB_FILL,                        // Fill (overwrite) or add to existing array contents
@@ -740,7 +740,7 @@ void main (void)
 
     GaussPhase = SIGLIB_ZERO;
     for (i = 0; i < SAMPLE_LENGTH; i++) {
-        SDS_SignalGenerate (pRealData+i,            // Output array pointer
+        SDS_SignalGenerate (pRealData+i,            // Output sample pointer
                             SIGLIB_GAUSSIAN_NOISE,  // Signal type - Gaussian noise
                             SIGLIB_ZERO,            // Signal peak level - Unused
                             SIGLIB_FILL,            // Fill (overwrite) or add to existing array contents

@@ -30,93 +30,93 @@ void    main(void);
 void main(void)
 {
     SLFixData_t       i = ((SLFixData_t)0);
-    const SLData_t    *pSrcData = SourceData;
+    const SLData_t    *pSrc = SourceData;
 
     SIF_Fir (FilterDelay,                           // Pointer to filter state array
             &FilterIndex,                           // Pointer to filter index register
             FILTER_LENGTH);                         // Filter length
 
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
 
-    SDS_FirAddSample (*pSrcData++,                  // Input sample to add to delay line
+    SDS_FirAddSample (*pSrc++,                      // Input sample to add to delay line
                       FilterDelay,                  // Pointer to filter state array
                       &FilterIndex,                 // Pointer to filter index register
                       FILTER_LENGTH);               // Filter length
 
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
 
-    SDS_FirAddSample (*pSrcData++,                  // Input sample to add to delay line
+    SDS_FirAddSample (*pSrc++,                      // Input sample to add to delay line
                       FilterDelay,                  // Pointer to filter state array
                       &FilterIndex,                 // Pointer to filter index register
                       FILTER_LENGTH);               // Filter length
 
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
 
-    SDA_FirAddSamples (pSrcData,                    // Pointer to input samples to add to delay line
+    SDA_FirAddSamples (pSrc,                        // Pointer to input samples to add to delay line
                        FilterDelay,                 // Pointer to filter state array
                        &FilterIndex,                // Pointer to filter index register
                        FILTER_LENGTH,               // Filter length
                        SAMPLE_INSERT_LENGTH);       // Number of samples to insert
-    pSrcData += SAMPLE_INSERT_LENGTH;
+    pSrc += SAMPLE_INSERT_LENGTH;
 
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register
                                                 FILTER_LENGTH));    // Filter length
-    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrcData++,        // Input data sample to be filtered
+    printf ("Output[%d] = %lf\n", i++, SDS_Fir (*pSrc++,            // Input data sample to be filtered
                                                 FilterDelay,        // Pointer to filter state array
                                                 FilterCoeffs,       // Pointer to filter coefficients
                                                 &FilterIndex,       // Pointer to filter index register

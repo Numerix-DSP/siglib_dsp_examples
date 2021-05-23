@@ -1,8 +1,11 @@
 @echo off
 
-rem Batch file for building client application with Microsoft V9 compiler
+rem Batch file for building and executing client application with Microsoft Visual Studio compiler
+rem This build uses the static library, release model
 
-cl %1.c -D "SIGLIB_STATIC_LIB=1" C:\siglib\lib\Microsoft\static_library\Release\siglib.lib gnuplot_c.lib
-rem C:\siglib\nhl\nhl.lib
+if exist %1.exe (
+    del %1.exe
+)
+
+cl %1.c -W4 -D "SIGLIB_STATIC_LIB=1" -D "_CRT_SECURE_NO_WARNINGS=1" siglib.lib gnuplot_c.lib
 del *.obj
-

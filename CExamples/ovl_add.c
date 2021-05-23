@@ -7,13 +7,13 @@
 
 // Define constants
 #define ARRAY_LENGTH    10
-#define WINDOW_SIZE     20
+#define WINDOW_LENGTH   20
 
 // Declare global variables and arrays
 static const SLData_t   Src1[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.};
 static const SLData_t   Src2[] = {-1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0, -9.0, -10.};
 static SLData_t         Dst[ARRAY_LENGTH];
-static SLData_t         Window[WINDOW_SIZE];        // Declare the full window length but we only use the first half
+static SLData_t         Window[WINDOW_LENGTH];        // Declare the full window length but we only use the first half
 
 void main (void)
 
@@ -24,7 +24,7 @@ void main (void)
     SIF_Window (Window,                             // Pointer to window oefficient
             SIGLIB_HANNING,                         // Window type
             SIGLIB_ZERO,                            // Window coefficient
-            WINDOW_SIZE);                           // Window length
+            WINDOW_LENGTH);                         // Window length
 
     SIF_OverlapAndAddLinear (&Increment,            // Pointer to the value used to in(de)crement between the two arrays
                              ARRAY_LENGTH);         // Array length

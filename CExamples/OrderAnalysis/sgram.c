@@ -14,7 +14,7 @@
 // Define constants
 #define SAMPLE_LENGTH       1024                    // Length of array read from input file
 #define FFT_LENGTH          1024                    // Length of FFT performed
-#define LOG2_FFT_LENGTH     10
+#define LOG2_FFT_LENGTH     ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define RESULT_LENGTH       (FFT_LENGTH >> 1)       // Only need to store the lower 1/2 of the FFT output
 #define OVERLAP_LENGTH      (SAMPLE_LENGTH >> 2)    // 25 % overlap
 
@@ -55,9 +55,9 @@ void main (int argc, char *argv[])
     pFDPResults = SUF_VectorArrayAllocate (FFT_LENGTH);         // Results data array
     pFDPFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);    // FFT coefficient data array
 
-    if ((pDataArray == NULL) || (pOverlapArray == NULL) || (pWindowCoeffs == NULL) ||
-        (pFDPRealData == NULL) || (pFDPImagData == NULL) ||
-        (pFDPResults == NULL) || (pFDPFFTCoeffs == NULL)) {
+    if ((NULL == pDataArray) || (NULL == pOverlapArray) || (NULL == pWindowCoeffs) ||
+        (NULL == pFDPRealData) || (NULL == pFDPImagData) ||
+        (NULL == pFDPResults) || (NULL == pFDPFFTCoeffs)) {
 
         printf ("Memory allocation error\n");
         exit (0);
@@ -109,7 +109,7 @@ void main (int argc, char *argv[])
                               80.0,                     // Maximum Z value
                               GPC_COLOUR,               // Graph mode
                               GPC_KEY_ENABLE);          // Legend / key mode
-    if (hSpectrogram == NULL) {
+    if (NULL == hSpectrogram) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

@@ -8,7 +8,7 @@
 
 // Define constants
 #define FFT_LENGTH      256
-#define LOG2_FFT_LENGTH 8
+#define LOG2_FFT_LENGTH ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define SAMPLE_LENGTH   256
 #define SHIFT_RATIO     2.3333333333333333333333333
 #define SHIFT_BUF_SIZE  64
@@ -47,7 +47,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }

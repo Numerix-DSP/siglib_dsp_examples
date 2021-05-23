@@ -1,14 +1,14 @@
 
 
 
-                               SigLib ™
+                               SigLib ï¿½
 
                        Signal Processing Library
 
 
-                             Version 8.60
+                             Version 9.00
 
-                              07/01/2018
+                              17/11/2020
 
 
 INTRODUCTION
@@ -27,7 +27,7 @@ to run on your chosen platform.
 The SigLib package is updated frequently and we would like to
 upgrade you as soon as the new software is released, consequently
 we ask you, the user, to register with us using the form supplied.
-Our web site http://www.numerix-dsp.com is also updated frequently
+Our web site https://www.numerix-dsp.com is also updated frequently
 with information about the latest version of SigLib and also DSP
 applications, consequently you might like to bookmark the site.
 
@@ -85,6 +85,7 @@ of Sigma Numerix Ltd. all other trademarks acknowledged.
 For additional information, please contact :
 
 Sigma Numerix Ltd
-Email : info@numerix-dsp.com
-WWW : http:\\www.numerix-dsp.com
+Email: info@numerix-dsp.com
+WWW  : https:\\www.numerix-dsp.com
 
+Copyright (C) 2017 Numerix Ltd.

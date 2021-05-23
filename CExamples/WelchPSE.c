@@ -8,14 +8,14 @@
 
 // Define constants
 #define FFT_LENGTH                  512             // Length of fast power spectrum FFT
-#define LOG2_FFT_LENGTH             9
+#define LOG2_FFT_LENGTH             ((SLArrayIndex_t)(SDS_Log2(FFT_LENGTH)+SIGLIB_MIN_THRESHOLD))   // Log FFT length and avoid quantization issues
 #define NUMBER_OF_ARRAYS_AVERAGED   4
 #define OVERLAP_SIZE                32              // Size of the overlap between successive arrays
 #define INPUT_ARRAY_LENGTH          (((FFT_LENGTH - OVERLAP_SIZE) * NUMBER_OF_ARRAYS_AVERAGED) + OVERLAP_SIZE)  // Size of the input array
 #define RESULT_LENGTH               ((FFT_LENGTH >> SIGLIB_AI_ONE)+SIGLIB_AI_ONE)       // Note the result length is N/2+1
 
 // Declare global variables and arrays
-static SLData_t         *pSrcData, *pDstData;
+static SLData_t         *pSrc, *pDst;
 static SLData_t         *pRealData, *pImagData, *pOverlap, *pWindowCoeffs, *pFFTCoeffs;
 static SLArrayIndex_t   OverlapSourceIndex;
 static SLData_t         SinePhase;
@@ -27,16 +27,16 @@ void main(void)
 
     SLError_t   SigLibErrorCode;
 
-    pSrcData = SUF_VectorArrayAllocate (INPUT_ARRAY_LENGTH);    // Allocate memory
-    pDstData = SUF_VectorArrayAllocate (RESULT_LENGTH);
+    pSrc = SUF_VectorArrayAllocate (INPUT_ARRAY_LENGTH);    // Allocate memory
+    pDst = SUF_VectorArrayAllocate (RESULT_LENGTH);
     pRealData = SUF_VectorArrayAllocate (FFT_LENGTH);
     pImagData = SUF_VectorArrayAllocate (FFT_LENGTH);
     pOverlap = SUF_VectorArrayAllocate (OVERLAP_SIZE);
     pWindowCoeffs = SUF_VectorArrayAllocate (FFT_LENGTH);
     pFFTCoeffs = SUF_FftCoefficientAllocate (FFT_LENGTH);
 
-    if ((pRealData == NULL) || (pImagData == NULL) ||
-        (pDstData == NULL) || (pWindowCoeffs == NULL) || (pFFTCoeffs == NULL) || (pDstData == NULL)) {
+    if ((NULL == pRealData) || (NULL == pImagData) ||
+        (NULL == pSrc) || (NULL == pDst) || (NULL == pWindowCoeffs) || (NULL == pFFTCoeffs)) {
 
         printf ("\n\nMalloc failed\n\n");
         exit (0);
@@ -49,7 +49,7 @@ void main(void)
                      GPC_AUTO_SCALE,                // Scaling mode
                      GPC_SIGNED,                    // Sign mode
                      GPC_KEY_ENABLE);               // Legend / key mode
-    if (h2DPlot == NULL) {
+    if (NULL == h2DPlot) {
         printf ("\nPlot creation failure.\n");
         exit (1);
     }
@@ -72,7 +72,7 @@ void main(void)
     }
 
     SinePhase = SIGLIB_ZERO;
-    SDA_SignalGenerate (pSrcData,                   // Pointer to destination array
+    SDA_SignalGenerate (pSrc,                       // Pointer to destination array
                         SIGLIB_SINE_WAVE,           // Signal type - Sine wave
                         0.9,                        // Signal peak level
                         SIGLIB_FILL,                // Fill (overwrite) or add to existing array contents
@@ -84,7 +84,7 @@ void main(void)
                         SIGLIB_NULL_DATA_PTR ,      // Unused
                         INPUT_ARRAY_LENGTH);        // Output dataset length
 
-    SDA_SignalGenerate (pSrcData,                   // Pointer to destination array
+    SDA_SignalGenerate (pSrc,                       // Pointer to destination array
                         SIGLIB_WHITE_NOISE,         // Signal type - random white noise
                         0.3,                        // Signal peak level
                         SIGLIB_ADD,                 // Fill (overwrite) or add to existing array contents
@@ -97,7 +97,7 @@ void main(void)
                         INPUT_ARRAY_LENGTH);        // Output dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pSrcData,                          // Dataset
+                 pSrc,                              // Dataset
                  FFT_LENGTH,                        // Dataset length
                  "Sine Wave",                       // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -109,8 +109,8 @@ void main(void)
 
 
                                                                 // Perform Welch power spectrum calculation
-    SDA_WelchRealPowerSpectrum (pSrcData,                       // Pointer to source data
-                                pDstData,                       // Pointer to destination data
+    SDA_WelchRealPowerSpectrum (pSrc,                           // Pointer to source data
+                                pDst,                           // Pointer to destination data
                                 pRealData,                      // Pointer to real internal processing array
                                 pImagData,                      // Pointer to imaginary internal processing array
                                 pOverlap,                       // Pointer to internal overlap array
@@ -126,12 +126,12 @@ void main(void)
                                 InverseNumberOfArraysAveraged,  // Inverse of number of arrays averaged
                                 INPUT_ARRAY_LENGTH);            // Source dataset length
 
-    SDA_PositiveOffset (pDstData,                   // Pointer to source array
-                        pDstData,                   // Pointer to destination array
+    SDA_PositiveOffset (pDst,                       // Pointer to source array
+                        pDst,                       // Pointer to destination array
                         RESULT_LENGTH);             // Dataset length
 
     gpc_plot_2d (h2DPlot,                           // Graph handle
-                 pDstData,                          // Dataset
+                 pDst,                              // Dataset
                  RESULT_LENGTH,                     // Dataset length
                  "Welch Power Spectrum",            // Dataset title
                  SIGLIB_ZERO,                       // Minimum X value
@@ -145,8 +145,8 @@ void main(void)
     gpc_close (h2DPlot);
 
 
-    SUF_MemoryFree (pSrcData);                      // Free memory
-    SUF_MemoryFree (pDstData);
+    SUF_MemoryFree (pSrc);                          // Free memory
+    SUF_MemoryFree (pDst);
     SUF_MemoryFree (pRealData);
     SUF_MemoryFree (pImagData);
     SUF_MemoryFree (pOverlap);

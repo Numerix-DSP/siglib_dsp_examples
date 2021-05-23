@@ -65,6 +65,15 @@ void main(void)
         printf ("%lf, ", Dst[i]);
     }
 
+    SDA_SubtractMax (Src,                           // Pointer to source array
+                     Dst,                           // Pointer to destination array
+                     DATA_LENGTH);                  // Array length
+    printf ("\nMax subtracted = ");
+
+    for (i = 0; i < DATA_LENGTH; i++) {
+        printf ("%lf, ", Dst[i]);
+    }
+
     printf ("\n");
     printf ("\n");
 
